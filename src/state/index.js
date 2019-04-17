@@ -1,4 +1,5 @@
-/* The State Machine, heart and soul of mission control
+/*
+ * The State Machine, heart and soul of mission control.
  *
  * The state maching is responsible for keeping the state for lights etc.
  * It works in a similar way that React/Redux works. But its simplified in that

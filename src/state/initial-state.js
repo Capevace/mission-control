@@ -1,1 +1,1 @@
-module.exports = { somebody: { is: [0, 1, 2] } };
+module.exports = { lamp: false };
