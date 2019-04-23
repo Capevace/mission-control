@@ -1,16 +1,32 @@
 const fs = require('fs');
+const path = require('path');
 
-// Read all files in the actions directory, remove the index and then dynamically load them.
-const actionFiles = fs.readdirSync(__dirname);
-const actions = actionFiles
-	.map(file => file.replace('.js', ''))
-	.filter(file => file !== 'index')
-	.reduce(
-		(all, file) => ({
-			...all,
-			[file]: require(`./${file}`)
-		}),
-		{}
-	);
+const actionIdToPath = actionId =>
+	actionId
+		.replace(/:/g, '/')
+		.replace(/_/g, '-')
+		.toLowerCase();
 
-module.exports = { getActions: () => actions };
+// Take the actions and require their respective js files.
+const actions = [
+	// Notificatons Actions
+	'NOTIFICATIONS:CREATE',
+	'NOTIFICATIONS:DELETE',
+	'NOTIFICATIONS:MARK-AS-READ',
+	'NOTIFICATIONS:SET',
+
+	// Spotify
+	'SPOTIFY:UPDATE-TOKEN',
+	'SYSTEM-INFO:UPDATE',
+
+	// Scene
+	'SCENE:TOGGLE'
+].reduce(
+	(allActions, action) => ({
+		...allActions,
+		[action]: require(`./${actionIdToPath(action)}`)
+	}),
+	{}
+);
+
+module.exports = actions;

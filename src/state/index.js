@@ -31,7 +31,9 @@
 
 const EventEmitter = require('eventemitter2');
 const diff = require('object-diff');
-const { getActions } = require('./actions');
+const actions = require('./actions');
+
+const log = require('@helpers/log').logger('State');
 
 const emitter = new EventEmitter({
 	wildcard: true,
@@ -61,11 +63,11 @@ function subscribe(event, callback) {
 }
 
 // The call method will run an action on the state with given arguments.
-function call(actionKey, data) {
+function callAction(actionKey, data) {
+	log(`Executing action ${actionKey}`);
+
 	// Normalize action name
 	actionKey = actionKey.toUpperCase();
-
-	const actions = getActions();
 
 	// Throw an error if action doesn't exist
 	if (!(actionKey in actions)) {
@@ -93,16 +95,18 @@ function call(actionKey, data) {
 
 	// Get a diff of the old and new state.
 	// Using that diff we determine what the emitter should emit.
+	// The state provided in update events that are limited to a key is
+	// only the state that was updated.
 	const stateDiff = diff(oldState, newState);
 	Object.keys(stateDiff).forEach(changedKey => {
 		emitter.emit(`update:${changedKey}`, {
-			state: newState
+			state: stateDiff
 		});
 	});
 
 	// Emit a general state update event
 	emitter.emit('update', {
-		state: newState,
+		state: stateDiff,
 		action: actionKey,
 		diff: Object.keys(stateDiff)
 	});
@@ -113,8 +117,13 @@ function call(actionKey, data) {
 	});
 }
 
+function emitEvent(event, data) {
+	emitter.emit(event, data);
+}
+
 module.exports = {
 	getState: () => state,
-	call,
+	callAction,
+	emitEvent,
 	subscribe
 };

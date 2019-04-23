@@ -1,34 +1,51 @@
+const log = require('@helpers/log').logger('Socket');
+const state = require('@state');
 const socketIO = require('socket.io');
 
-module.exports = function socket(state, http) {
+module.exports = function socket(http) {
 	const server = socketIO(http);
 
 	server.on('connection', function(client) {
 		let subscriptions = {};
 
-		console.log('A new client connected via socket.');
+		log('A new client connected.');
 
+		// On connection, we emit a initial-state event.
+		// The client can use this to populate its state.
+		client.emit('initial-state', {
+			state: state.getState()
+		});
+
+		// The client can call actions by emitting the action event.
+		// It has to pass the action and associated data.
+		client.on('action', ({ action, data }) => {
+			log(`Client requested action ${action}.`);
+			state.callAction(action, data);
+		});
+
+		// The client can emit a 'subscribe' event to subscribe to the state machines events.
+		// These will then get relayed to the socket client.
 		client.on('subscribe', ({ event }) => {
 			if (event in subscriptions) return;
 
-			console.log(`A client subscribed to ${event}.`);
+			log(`A client subscribed to ${event}.`);
 
+			// If a wildcard is passed we also pass the events name in the payload.
 			const relayEvent =
 				event === '*'
 					? (actualEvent, data) => {
-							client.emit('*', {
+							client.emit('all-events', {
 								event: actualEvent,
 								data
 							});
-							console.log(
-								`Emitting ${actualEvent} to client on *.`
-							);
+							// log(`Emitting ${actualEvent} to client on *.`);
 					  }
 					: data => {
 							client.emit(event, data);
-							console.log(`Emitting ${event} to client.`);
+							// log(`Emitting ${event} to client.`);
 					  };
 
+			// We save the returned method from the subscribe function to later unsubscribe.
 			subscriptions[event] = state.subscribe(event, relayEvent);
 		});
 
@@ -36,7 +53,7 @@ module.exports = function socket(state, http) {
 		client.on('unsubscribe', ({ event }) => {
 			if (!(event in subscriptions)) return;
 
-			console.log(`Unsubscribing client from event ${event}.`);
+			log(`Unsubscribing client from event ${event}.`);
 
 			subscriptions[event]();
 			delete subscriptions[event];
@@ -44,10 +61,12 @@ module.exports = function socket(state, http) {
 
 		// When the client disconnects unsubscribe all subscriptions
 		client.on('disconnect', ({ event }) => {
-			console.log('A client disconnected.');
+			log('A client disconnected.');
 
 			Object.values(subscriptions).forEach(unsubscribe => unsubscribe());
 			subscriptions = null;
 		});
 	});
+
+	log('Listening via HTTP server.');
 };
