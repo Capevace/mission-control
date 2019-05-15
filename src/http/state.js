@@ -1,6 +1,6 @@
 const state = require('@state');
 
-module.exports = function state(app) {
+module.exports = function state(app, requireAuth) {
 	/*
 	 * This route lets you get the state from the state machine via URL parameters.
 	 * Basically we take each parameter and go through the state object step by step.
@@ -10,6 +10,7 @@ module.exports = function state(app) {
 	 */
 	app.get(
 		'/state/:param1?/:param2?/:param3?/:param4?/:param5?/:param6?/:param7?/:param8?',
+		requireAuth(),
 		(req, res) => {
 			// Get the parameters and filter out the ones that arent set i.e. null
 			const params = Object.values(req.params).filter(value => !!value);
@@ -37,7 +38,7 @@ module.exports = function state(app) {
 	 * So data like { isOn: true } would be /?isOn=true
 	 * TODO: HTTP authentication
 	 */
-	app.get('/action/:action', (req, res) => {
+	app.get('/action/:action', requireAuth(), (req, res) => {
 		res.json(state.callAction(req.params.action, req.query));
 	});
 };

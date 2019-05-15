@@ -9,12 +9,15 @@ const logNotification = require('@helpers/log').custom();
 const uuid = require('uuid/v4');
 
 module.exports = async function notifications() {
-	state.subscribe('action:CREATE_NOTIFICATION', ({ title, message }) => {
-		logNotification(
-			chalk.black.bold.bgWhiteBright('[Notification]') +
-				` ${chalk.bold(title)}: ${message}`
-		);
-	});
+	state.subscribe(
+		'action:NOTIFICATIONS:CREATE',
+		({ actionData: { title, message } }) => {
+			logNotification(
+				chalk.black.bold.bgWhiteBright('[Notification]') +
+					` ${chalk.bold(title)}: ${message}`
+			);
+		}
+	);
 
 	// Mark notification with id as read
 	state.subscribe('notification:read', ({ id }) => {

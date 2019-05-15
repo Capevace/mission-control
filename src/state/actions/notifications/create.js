@@ -5,7 +5,7 @@ module.exports.call = function CREATE_NOTIFICATION(state, { title, message }) {
 		...state,
 		notifications: [
 			...state.notifications,
-			{ title, message, unread: true, id: uuid() }
+			{ title, message, unread: true, id: uuid(), date: new Date() }
 		]
 	};
 };

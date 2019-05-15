@@ -98,6 +98,10 @@ function scheduleTokenRefresh(expiresAt, refreshToken) {
 			);
 		} catch (e) {
 			log('Couldnt refresh access token.', e);
+			state.callAction('NOTIFICATIONS:CREATE', {
+				title: "Spotify couldn't be authorized.",
+				message: e.message
+			});
 		}
 	}, dateDifference);
 }

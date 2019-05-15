@@ -113,6 +113,7 @@ function callAction(actionKey, data) {
 	emitter.emit(`action:${actionKey}`, {
 		state: newState,
 		action: actionKey,
+		actionData: data,
 		diff: Object.keys(stateDiff)
 	});
 }

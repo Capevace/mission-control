@@ -1,5 +1,5 @@
 # Hide Storage in git
-storage
+storage/*
 
 # Logs
 logs

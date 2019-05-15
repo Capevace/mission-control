@@ -38,10 +38,3 @@ services.startServices();
 state.subscribe('*', (event, data) =>
 	DEBUG_MODE ? eventLog(event, data) : eventLog(event)
 );
-
-setTimeout(() => {
-	state.callAction('NOTIFICATIONS:CREATE', {
-		title: 'Hello!',
-		message: 'God bless you'
-	});
-}, 2000);

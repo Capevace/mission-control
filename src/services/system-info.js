@@ -47,7 +47,7 @@ module.exports = async function systemInformation() {
 			si.mem(),
 			si.networkInterfaces(),
 			si.currentLoad(),
-			publicIp.v4({ https: true })
+			publicIp.v4({ https: true }).catch(e => null)
 		]);
 
 		const network = networkInterfaces.reduce((mainNetwork, interface) => {
@@ -73,12 +73,15 @@ module.exports = async function systemInformation() {
 				free: memory.free,
 				used: memory.used
 			},
-			network: {
-				internalIPv4: network.ip4,
-				publicIPv4: ip,
-				mac: network.mac,
-				speed: network.speed
-			}
+			network:
+				network !== null
+					? {
+							internalIPv4: network.ip4,
+							publicIPv4: ip,
+							mac: network.mac,
+							speed: network.speed
+					  }
+					: null
 		};
 
 		state.callAction('SYSTEM-INFO:UPDATE', data);
