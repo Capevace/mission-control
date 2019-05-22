@@ -35,12 +35,12 @@
     "uuid": "^3.3.2"
   },
   "_moduleAliases": {
-    "@root": "./src",
-    "@config": "./src/config",
-    "@database": "src/database",
-    "@state": "src/state",
-    "@helpers": "src/helpers",
-    "@services": "src/services"
+    "@root": "app",
+    "@config": "app/config",
+    "@database": "app/database",
+    "@state": "app/state",
+    "@helpers": "app/helpers",
+    "@services": "app/services"
   },
   "devDependencies": {
     "jsdoc": "^3.6.2"
