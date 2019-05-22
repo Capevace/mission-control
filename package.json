@@ -5,7 +5,8 @@
   "main": "app/index.js",
   "scripts": {
     "start": "node app/index.js",
-    "docs": "jsdoc -r app -d docs -c jsdoc.config.js -u tutorials"
+    "docs-tutorials-later": "jsdoc -r app -d docs -c jsdoc.config.js -u tutorials",
+    "docs": "jsdoc -r app -d docs -c jsdoc.config.js"
   },
   "repository": {
     "type": "git",
