@@ -1,6 +1,7 @@
 /**
  * Logging Helpers
  * @module @helpers/log
+ * @requires chalk
  */
 
 const chalk = require('chalk');

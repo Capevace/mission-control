@@ -2,10 +2,10 @@
   "name": "hal-6900-mission-control",
   "version": "0.0.1",
   "description": "The mission control server for HAL6900.",
-  "main": "src/index.js",
+  "main": "app/index.js",
   "scripts": {
-    "start": "node src/index.js",
-    "docs": "jsdoc -r src -d docs -c jsdoc.config.js -u tutorials"
+    "start": "node app/index.js",
+    "docs": "jsdoc -r app -d docs -c jsdoc.config.js -u tutorials"
   },
   "repository": {
     "type": "git",
