@@ -38,3 +38,14 @@ services.startServices();
 state.subscribe('*', (event, data) =>
 	DEBUG_MODE ? eventLog(event, data) : eventLog(event)
 );
+
+setTimeout(
+	() =>
+		state.callAction('VIDEO-QUEUE:PUSH', {
+			video: {
+				url: 'https://www.youtube.com/watch?v=jNQXAC9IVRw',
+				format: 'm4a'
+			}
+		}),
+	2000
+);

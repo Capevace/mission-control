@@ -1,6 +1,20 @@
+/**
+ * The initial state object for the state machine.
+ * @name  Initial State
+ * @module @state/initial-state
+ * @since 1.0.0
+ */
 const config = require('@config');
 
+/**
+ * The initial state object for the state machine.
+ *
+ * @todo  Save state and load on launch.
+ *
+ * @type {Object}
+ */
 module.exports = {
+	videoQueue: [],
 	notifications: [],
 	spotify: {
 		accessToken: null,

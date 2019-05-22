@@ -1,7 +1,5 @@
-module.exports.call = function(
-	state,
-	{ accessToken, expiresAt, refreshToken }
-) {
+// prettier-ignore
+module.exports.call = function(state, { accessToken, expiresAt, refreshToken }) {
 	return {
 		...state,
 		spotify: {

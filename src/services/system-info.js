@@ -50,10 +50,10 @@ module.exports = async function systemInformation() {
 			publicIp.v4({ https: true }).catch(e => null)
 		]);
 
-		const network = networkInterfaces.reduce((mainNetwork, interface) => {
+		const network = networkInterfaces.reduce((mainNetwork, iface) => {
 			if (mainNetwork) return mainNetwork;
 
-			if (interface.iface === 'en1') return interface;
+			if (iface.iface === 'en1') return iface;
 
 			return null;
 		}, null);

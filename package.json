@@ -4,7 +4,8 @@
   "description": "The mission control server for HAL6900.",
   "main": "src/index.js",
   "scripts": {
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "docs": "jsdoc -r src -d docs -c jsdoc.config.js -u tutorials"
   },
   "repository": {
     "type": "git",
@@ -40,5 +41,8 @@
     "@state": "src/state",
     "@helpers": "src/helpers",
     "@services": "src/services"
+  },
+  "devDependencies": {
+    "jsdoc": "^3.6.2"
   }
 }
