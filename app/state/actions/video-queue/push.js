@@ -3,11 +3,11 @@ module.exports.call = function(state, { video: { url, format } }) {
 		...state,
 		videoQueue: {
 			...state.videoQueue,
-			[video.url]: {
-				url: video.url,
-				format: video.format,
+			[url]: {
+				url: url,
+				format: format,
 				progress: null,
-				title: video.url
+				title: url
 			}
 		}
 	};

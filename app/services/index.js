@@ -6,11 +6,6 @@
  * @since 1.0.0
  * @module @services
  */
-const config = require('@config');
-const database = require('@database');
-const state = require('@state');
-const { logger } = require('@helpers/log');
-
 const iftttService = require('./ifttt');
 const notificationsService = require('./notifications');
 const spotifyService = require('./spotify');
@@ -35,7 +30,7 @@ module.exports = {
 	 * @param {module:@database} database The database module.
 	 * @param {module:@state} state The state module.
 	 */
-	startServices(config, database, state) {
+	startServices() {
 		services = {
 			spotify: spotifyService(),
 			systemInfo: systemInfoService(),

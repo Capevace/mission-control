@@ -14,7 +14,7 @@ const chalk = require('chalk');
  * @return {Function} A function that you can call to log things.
  */
 module.exports.logger = function logger(title, color = 'blue') {
-	return (...args) => console.log(`[${chalk[color](title)}]`, ...args);
+	return (...args) => console.log(`[${chalk[color](title)}]`, ...args); // eslint-disable-line no-console
 };
 
 /**
@@ -23,5 +23,5 @@ module.exports.logger = function logger(title, color = 'blue') {
  * @return {Function} A function that you can call to log things.
  */
 module.exports.custom = function custom() {
-	return (...args) => console.log(...args);
+	return (...args) => console.log(...args); // eslint-disable-line no-console
 };

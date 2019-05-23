@@ -55,6 +55,6 @@ module.exports.set = function set(key, value) {
  * @param  {String} key - The key to retrieve from the database. (1-level deep)
  * @return {Object} The object from the database.
  */
-module.exports.get = function get(key, value) {
+module.exports.get = function get(key, defaultValue) {
 	return database[key] || defaultValue;
 };

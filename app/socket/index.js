@@ -44,13 +44,13 @@ module.exports = function socket(http) {
 					next(null);
 				} catch (e) {
 					log(
-						"Client couldn't be authorized. Invalid authentication token."
+						'Client couldnt be authorized. Invalid authentication token.'
 					);
 					next(new Error('Unauthorized'));
 				}
 			} else {
 				log(
-					"Client couldn't be authorized. Missing authentication token."
+					'Client couldnt be authorized. Missing authentication token.'
 				);
 				next(new Error('Unauthorized'));
 			}
@@ -80,20 +80,21 @@ module.exports = function socket(http) {
 
 				log(`A client subscribed to ${event}.`);
 
+				const relayAllEvents = (actualEvent, data) => {
+					client.emit('all-events', {
+						event: actualEvent,
+						data
+					});
+				};
+
+				const relaySingleEvent = data => {
+					client.emit(event, data);
+					// log(`Emitting ${event} to client.`);
+				};
+
 				// If a wildcard is passed we also pass the events name in the payload.
 				const relayEvent =
-					event === '*'
-						? (actualEvent, data) => {
-								client.emit('all-events', {
-									event: actualEvent,
-									data
-								});
-								// log(`Emitting ${actualEvent} to client on *.`);
-						  }
-						: data => {
-								client.emit(event, data);
-								// log(`Emitting ${event} to client.`);
-						  };
+					event === '*' ? relayAllEvents : relaySingleEvent;
 
 				// We save the returned method from the subscribe function to later unsubscribe.
 				subscriptions[event] = state.subscribe(event, relayEvent);
@@ -110,7 +111,7 @@ module.exports = function socket(http) {
 			});
 
 			// When the client disconnects unsubscribe all subscriptions
-			client.on('disconnect', ({ event }) => {
+			client.on('disconnect', () => {
 				log('A client disconnected.');
 
 				Object.values(subscriptions).forEach(unsubscribe =>

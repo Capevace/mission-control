@@ -1,4 +1,4 @@
-const state = require('@state');
+const { getState, callAction } = require('@state');
 
 module.exports = function state(app, requireAuth) {
 	/*
@@ -14,7 +14,7 @@ module.exports = function state(app, requireAuth) {
 		(req, res) => {
 			// Get the parameters and filter out the ones that arent set i.e. null
 			const params = Object.values(req.params).filter(value => !!value);
-			const currentState = state.getState();
+			const currentState = getState();
 
 			// Go through the list of parameters and find the object in the state
 			const value = params.reduce((currentObject, param) => {
@@ -39,6 +39,6 @@ module.exports = function state(app, requireAuth) {
 	 * TODO: HTTP authentication
 	 */
 	app.get('/action/:action', requireAuth(), (req, res) => {
-		res.json(state.callAction(req.params.action, req.query));
+		res.json(callAction(req.params.action, req.query));
 	});
 };

@@ -1,5 +1,4 @@
 const config = require('@config');
-const database = require('@database');
 const state = require('@state');
 const log = require('@helpers/log').logger('IFTTT');
 
@@ -14,7 +13,7 @@ function getWebhookUrl(event) {
 async function triggerWebhook(event, value1, value2, value3) {
 	try {
 		await superagent
-			.post(getWebhookUrl(eveent))
+			.post(getWebhookUrl(event))
 			.type('json')
 			.send({ value1, value2, value3 });
 
@@ -33,5 +32,7 @@ module.exports = async function ifttt() {
 		return;
 	}
 
-	state.subscribe('ifttt:webhook', () => {});
+	state.subscribe('ifttt:webhook', () => {
+		triggerWebhook();
+	});
 };

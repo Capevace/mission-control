@@ -30,6 +30,7 @@ module.exports = class MissionControlEvent {
 	 * @return {Boolean} If this function returns true, the jsonData will automagically be assigned to the class instance. Override the method and explicitly return false here to turn that off.
 	 */
 	onUnserialize(jsonData) {
+		jsonData;
 		return true;
 	}
 

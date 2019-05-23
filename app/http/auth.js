@@ -1,5 +1,4 @@
 const config = require('@config');
-const state = require('@state');
 const log = require('@helpers/log').logger('Auth');
 
 const passport = require('passport');
@@ -89,7 +88,7 @@ module.exports = function authRoutes(app, requireAuthentication) {
 		const token = req.query.auth_token;
 		try {
 			// Verify JWT received with the secret
-			const payload = jwt.verify(token, config.auth.jwtSecret, {
+			jwt.verify(token, config.auth.jwtSecret, {
 				issuer: config.auth.issuer,
 				audience: config.auth.audience
 			});

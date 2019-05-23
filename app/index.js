@@ -15,7 +15,7 @@ const log = require('@helpers/log').logger('Main', 'cyan');
 const eventLog = require('@helpers/log').logger('Event', 'green');
 log('Starting Mission Control\n');
 
-const database = require('@database');
+const database = require('@database'); // eslint-disable-line no-unused-vars
 const state = require('@state');
 
 const http = require('./http');
@@ -23,7 +23,7 @@ const socket = require('./socket');
 
 // Initialize the main mission control http server
 const server = http();
-const io = socket(server);
+const io = socket(server); // eslint-disable-line no-unused-vars
 
 const services = require('@services');
 services.startServices();

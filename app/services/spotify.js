@@ -1,3 +1,4 @@
+/*global Buffer */
 const config = require('@config');
 const database = require('@database');
 const state = require('@state');
@@ -99,7 +100,7 @@ function scheduleTokenRefresh(expiresAt, refreshToken) {
 		} catch (e) {
 			log('Couldnt refresh access token.', e);
 			state.callAction('NOTIFICATIONS:CREATE', {
-				title: "Spotify couldn't be authorized.",
+				title: `Spotify couldn't be authorized.`,
 				message: e.message
 			});
 		}

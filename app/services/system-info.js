@@ -1,8 +1,4 @@
-const config = require('@config');
-const database = require('@database');
 const state = require('@state');
-const log = require('@helpers/log').logger('System Info');
-
 const si = require('systeminformation');
 const publicIp = require('public-ip');
 
@@ -47,7 +43,7 @@ module.exports = async function systemInformation() {
 			si.mem(),
 			si.networkInterfaces(),
 			si.currentLoad(),
-			publicIp.v4({ https: true }).catch(e => null)
+			publicIp.v4({ https: true }).catch(() => null)
 		]);
 
 		const network = networkInterfaces.reduce((mainNetwork, iface) => {

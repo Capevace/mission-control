@@ -5,7 +5,8 @@
   "main": "app/index.js",
   "scripts": {
     "start": "node app/index.js",
-    "docs-tutorials-later": "jsdoc -r app -d docs -c jsdoc.config.js -u tutorials",
+    "lint": "eslint app",
+    "docs-tutorials-for-later": "jsdoc -r app -d docs -c jsdoc.config.js -u tutorials",
     "docs": "jsdoc -r app -d docs -c jsdoc.config.js"
   },
   "repository": {
@@ -44,6 +45,38 @@
     "@services": "app/services"
   },
   "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-config-prettier": "^4.3.0",
+    "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-prettier": "^3.1.0",
     "jsdoc": "^3.6.2"
+  },
+  "eslintConfig": {
+    "env": {
+      "node": true,
+      "commonjs": true,
+      "es6": true
+    },
+    "extends": [
+      "eslint:recommended",
+      "prettier"
+    ],
+    "globals": {
+      "Atomics": "readonly",
+      "SharedArrayBuffer": "readonly"
+    },
+    "parserOptions": {
+      "ecmaVersion": 2018
+    },
+    "rules": {
+      "linebreak-style": [
+        "error",
+        "unix"
+      ],
+      "semi": [
+        "error",
+        "always"
+      ]
+    }
   }
 }

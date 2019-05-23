@@ -8,8 +8,6 @@
  *
  * @module @state/actions
  */
-const fs = require('fs');
-const path = require('path');
 
 const actionIdToPath = actionId =>
 	actionId
