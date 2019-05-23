@@ -39,7 +39,7 @@ const EventEmitter = require('eventemitter2');
 const diff = require('object-diff');
 const actions = require('./actions');
 
-const ActionEvent = require('@state/events/ActionEvent');
+// const ActionEvent = require('@state/events/ActionEvent');
 
 const log = require('@helpers/log').logger('State');
 
@@ -145,8 +145,8 @@ function callAction(actionKey, data) {
 		diff: Object.keys(stateDiff)
 	});
 
-	const actionEvent = new ActionEvent(actionKey, data, diff);
-	emitter.emit(`_action:${actionKey}`, actionEvent);
+	// const actionEvent = new ActionEvent(actionKey, data, diff);
+	// emitter.emit(`_action:${actionKey}`, actionEvent);
 }
 
 /**
