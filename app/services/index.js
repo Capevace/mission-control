@@ -26,9 +26,6 @@ module.exports = {
 	 * Don't call this method manually!
 	 *
 	 * @protected
-	 * @param {module:@config} config The main config module.
-	 * @param {module:@database} database The database module.
-	 * @param {module:@state} state The state module.
 	 */
 	startServices() {
 		services = {
