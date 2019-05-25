@@ -41,10 +41,9 @@
  */
 
 const log = require('@helpers/log').logger('Socket');
-const config = require('@config');
 const state = require('@state');
 const socketIO = require('socket.io');
-const jwt = require('jsonwebtoken');
+const socketAuth = require('./auth');
 
 /**
  * Initialize the socket module.
@@ -53,101 +52,97 @@ const jwt = require('jsonwebtoken');
 module.exports = function socket(http) {
 	const server = socketIO(http);
 
-	server
-		.use((socket, next) => {
-			if (socket.handshake.query &amp;&amp; socket.handshake.query.token) {
-				const token = socket.handshake.query.token;
+	socketAuth(server, client => {
+		let subscriptions = {};
 
-				try {
-					// Verify JWT received with the secret
-					const payload = jwt.verify(token, config.auth.jwtSecret, {
-						issuer: config.auth.issuer,
-						audience: config.auth.audience
-					});
+		log('A new client connected.');
 
-					socket.jwt = token;
-					socket.jwtPayload = payload;
-					// Authenticated successfully
-
-					next(null);
-				} catch (e) {
-					log(
-						'Client couldnt be authorized. Invalid authentication token.'
-					);
-					next(new Error('Unauthorized'));
-				}
-			} else {
-				log(
-					'Client couldnt be authorized. Missing authentication token.'
-				);
-				next(new Error('Unauthorized'));
-			}
-		})
-		.on('connection', function(client) {
-			let subscriptions = {};
-
-			log('A new client connected.');
-
-			// On connection, we emit a initial-state event.
-			// The client can use this to populate its state.
-			client.emit('initial-state', {
-				state: state.getState()
-			});
-
-			// The client can call actions by emitting the action event.
-			// It has to pass the action and associated data.
-			client.on('action', ({ action, data }) => {
-				log(`Client requested action ${action}.`);
-				state.callAction(action, data);
-			});
-
-			// The client can emit a 'subscribe' event to subscribe to the state machines events.
-			// These will then get relayed to the socket client.
-			client.on('subscribe', ({ event }) => {
-				if (event in subscriptions) return;
-
-				log(`A client subscribed to ${event}.`);
-
-				const relayAllEvents = (actualEvent, data) => {
-					client.emit('all-events', {
-						event: actualEvent,
-						data
-					});
-				};
-
-				const relaySingleEvent = data => {
-					client.emit(event, data);
-					// log(`Emitting ${event} to client.`);
-				};
-
-				// If a wildcard is passed we also pass the events name in the payload.
-				const relayEvent =
-					event === '*' ? relayAllEvents : relaySingleEvent;
-
-				// We save the returned method from the subscribe function to later unsubscribe.
-				subscriptions[event] = state.subscribe(event, relayEvent);
-			});
-
-			// When the client wants to unsubscribe remove the event
-			client.on('unsubscribe', ({ event }) => {
-				if (!(event in subscriptions)) return;
-
-				log(`Unsubscribing client from event ${event}.`);
-
-				subscriptions[event]();
-				delete subscriptions[event];
-			});
-
-			// When the client disconnects unsubscribe all subscriptions
-			client.on('disconnect', () => {
-				log('A client disconnected.');
-
-				Object.values(subscriptions).forEach(unsubscribe =>
-					unsubscribe()
-				);
-				subscriptions = null;
-			});
+		// On connection, we emit a initial-state event.
+		// The client can use this to populate its state.
+		client.emit('initial-state', {
+			state: state.getState()
 		});
+
+		// The client can call actions by emitting the action event.
+		// It has to pass the action and associated data.
+		client.on('action', ({ action, data }) => {
+			log(`Client requested action ${action}.`);
+			state.callAction(action, data);
+		});
+
+		// The client can emit a 'subscribe' event to subscribe to the state machines events.
+		// These will then get relayed to the socket client.
+		client.on('subscribe', ({ event }) => {
+			if (event in subscriptions) return;
+
+			log(`A client subscribed to ${event}.`);
+
+			const relayAllEvents = (actualEvent, data) => {
+				client.emit('all-events', {
+					event: actualEvent,
+					data
+				});
+			};
+
+			const relaySingleEvent = data => {
+				client.emit(event, data);
+				// log(`Emitting ${event} to client.`);
+			};
+
+			// If a wildcard is passed we also pass the events name in the payload.
+			const relayEvent =
+				event === '*' ? relayAllEvents : relaySingleEvent;
+
+			// We save the returned method from the subscribe function to later unsubscribe.
+			subscriptions[event] = state.subscribe(event, relayEvent);
+		});
+
+		// When the client wants to unsubscribe remove the event
+		client.on('unsubscribe', ({ event }) => {
+			if (!(event in subscriptions)) return;
+
+			log(`Unsubscribing client from event ${event}.`);
+
+			subscriptions[event]();
+			delete subscriptions[event];
+		});
+
+		// When the client disconnects unsubscribe all subscriptions
+		client.on('disconnect', () => {
+			log('A client disconnected.');
+
+			Object.values(subscriptions).forEach(unsubscribe => unsubscribe());
+			subscriptions = null;
+		});
+	});
+
+	// server.use((socket, next) => {
+	// 	if (socket.handshake.query &amp;&amp; socket.handshake.query.token) {
+	// 		const token = socket.handshake.query.token;
+
+	// 		try {
+	// 			// Verify JWT received with the secret
+	// 			const payload = jwt.verify(token, config.auth.jwtSecret, {
+	// 				issuer: config.auth.issuer,
+	// 				audience: config.auth.audience
+	// 			});
+
+	// 			socket.jwt = token;
+	// 			socket.jwtPayload = payload;
+	// 			// Authenticated successfully
+
+	// 			next(null);
+	// 		} catch (e) {
+	// 			log(
+	// 				'Client couldnt be authorized. Invalid authentication token.'
+	// 			);
+	// 			next(new Error('Unauthorized'));
+	// 		}
+	// 	} else {
+	// 		log('Client couldnt be authorized. Missing authentication token.');
+	// 		next(new Error('Unauthorized'));
+	// 	}
+	// });
 
 	log('Listening via HTTP server.');
 };
@@ -167,7 +162,7 @@ module.exports = function socket(http) {
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.2</a> on Thu May 23 2019 14:01:38 GMT+1000 (Australian Eastern Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.2</a> on Sun May 26 2019 00:49:22 GMT+1000 (Australian Eastern Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>
