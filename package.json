@@ -13,6 +13,9 @@
     "type": "git",
     "url": "git+https://github.com/capevace/hal-6900-mission-control.git"
   },
+  "bin": {
+    "mission-control": "app/index.js"
+  },
   "author": "Lukas Mateffy (@Capevace)",
   "license": "MIT",
   "bugs": {
