@@ -6,8 +6,8 @@
   "scripts": {
     "start": "node app/index.js",
     "lint": "eslint app",
-    "docs-tutorials-for-later": "jsdoc -r app -d docs -c jsdoc.config.js -u tutorials",
-    "docs": "jsdoc -r app -d docs -c jsdoc.config.js"
+    "docs-tutorials-for-later": "jsdoc -r app -d docs -c jsdoc.config.js -u tutorials --package ./package.json ",
+    "docs": "jsdoc -d docs -c jsdoc.config.js -r app ./README.md"
   },
   "repository": {
     "type": "git",

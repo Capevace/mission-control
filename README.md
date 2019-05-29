@@ -1,6 +1,6 @@
 # Mission Control
 
-> Beautiful home automation software built on Node.js and the Raspberri Pi.
+> Beautiful home automation software built on Node.js and the Raspberry Pi.
 
 [![NPM Version][npm-image]][npm-url]
 [![Build Status][travis-image]][travis-url]

@@ -47,11 +47,11 @@ module.exports = async function systemInformation() {
 		]);
 
 		const network = networkInterfaces.reduce((mainNetwork, iface) => {
-			if (mainNetwork) return mainNetwork;
+			if (mainNetwork !== null) return mainNetwork;
 
 			if (iface.iface === 'en1') return iface;
 
-			return null;
+			return mainNetwork;
 		}, null);
 
 		const data = {
@@ -69,15 +69,12 @@ module.exports = async function systemInformation() {
 				free: memory.free,
 				used: memory.used
 			},
-			network:
-				network !== null
-					? {
-							internalIPv4: network.ip4,
-							publicIPv4: ip,
-							mac: network.mac,
-							speed: network.speed
-					  }
-					: null
+			network: {
+				internalIPv4: network ? network.ip4 : '-',
+				publicIPv4: ip || '-',
+				mac: network ? network.mac : '-',
+				speed: network ? network.speed : '-'
+			}
 		};
 
 		state.callAction('SYSTEM-INFO:UPDATE', data);

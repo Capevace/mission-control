@@ -55,7 +55,10 @@ module.exports = {
 		sessionSecret: sessionSecret
 	},
 	dashboard: {
-		publicUiPath: path.resolve(__dirname, '../../../dashboard/public')
+		publicUiPath: path.resolve(
+			__dirname,
+			'../../../dashboard/dist/development'
+		)
 	},
 	spotify: {
 		publicUiPath: path.resolve(__dirname, '../../../spotify-player/dist'),
