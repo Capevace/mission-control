@@ -88,9 +88,9 @@ module.exports = function authRoutes(app, requireAuthentication) {
 		const token = req.query.auth_token;
 		try {
 			// Verify JWT received with the secret
-			jwt.verify(token, config.auth.jwtSecret, {
-				issuer: config.auth.issuer,
-				audience: config.auth.audience
+			jwt.verify(token, config.secrets.jwt, {
+				issuer: config.sso.issuer,
+				audience: config.sso.audience
 			});
 			req.session.jwt = token;
 

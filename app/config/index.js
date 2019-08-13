@@ -25,13 +25,13 @@ const config = require('rc')('mission-control', {
 		audience: 'mission-control'
 	},
 	http: {
-		url: 'http://localhost',
+		url: 'http://localhost:3000',
 		port: 3000
 	},
 	dashboard: {
 		path: path.resolve(
 			__dirname,
-			'../../../dashboard/dist/development'
+			'../../resources/dashboard-ui'
 		), // static ui path
 	},
 	secrets: {

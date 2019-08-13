@@ -49,7 +49,7 @@ module.exports = async function systemInformation() {
 		const network = networkInterfaces.reduce((mainNetwork, iface) => {
 			if (mainNetwork !== null) return mainNetwork;
 
-			if (iface.iface === 'en1') return iface;
+			if (iface.ip4 !== '' && iface.ip4 !== '127.0.0.1') return iface;
 
 			return mainNetwork;
 		}, null);
