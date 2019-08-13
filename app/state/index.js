@@ -42,6 +42,7 @@ const actions = require('./actions');
 // const ActionEvent = require('@state/events/ActionEvent');
 
 const log = require('@helpers/log').logger('State');
+const logError = require('@helpers/log').error;
 
 const emitter = new EventEmitter({
 	wildcard: true,
@@ -99,17 +100,18 @@ function callAction(actionKey, data) {
 
 	// Throw an error if action doesn't exist
 	if (!(actionKey in actions)) {
-		throw new Error(`State machine could not find action '${actionKey}'.`);
+		logError('State', `State machine could not find action '${actionKey}'.`);
+		return;
 	}
 
 	const action = actions[actionKey];
 
-	if (!action.validate(data))
-		throw new Error(
-			`Data for action '${actionKey}' is invalid (data: ${JSON.stringify(
-				data
-			)}).`
-		);
+	if (!action.validate(data)) {
+		logError('State', `Data for action '${actionKey}' is invalid (data: ${JSON.stringify(
+			data
+		)}).`);
+		return;
+	}
 
 	// Run the action with the old state
 	const oldState = state;

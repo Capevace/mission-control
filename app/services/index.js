@@ -7,6 +7,7 @@
  * @module @services
  */
 const iftttService = require('./ifttt');
+// const kodiService = require('./kodi');
 const notificationsService = require('./notifications');
 const spotifyService = require('./spotify');
 const systemInfoService = require('./system-info');
@@ -29,10 +30,11 @@ module.exports = {
 	 */
 	startServices() {
 		services = {
-			spotify: spotifyService(),
-			systemInfo: systemInfoService(),
 			ifttt: iftttService(),
-			notifications: notificationsService()
+			// kodi: kodiService(),
+			notifications: notificationsService(),
+			spotify: spotifyService(),
+			systemInfo: systemInfoService()
 		};
 	}
 };

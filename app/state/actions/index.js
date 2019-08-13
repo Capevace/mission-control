@@ -17,6 +17,15 @@ const actionIdToPath = actionId =>
 
 const rawActions = [
 	/**
+	 * Play/pause the Kodi player.
+	 * @constant KODI:RUN
+	 * @property {string} command The command to execute.
+	 * @property {array} args The arguments to pass along.
+	 * @example demo-action-call
+	 */
+	'KODI:RUN',
+
+	/**
 	 * Create a notification
 	 * @constant NOTIFICATIONS:CREATE
 	 * @property {string} title The title of the notification.
