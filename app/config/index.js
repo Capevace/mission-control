@@ -42,6 +42,7 @@ if (!fs.existsSync(jwtSecretPath)) {
  * @type {Object}
  */
 module.exports = {
+	debug: false,
 	auth: {
 		ssoUrl: 'http://sso.home.mateffy.test:3001',
 		jwtSecret: fs.readFileSync(jwtSecretPath),
