@@ -7,7 +7,8 @@
     "start": "node app/index.js",
     "lint": "eslint app",
     "docs-tutorials-for-later": "jsdoc -r app -d docs -c jsdoc.config.js -u tutorials --package ./package.json ",
-    "docs": "jsdoc -d docs -c jsdoc.config.js -r app ./README.md"
+    "docs": "jsdoc -d docs -c jsdoc.config.js -r app ./README.md",
+    "ui": "cp -r ../dashboard/dist/production resources/dashboard-ui/"
   },
   "repository": {
     "type": "git",
