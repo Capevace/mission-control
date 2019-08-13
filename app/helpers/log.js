@@ -17,6 +17,10 @@ module.exports.logger = function logger(title, color = 'blue') {
 	return (...args) => console.log(`[${chalk[color](title)}]`, ...args); // eslint-disable-line no-console
 };
 
+module.exports.error = function error(title, ...args) {
+	console.log(`[${chalk['red'](title)}]`, ...args); // eslint-disable-line no-console
+};
+
 /**
  * Create a custom logger function to use for console output without any title or styling.
  *

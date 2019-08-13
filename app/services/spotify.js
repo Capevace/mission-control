@@ -10,12 +10,12 @@ const superagent = require('superagent');
 async function requestAccessToken(code) {
 	try {
 		const result = await superagent
-			.post(`${config.spotify.authUrl}/api/token`)
+			.post('https://accounts.spotify.com/api/token')
 			.set('Content-Type', 'application/x-www-form-urlencoded')
 			.set(
 				'Authorization',
 				`Basic ${Buffer.from(
-					config.spotify.clientId + ':' + config.spotify.clientSecret
+					config.spotify.clientId + ':' + config.secrets.spotify
 				).toString('base64')}`
 			)
 			.send({
@@ -45,12 +45,12 @@ async function requestAccessToken(code) {
 async function refreshAccessToken(refreshToken) {
 	try {
 		const response = await superagent
-			.post(`${config.spotify.authUrl}/api/token`)
+			.post('https://accounts.spotify.com/api/token')
 			.set('Content-Type', 'application/x-www-form-urlencoded')
 			.set(
 				'Authorization',
 				`Basic ${Buffer.from(
-					`${config.spotify.clientId}:${config.spotify.clientSecret}`
+					`${config.spotify.clientId}:${config.secrets.spotify}`
 				).toString('base64')}`
 			)
 			.send({
@@ -129,7 +129,7 @@ module.exports = function spotify() {
 	if (!spotifyData.accessToken) {
 		log(
 			`Spotify isnt authorized. Visit ${require('chalk').cyan(
-				`${config.http.baseUrl}/spotify/auth`
+				`${config.http.url}/spotify/auth`
 			)} and log in.`
 		);
 	} else {

@@ -40,7 +40,7 @@ const dashboardRoutes = require('./dashboard');
 module.exports = function http() {
 	app.use(
 		session({
-			secret: config.http.sessionSecret,
+			secret: config.secrets.session,
 			resave: true,
 			saveUninitialized: true,
 			name: 'mc.sid'

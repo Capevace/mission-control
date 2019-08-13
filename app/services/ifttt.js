@@ -6,7 +6,7 @@ const superagent = require('superagent');
 
 function getWebhookUrl(event) {
 	return `https://maker.ifttt.com/trigger/${event}/with/key/${
-		config.ifttt.webhookKey
+		config.secrets.iftttWebhook
 	}`;
 }
 
@@ -24,7 +24,7 @@ async function triggerWebhook(event, value1, value2, value3) {
 }
 
 module.exports = async function ifttt() {
-	if (!config.ifttt.webhookKey) {
+	if (!config.secrets.iftttWebhook) {
 		log(
 			"Won't be able to trigger IFTTT webhooks, as webhook key is not defined in config file."
 		);

@@ -4,23 +4,23 @@
  * @since 1.0.0
  */
 const log = require('@helpers/log').logger('Database', 'cyan');
-const storageConfig = require('@config').storage;
+const config = require('@config');
 const fs = require('fs');
 
 let database = {};
 
 // If the storage folder doesnt exist, create it
-if (!fs.existsSync(storageConfig.path)) {
+if (!fs.existsSync(config.storagePath)) {
 	log("Storage folder doesn't exist. Creating /storage.");
-	fs.mkdirSync(storageConfig.path);
+	fs.mkdirSync(config.storagePath, { recursive: true });
 }
 
 // If the database.json file doenst exist, create it
 // Otherwise, read from it and populate the database.
-if (!fs.existsSync(storageConfig.databasePath)) {
-	fs.writeFileSync(storageConfig.databasePath, '{}');
+if (!fs.existsSync(config.databasePath)) {
+	fs.writeFileSync(config.databasePath, '{}');
 } else {
-	database = require(storageConfig.databasePath);
+	database = require(config.databasePath);
 }
 
 /**
@@ -39,7 +39,7 @@ module.exports.set = function set(key, value) {
 
 	// Save the database to disk
 	fs.writeFileSync(
-		storageConfig.databasePath,
+		config.databasePath,
 		JSON.stringify(database, null, 2),
 		err => {
 			if (err) log('Error writing Database file', err);

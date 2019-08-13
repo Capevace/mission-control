@@ -17,7 +17,7 @@ module.exports = function socketAuth(socketIO, onAuthentication) {
 					},
 					() => socket.disconnect()
 				),
-			config.auth.socketTimeout
+			15000
 		);
 		socket.authenticated = false;
 

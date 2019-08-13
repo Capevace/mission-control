@@ -8,11 +8,11 @@ const queryString = require('querystring');
 module.exports = function spotifyAuthRoutes(app, requireAuth) {
 	app.get('/spotify/auth', requireAuth(), (req, res) => {
 		res.redirect(
-			`${config.spotify.authUrl}/authorize?${queryString.stringify({
+			`https://accounts.spotify.com/authorize?${queryString.stringify({
 				response_type: 'code',
 				client_id: config.spotify.clientId,
-				scope: config.spotify.scope,
-				redirect_uri: `${config.http.baseUrl}/spotify/auth/callback`,
+				scope: 'user-read-private user-read-email user-read-birthdate user-read-playback-state user-modify-playback-state user-library-read playlist-read-private streaming playlist-modify-public playlist-modify-private user-library-modify ugc-image-upload user-follow-modify user-follow-read',
+				redirect_uri: `${config.http.url}/spotify/auth/callback`,
 				state: 'whatthefuckisthis'
 			})}`
 		);
@@ -65,6 +65,6 @@ module.exports = function spotifyAuthRoutes(app, requireAuth) {
 	app.use(
 		'/spotify/player',
 		requireAuth(),
-		express.static(config.spotify.publicUiPath)
+		express.static(config.spotify.path)
 	);
 };

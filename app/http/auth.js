@@ -45,9 +45,9 @@ module.exports = function authRoutes(app, requireAuthentication) {
 					}
 					// ExtractJwt.fromUrlQueryParameter('token')
 				]),
-				secretOrKey: config.auth.jwtSecret,
-				issuer: config.auth.issuer,
-				audience: config.auth.audience
+				secretOrKey: config.secrets.jwt,
+				issuer: config.sso.issuer,
+				audience: config.sso.audience
 			},
 			(jwtPayload, done) => {
 				if (!jwtPayload.user) {
@@ -73,10 +73,10 @@ module.exports = function authRoutes(app, requireAuthentication) {
 			if (err) log('Error saving session', err);
 
 			res.redirect(
-				`${config.auth.ssoUrl}/authenticate` +
+				`${config.sso.url}/authenticate` +
 					'?' +
 					queryString.stringify({
-						redirect_url: `${config.http.baseUrl}/auth/callback`
+						redirect_url: `${config.http.url}/auth/callback`
 					})
 			);
 		});
