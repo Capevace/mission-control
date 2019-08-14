@@ -1,17 +1,19 @@
 const config = require('@config');
 const fs = require('fs');
+const path = require('path');
 const readFileAsync = require('util').promisify(fs.readFile);
 const express = require('express');
 const addTrailingSlashMiddleware = require('@helpers/add-trailing-slash-middleware');
 
 module.exports = function dashboardRoutes(app, requireAuth) {
+	const dashboardHtmlPath = path.resolve(__dirname, '../views/dashboard.html');
 	let dashboardIndexFile = '';
 	try {
 		dashboardIndexFile = fs
-			.readFileSync(config.dashboard.path + '/dashboard.html')
+			.readFileSync(dashboardHtmlPath)
 			.toString();
 	} catch (e) {
-		require('@helpers/log').error('HTTP:Dashboard', 'No dashboard html found at ' + config.dashboard.path + '/dashboard.html');
+		require('@helpers/log').error('HTTP:Dashboard', 'No dashboard html found at ' + dashboardHtmlPath);
 	}
 	
 
@@ -20,7 +22,7 @@ module.exports = function dashboardRoutes(app, requireAuth) {
 	app.get('/dashboard/', addTrailingSlashMiddleware, requireAuth(), async (req, res) => {
 		console.log()
 		const indexFile = (config.debug
-			? (await readFileAsync(config.dashboard.path + '/dashboard.html')).toString()
+			? (await readFileAsync(dashboardHtmlPath)).toString()
 			: dashboardIndexFile
 		).replace(/{{SERVER_REPLACE_API_KEY}}/gm, req.session.jwt)
 			.replace(/{{SERVER_REPLACE_URL}}/gm, config.http.url);

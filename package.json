@@ -27,6 +27,7 @@
     "chalk": "^2.4.2",
     "eventemitter2": "^5.0.1",
     "express": "^4.16.4",
+    "express-http-proxy": "^1.5.1",
     "express-session": "^1.16.1",
     "kodi-ws": "^2.4.3",
     "module-alias": "^2.2.0",
