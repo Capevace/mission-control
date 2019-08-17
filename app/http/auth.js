@@ -61,7 +61,7 @@ module.exports = function authRoutes(app, requireAuthentication) {
 	);
 
 	app.get('/auth', requireAuthentication(), (req, res) => {
-		res.json('yes');
+		res.json(req.user);
 	});
 
 	app.get('/auth/login', (req, res) => {
