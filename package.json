@@ -29,6 +29,7 @@
     "express": "^4.16.4",
     "express-http-proxy": "^1.5.1",
     "express-session": "^1.16.1",
+    "http-proxy-middleware": "^0.20.0",
     "kodi-ws": "^2.4.3",
     "module-alias": "^2.2.0",
     "object-diff": "0.0.4",

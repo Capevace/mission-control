@@ -20,7 +20,6 @@ module.exports = function dashboardRoutes(app, requireAuth) {
 	app.get('/', requireAuth(), (req, res) => res.redirect('/dashboard/'));
 
 	app.get('/dashboard/', addTrailingSlashMiddleware, requireAuth(), async (req, res) => {
-		console.log()
 		const indexFile = (config.debug
 			? (await readFileAsync(dashboardHtmlPath)).toString()
 			: dashboardIndexFile

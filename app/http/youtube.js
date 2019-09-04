@@ -1,13 +1,17 @@
-const config = require('@config');
-const fs = require('fs');
-const path = require('path');
-const express = require('express');
-const proxy = require('express-http-proxy');
+const proxy = require('http-proxy-middleware');
 
 module.exports = function youtubeRoutes(app, requireAuth) {
 	app.use(
-		'/youtube',
+		'/youtube-downloader',
 		requireAuth(),
-		proxy('http://localhost:3003')
+		proxy(
+			'/', 
+			{
+				target: 'http://localhost:3003', 
+				logLevel: 'debug', 
+				prependPath: false, 
+				ignorePath: true
+			}
+		)
 	);
 };
