@@ -10,7 +10,8 @@ module.exports = function youtubeRoutes(app, requireAuth) {
 				target: 'http://localhost:3003', 
 				logLevel: 'debug', 
 				prependPath: false, 
-				ignorePath: true
+				ignorePath: true,
+				ws: true
 			}
 		)
 	);
