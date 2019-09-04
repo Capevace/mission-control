@@ -30,6 +30,7 @@ const spotifyRoutes = require('./spotify');
 const iftttRoutes = require('./ifttt');
 const dashboardRoutes = require('./dashboard');
 const filesRoutes = require('./files');
+const youtubeRoutes = require('./youtube');
 
 /**
  * Initialize the main HTTP server for the mission control sysyem.
@@ -63,6 +64,7 @@ module.exports = function http() {
 	iftttRoutes(app, requireAuthentication);
 	dashboardRoutes(app, requireAuthentication);
 	filesRoutes(app, requireAuthentication);
+	youtubeRoutes(app, requireAuthentication);
 
 	server.listen(config.http.port, () =>
 		log(`Listening on port ${config.http.port}.`)
