@@ -73,7 +73,7 @@ module.exports = function authRoutes(app, requireAuthentication) {
 			if (err) log('Error saving session', err);
 
 			res.redirect(
-				`${config.sso.url}/authenticate` +
+				`${config.sso.url}/api/v1/authenticate` +
 					'?' +
 					queryString.stringify({
 						redirect_url: `${config.http.url}/auth/callback`
