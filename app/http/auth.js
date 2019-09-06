@@ -103,4 +103,10 @@ module.exports = function authRoutes(app, requireAuthentication) {
 			res.status(401).json('Unauthorized');
 		}
 	});
+
+	app.get('/auth/logout', (req, res) => {
+		req.logout();
+		req.session.destroy();
+		res.redirect(`${config.sso.url}/logout`);
+	});
 };
