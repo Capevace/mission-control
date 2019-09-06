@@ -8,7 +8,7 @@ module.exports = function youtubeRoutes(app, requireAuth) {
 			'/', 
 			{
 				target: 'http://localhost:3003', 
-				logLevel: 'debug',
+				// logLevel: 'debug',
 				ws: true,
 				pathRewrite: {
 					'^/youtube-downloader': '/',
