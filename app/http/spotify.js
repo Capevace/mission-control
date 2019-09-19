@@ -62,6 +62,11 @@ module.exports = function spotifyAuthRoutes(app, requireAuth) {
 	// 	}
 	// });
 
+	app.get('/spotify/player', (req, res) => {
+		const indexFile = fs.readFileSync(config.spotify.path + '/index.html');
+		res.send(indexFile);
+	});
+
 	app.use(
 		'/spotify/player',
 		requireAuth(),
