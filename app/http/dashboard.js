@@ -38,4 +38,8 @@ module.exports = function dashboardRoutes(app, requireAuth) {
 	app.get('/apple-touch-icon.png', (req, res) => {
 		res.sendFile(path.resolve(__dirname, '../../resources/mission-control-icon.png'));
 	});
+
+	app.get('/favicon.png', (req, res) => {
+		res.sendFile(path.resolve(__dirname, '../../resources/favicon.png'));
+	});
 };
