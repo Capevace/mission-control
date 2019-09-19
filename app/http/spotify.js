@@ -1,3 +1,4 @@
+const fs = require('fs');
 const config = require('@config');
 const state = require('@state');
 const log = require('@helpers/log').logger('Spotify');
@@ -62,9 +63,13 @@ module.exports = function spotifyAuthRoutes(app, requireAuth) {
 	// 	}
 	// });
 
-	app.get('/spotify/player', (req, res) => {
-		const indexFile = fs.readFileSync(config.spotify.path + '/index.html');
-		res.send(indexFile);
+	app.get('/spotify/player', requireAuth(), (req, res) => {
+		const indexFile = fs.readFileSync(config.spotify.path + '/index.html')
+			.toString()
+			.replace(/\<MISSION_CONTROL_URL\>/g, config.http.url)
+			.replace(/\<MISSION_CONTROL_TOKEN\>/g, req.session.jwt);
+
+		res.type('text/html').send(indexFile);
 	});
 
 	app.use(
