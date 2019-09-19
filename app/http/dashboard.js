@@ -34,4 +34,8 @@ module.exports = function dashboardRoutes(app, requireAuth) {
 		requireAuth(),
 		express.static(config.dashboard.path)
 	);
+
+	app.get('/apple-touch-icon.png', (req, res) => {
+		res.sendFile(path.resolve(__dirname, '../../resources/mission-control-icon.png'));
+	});
 };
