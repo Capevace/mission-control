@@ -20,7 +20,7 @@ async function requestAccessToken(code) {
 			)
 			.send({
 				code: code,
-				redirect_uri: 'http://localhost:3000/spotify/auth/callback',
+				redirect_uri: `${config.http.url}/spotify/auth/callback`,
 				grant_type: 'authorization_code'
 			});
 
