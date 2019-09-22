@@ -14,7 +14,10 @@
 const fs = require('fs');
 const path = require('path');
 const log = require('@helpers/log').logger('Config', 'cyan');
-const basePath = require('os').homedir() + '/.mission-control';
+
+const basePath = process.env.NODE_ENV === 'production'
+	? '/etc/mission-control'
+	: require('os').homedir() + '/.mission-control';
 
 const config = require('rc')('mission-control', {
 	basePath,
