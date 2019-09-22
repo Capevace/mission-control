@@ -67,7 +67,9 @@ module.exports = function spotifyAuthRoutes(app, requireAuth) {
 		const indexFile = fs.readFileSync(config.spotify.path + '/index.html')
 			.toString()
 			.replace(/\<MISSION_CONTROL_URL\>/g, config.http.url)
-			.replace(/\<MISSION_CONTROL_TOKEN\>/g, req.session.jwt);
+			.replace(/\<MISSION_CONTROL_TOKEN\>/g, req.session.jwt)
+			.replace(/\<MISSION_CONTROL_SPOTIFY_TOKEN\>/g, state.getState().spotify.accessToken)
+			.replace(/\<MISSION_CONTROL_SPOTIFY_EXPIRY\>/g, state.getState().spotify.expiresAt);
 
 		res.type('text/html').send(indexFile);
 	});
