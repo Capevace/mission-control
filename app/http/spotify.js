@@ -63,7 +63,7 @@ module.exports = function spotifyAuthRoutes(app, requireAuth) {
 	// 	}
 	// });
 
-	app.get('/spotify/player', requireAuth(), (req, res) => {
+	app.get('/spotify', requireAuth(), (req, res) => {
 		const indexFile = fs.readFileSync(config.spotify.path + '/index.html')
 			.toString()
 			.replace(/\<MISSION_CONTROL_URL\>/g, config.http.url)
@@ -73,7 +73,7 @@ module.exports = function spotifyAuthRoutes(app, requireAuth) {
 	});
 
 	app.use(
-		'/spotify/player',
+		'/spotify',
 		requireAuth(),
 		express.static(config.spotify.path)
 	);
