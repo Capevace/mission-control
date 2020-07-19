@@ -93,7 +93,9 @@ function subscribe(event, callback) {
  * @emits 'update'
  */
 function callAction(actionKey, data) {
-	log(`Executing action ${actionKey}`);
+	log(`Executing action ${actionKey} with data: ${JSON.stringify(
+		data
+	)}`);
 
 	// Normalize action name
 	actionKey = actionKey.toUpperCase();
@@ -107,9 +109,7 @@ function callAction(actionKey, data) {
 	const action = actions[actionKey];
 
 	if (!action.validate(data)) {
-		logError('State', `Data for action '${actionKey}' is invalid (data: ${JSON.stringify(
-			data
-		)}).`);
+		logError('State', `Data for action '${actionKey}' is invalid.`);
 		return;
 	}
 

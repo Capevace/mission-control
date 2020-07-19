@@ -24,7 +24,7 @@ async function triggerWebhook(event, value1, value2, value3) {
 }
 
 module.exports = async function ifttt() {
-	if (!config.secrets.iftttWebhook) {
+	if (!config.ifttt.secret) {
 		log(
 			"Won't be able to trigger IFTTT webhooks, as webhook key is not defined in config file."
 		);

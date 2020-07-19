@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/capevace/hal-6900-mission-control#readme",
   "dependencies": {
+    "@oznu/hap-client": "^1.6.0",
     "chalk": "^2.4.2",
     "eventemitter2": "^5.0.1",
     "express": "^4.16.4",

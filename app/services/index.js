@@ -11,6 +11,7 @@ const iftttService = require('./ifttt');
 const notificationsService = require('./notifications');
 const spotifyService = require('./spotify');
 const systemInfoService = require('./system-info');
+const homekitService = require('./homekit');
 
 let services = {};
 
@@ -34,7 +35,8 @@ module.exports = {
 			// kodi: kodiService(),
 			notifications: notificationsService(),
 			spotify: spotifyService(),
-			systemInfo: systemInfoService()
+			systemInfo: systemInfoService(),
+			homekit: homekitService()
 		};
 	}
 };

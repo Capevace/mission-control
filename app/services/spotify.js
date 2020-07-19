@@ -15,7 +15,7 @@ async function requestAccessToken(code) {
 			.set(
 				'Authorization',
 				`Basic ${Buffer.from(
-					config.spotify.clientId + ':' + config.secrets.spotify
+					config.spotify.clientId + ':' + config.spotify.secret
 				).toString('base64')}`
 			)
 			.send({
@@ -50,7 +50,7 @@ async function refreshAccessToken(refreshToken) {
 			.set(
 				'Authorization',
 				`Basic ${Buffer.from(
-					`${config.spotify.clientId}:${config.secrets.spotify}`
+					`${config.spotify.clientId}:${config.spotify.secret}`
 				).toString('base64')}`
 			)
 			.send({

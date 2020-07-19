@@ -26,9 +26,9 @@ module.exports = function socketAuth(socketIO, onAuthentication) {
 
 			try {
 				// Verify JWT received with the secret
-				const payload = jwt.verify(token, config.secrets.jwt, {
-					issuer: config.sso.issuer,
-					audience: config.sso.audience
+				const payload = jwt.verify(token, config.auth.secret, {
+					issuer: config.auth.issuer,
+					audience: config.auth.audience
 				});
 
 				socket.jwt = token;

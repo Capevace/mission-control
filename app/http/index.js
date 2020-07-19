@@ -14,6 +14,7 @@
  */
 
 const config = require('@config');
+const database = require('@database');
 const log = require('@helpers/log').logger('HTTP');
 
 const express = require('express');
@@ -23,6 +24,8 @@ const server = require('http').createServer(app);
 const session = require('express-session');
 const passport = require('passport');
 const queryString = require('querystring');
+
+const uuid = require('uuid/v4');
 
 const authRoutes = require('./auth');
 const stateRoutes = require('./state');
@@ -40,9 +43,17 @@ const youtubeRoutes = require('./youtube');
  * @return {module:express~Server} The express HTTP server.
  */
 module.exports = function http() {
+	let sessionSecret = database.get('session-secret', null);
+
+	if (!sessionSecret) {
+		sessionSecret = uuid();
+		database.set('session-secret', sessionSecret);
+	}
+
+
 	app.use(
 		session({
-			secret: config.secrets.session,
+			secret: sessionSecret,
 			resave: true,
 			saveUninitialized: true,
 			name: 'mc.sid'

@@ -126,7 +126,34 @@ const rawActions = [
 	 * @property {string} videoUrl The video url to remove from the queue.
 	 * @example demo-action-call
 	 */
-	'VIDEO-QUEUE:FINISHED'
+	'VIDEO-QUEUE:FINISHED',
+
+	/**
+	 * Set the devices homebridge sees
+	 *
+	 * @constant HOMEKIT:SET-SERVICES
+	 * @property {Object} service The video object to push onto the queue.
+	 * @property {string} service.uniqueId A unique ID for the service.
+	 * @property {number} service.iid A unique ID for the service (used for identification internally).
+	 * @property {string} service.name Name of the service
+	 * @property {string} service.type Type of the service
+	 * @property {Array} service.characteristics Array of characteristics
+	 * @property {Array} service.values Array of values for the characteristics
+	 * @example
+	 * state.callAction('HOMEKIT:SET-SERVICES', { services: { 'serviceID': { ...service }}})
+	 */
+	'HOMEKIT:SET-SERVICES',
+
+	/**
+	 * Set the devices homebridge sees
+	 *
+	 * @constant HOMEKIT:MODIFY-CHARACTERISTICS
+	 * @property {number} uniqueId The service ID
+	 * @property {object} changes The changes to be applied
+	 * @example
+	 * state.callAction('HOMEKIT:MODIFY-CHARACTERISTICS', { uniqueId: 0, changes: { 'On': false }})
+	 */
+	'HOMEKIT:MODIFY-CHARACTERISTICS'
 ];
 
 // Take the actions and require their respective js files.

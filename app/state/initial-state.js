@@ -22,5 +22,8 @@ module.exports = {
 	scenes: {
 		movie: { name: 'Movie Night', active: false },
 		chill: { name: 'Chill', active: false }
+	},
+	homekit: {
+		services: {}
 	}
 };

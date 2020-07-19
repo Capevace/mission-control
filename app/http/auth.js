@@ -45,9 +45,9 @@ module.exports = function authRoutes(app, requireAuthentication) {
 					}
 					// ExtractJwt.fromUrlQueryParameter('token')
 				]),
-				secretOrKey: config.secrets.jwt,
-				issuer: config.sso.issuer,
-				audience: config.sso.audience
+				secretOrKey: config.auth.secret,
+				issuer: config.auth.issuer,
+				audience: config.auth.audience
 			},
 			(jwtPayload, done) => {
 				if (!jwtPayload.user) {
@@ -73,7 +73,7 @@ module.exports = function authRoutes(app, requireAuthentication) {
 			if (err) log('Error saving session', err);
 
 			res.redirect(
-				`${config.sso.url}/api/v1/authenticate` +
+				`${config.auth.url}/api/v1/authenticate` +
 					'?' +
 					queryString.stringify({
 						redirect_url: `${config.http.url}/auth/callback`
@@ -88,9 +88,9 @@ module.exports = function authRoutes(app, requireAuthentication) {
 		const token = req.query.auth_token;
 		try {
 			// Verify JWT received with the secret
-			jwt.verify(token, config.secrets.jwt, {
-				issuer: config.sso.issuer,
-				audience: config.sso.audience
+			jwt.verify(token, config.auth.secret, {
+				issuer: config.auth.issuer,
+				audience: config.auth.audience
 			});
 			req.session.jwt = token;
 
@@ -107,6 +107,18 @@ module.exports = function authRoutes(app, requireAuthentication) {
 	app.get('/auth/logout', (req, res) => {
 		req.logout();
 		req.session.destroy();
-		res.redirect(`${config.sso.url}/logout`);
+		res.redirect(`${config.auth.url}/logout`);
 	});
+
+
+	app.get('/auth/v2/login')
+
+	/**
+		GET /login - Serve Login Page
+
+		POST /v2/auth - Authenticate login credentials
+
+		POST /v2/auth/token
+		POST /v2/auth/logout - Logout the User
+	*/ 
 };
