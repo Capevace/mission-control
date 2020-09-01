@@ -1,14 +1,14 @@
 <div align="center">
-	<a href="https://mateffy.me/mission-control">
+	<a href="https://mateffy.me/mission-control-project">
 		<img src="resources/icon-web.png">
 	</a>
 	<h1>Mission Control</h1>
-	<blockquote>
-		Beautiful home dashboard
-	</blockquote>
-	<!--<p>
-		<a href="https://mateffy.me/mission-control">Try it out!</a>
-	</p>-->
+	<p>
+		Beautiful home dashboard software built on Node.js 
+	</p>
+	<p>
+		<a href="https://mateffy.me/mission-control">Docs</a>
+	</p>
 </div>
 
 <br>
