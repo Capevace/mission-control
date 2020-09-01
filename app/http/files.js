@@ -1,6 +1,6 @@
 const proxy = require('http-proxy-middleware');
 
-module.exports = function dashboardRoutes(app, requireAuth) {
+module.exports = function filesRoutes(app, requireAuth) {
 	app.use(
 		'/files',
 		requireAuth(),
@@ -13,7 +13,6 @@ module.exports = function dashboardRoutes(app, requireAuth) {
 		// })
 		proxy('/', {
 			target: 'http://localhost:3002', 
-			// logLevel: 'debug',
 			pathRewrite: {
 				'^/files': '/',
 				'^/files/': '/'

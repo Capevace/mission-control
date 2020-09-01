@@ -153,7 +153,17 @@ const rawActions = [
 	 * @example
 	 * state.callAction('HOMEKIT:MODIFY-CHARACTERISTICS', { uniqueId: 0, changes: { 'On': false }})
 	 */
-	'HOMEKIT:MODIFY-CHARACTERISTICS'
+	'HOMEKIT:MODIFY-CHARACTERISTICS',
+
+	/**
+	 * Update Deutsche Bahn route data
+	 *
+	 * @constant BAHN:UPDATE
+	 * @property {object} changes The data to be set
+	 * @example
+	 * state.callAction('BAHN:UPDATE', { })
+	 */
+	'BAHN:UPDATE'
 ];
 
 // Take the actions and require their respective js files.

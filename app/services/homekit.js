@@ -26,14 +26,16 @@ module.exports = async function homekit() {
 		return;
 	}
 
+	const debugLog = config.debug ? log : () => {};
+
 	const hap = new HapClient({
 		pin: config.homebridge.pin,
 		logger: {
-			log,
-			info: log,
+			log: debugLog,
+			info: debugLog,
 			error: log,
 			warning: log,
-			verbose: log
+			verbose: debugLog
 		},
 		config: {
 			debug: true

@@ -12,6 +12,7 @@ const notificationsService = require('./notifications');
 const spotifyService = require('./spotify');
 const systemInfoService = require('./system-info');
 const homekitService = require('./homekit');
+const bahn = require('./bahn');
 
 let services = {};
 
@@ -36,7 +37,8 @@ module.exports = {
 			notifications: notificationsService(),
 			spotify: spotifyService(),
 			systemInfo: systemInfoService(),
-			homekit: homekitService()
+			homekit: homekitService(),
+			bahn: bahn()
 		};
 	}
 };

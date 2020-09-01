@@ -1,10 +1,10 @@
 {
-  "name": "hal-6900-mission-control",
-  "version": "0.0.1",
+  "name": "@capevace/mission-control",
+  "version": "0.1.0",
   "description": "The mission control server for HAL6900.",
   "main": "app/index.js",
   "scripts": {
-    "start": "node app/index.js",
+    "start": "node scripts/start.js",
     "lint": "eslint app",
     "docs-tutorials-for-later": "jsdoc -r app -d docs -c jsdoc.config.js -u tutorials --package ./package.json ",
     "docs": "jsdoc -d docs -c jsdoc.config.js -r app ./README.md",
@@ -15,7 +15,7 @@
     "url": "git+https://github.com/capevace/hal-6900-mission-control.git"
   },
   "bin": {
-    "mission-control": "app/index.js"
+    "mission-control": "scripts/start.js"
   },
   "author": "Lukas Mateffy (@Capevace)",
   "license": "MIT",
@@ -26,6 +26,8 @@
   "dependencies": {
     "@oznu/hap-client": "^1.6.0",
     "chalk": "^2.4.2",
+    "commander": "^6.1.0",
+    "db-hafas": "^5.0.2",
     "eventemitter2": "^5.0.1",
     "express": "^4.16.4",
     "express-session": "^1.16.1",

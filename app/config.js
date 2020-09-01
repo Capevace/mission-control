@@ -14,19 +14,21 @@
 const fs = require('fs');
 const path = require('path');
 const log = require('@helpers/log').logger('Config', 'cyan');
+const argv = require('@helpers/argv');
 
 const basePath = process.env.NODE_ENV === 'production'
 	? '/etc/mission-control'
 	: require('os').homedir() + '/.mission-control';
 
-const config = require('rc')('mission-control', {
+let config = require('rc')('mission-control', {
 	basePath,
 	debug: false,
 	auth: {
 		url: 'http://localhost:3001',
 		issuer: 'mission-control-sso',
 		audience: 'mission-control',
-		secret: 'applepie'
+		secret: 'applepie',
+		port: 3001
 	},
 	http: {
 		url: 'http://localhost:3000',
@@ -88,6 +90,22 @@ if (!fs.existsSync(config.basePath + '/config')) {
 
 `
 	);
+}
+
+if (argv.url) {
+	config.http.url = argv.url;
+}
+
+if (argv.port) {
+	config.http.port = argv.port;
+}
+
+if (argv.authUrl) {
+	config.auth.url = argv.authUrl;
+}
+
+if (argv.authPort) {
+	config.auth.port = argv.authPort;
 }
 
 module.exports = config;

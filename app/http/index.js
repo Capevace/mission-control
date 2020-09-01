@@ -15,7 +15,8 @@
 
 const config = require('@config');
 const database = require('@database');
-const log = require('@helpers/log').logger('HTTP');
+const logging = require('@helpers/log');
+const log = logging.logger('HTTP', 'magenta');
 
 const express = require('express');
 const app = express();
@@ -78,7 +79,7 @@ module.exports = function http() {
 	youtubeRoutes(app, requireAuthentication);
 
 	server.listen(config.http.port, () =>
-		log(`Listening on port ${config.http.port}.`)
+		log(`Mission Control available on ${logging.format('cyan', config.http.url)}.`)
 	);
 
 	return server;

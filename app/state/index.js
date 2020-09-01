@@ -35,6 +35,7 @@
  * @requires @state/initial-state
  */
 
+const config = require('@config');
 const EventEmitter = require('eventemitter2');
 const diff = require('object-diff');
 const actions = require('./actions');
@@ -93,9 +94,13 @@ function subscribe(event, callback) {
  * @emits 'update'
  */
 function callAction(actionKey, data) {
-	log(`Executing action ${actionKey} with data: ${JSON.stringify(
-		data
-	)}`);
+	if (config.debug) {
+		log(`Running action ${actionKey} with data: ${JSON.stringify(
+			data
+		)}`);
+	} else {
+		log(`Running action ${actionKey}`);
+	}
 
 	// Normalize action name
 	actionKey = actionKey.toUpperCase();

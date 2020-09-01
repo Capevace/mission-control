@@ -9,33 +9,48 @@
  */
 
 require('module-alias/register');
+const config = require('@config');
+const argv = require('@helpers/argv');
 
-const DEBUG_MODE = false;
+const startSSOProcess = require('@helpers/sso-process');
 
-const log = require('@helpers/log').logger('Main', 'cyan');
-const eventLog = require('@helpers/log').logger('Event', 'green');
-log('Starting Mission Control\n');
+module.exports = function startMissionControl() {
+	const log = require('@helpers/log').logger('Main', 'cyan');
+	const eventLog = require('@helpers/log').logger('Event', 'green');
+	log('Starting Mission Control\n');
 
-const database = require('@database'); // eslint-disable-line no-unused-vars
+	const database = require('@database'); // eslint-disable-line no-unused-vars
 
-// Start the state machine
-const state = require('@state');
+	// We spawn a node subprocess.
+	// This subprocess is the auth server.
+	// We do this, so the user doesn't have to do so manually,
+	// and the mission-control binary is self-contained to run everything needed.
+	if (argv.sso) {
+		startSSOProcess(config.auth.url, config.auth.port);
+	} else {
+		log('Skipping internal SSO server process');
+	}
 
-const http = require('./http');
-const socket = require('./socket');
+	// Start the state machine
+	const state = require('@state');
 
-// Initialize the main mission control http server
-const server = http();
-// Initialize the socket server
-const io = socket(server); // eslint-disable-line no-unused-vars
+	const http = require('./http');
+	const socket = require('./socket');
 
-// Start all our services
-const services = require('@services');
-services.startServices();
+	// Initialize the main mission control http server
+	const server = http();
+	// Initialize the socket server
+	const io = socket(server); // eslint-disable-line no-unused-vars
 
-state.subscribe('*', (event, data) =>
-	DEBUG_MODE ? eventLog(event, data) : eventLog(event)
-);
+	// Start all our services
+	const services = require('@services');
+	services.startServices();
+
+	state.subscribe('*', (event, data) =>
+		config.debug ? eventLog(event, data) : eventLog(event)
+	);
+}
+
 
 // setTimeout(
 // 	() =>
