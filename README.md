@@ -3,9 +3,9 @@
 		<img src="resources/icon-web.png">
 	</a>
 	<h1>Mission Control</h1>
-	<h4>
+	<blockquote>
 		Beautiful home dashboard
-	</h4>
+	</blockquote>
 	<!--<p>
 		<a href="https://mateffy.me/mission-control">Try it out!</a>
 	</p>-->
