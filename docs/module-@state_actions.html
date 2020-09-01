@@ -142,6 +142,691 @@ word like 'CREATE' concatenated by a ':'.</p></div>
 
         
             
+<h4 class="name" id="~BAHN:UPDATE"><span class="type-signature">(inner, constant) </span>BAHN:UPDATE<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>Update Deutsche Bahn route data</p>
+</div>
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>changes</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The data to be set</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="state_actions_index.js.html">state/actions/index.js</a>, <a href="state_actions_index.js.html#line158">line 158</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>state.callAction('BAHN:UPDATE', { })</code></pre>
+
+
+
+        
+            
+<h4 class="name" id="~HOMEKIT:MODIFY-CHARACTERISTICS"><span class="type-signature">(inner, constant) </span>HOMEKIT:MODIFY-CHARACTERISTICS<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>Set the devices homebridge sees</p>
+</div>
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>uniqueId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The service ID</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>changes</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The changes to be applied</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="state_actions_index.js.html">state/actions/index.js</a>, <a href="state_actions_index.js.html#line147">line 147</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>state.callAction('HOMEKIT:MODIFY-CHARACTERISTICS', { uniqueId: 0, changes: { 'On': false }})</code></pre>
+
+
+
+        
+            
+<h4 class="name" id="~HOMEKIT:SET-SERVICES"><span class="type-signature">(inner, constant) </span>HOMEKIT:SET-SERVICES<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>Set the devices homebridge sees</p>
+</div>
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>service</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The video object to push onto the queue.</p>
+                <h6>Properties</h6>
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>uniqueId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>A unique ID for the service.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>iid</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>A unique ID for the service (used for identification internally).</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Name of the service</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Type of the service</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>characteristics</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Array of characteristics</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>values</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Array of values for the characteristics</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="state_actions_index.js.html">state/actions/index.js</a>, <a href="state_actions_index.js.html#line131">line 131</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>state.callAction('HOMEKIT:SET-SERVICES', { services: { 'serviceID': { ...service }}})</code></pre>
+
+
+
+        
+            
+<h4 class="name" id="~KODI:RUN"><span class="type-signature">(inner, constant) </span>KODI:RUN<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>Play/pause the Kodi player.</p>
+</div>
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>command</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The command to execute.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>args</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The arguments to pass along.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="state_actions_index.js.html">state/actions/index.js</a>, <a href="state_actions_index.js.html#line19">line 19</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>state.callAction('KODI:RUN', { command: "The command to execute.", args: [] })</code></pre>
+
+
+
+        
+            
 <h4 class="name" id="~NOTIFICATIONS:CREATE"><span class="type-signature">(inner, constant) </span>NOTIFICATIONS:CREATE<span class="type-signature"></span></h4>
 
 
@@ -261,7 +946,7 @@ word like 'CREATE' concatenated by a ':'.</p></div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="state_actions_index.js.html">state/actions/index.js</a>, <a href="state_actions_index.js.html#line19">line 19</a>
+        <a href="state_actions_index.js.html">state/actions/index.js</a>, <a href="state_actions_index.js.html#line28">line 28</a>
     </li></ul></dd>
     
 
@@ -380,7 +1065,7 @@ word like 'CREATE' concatenated by a ':'.</p></div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="state_actions_index.js.html">state/actions/index.js</a>, <a href="state_actions_index.js.html#line28">line 28</a>
+        <a href="state_actions_index.js.html">state/actions/index.js</a>, <a href="state_actions_index.js.html#line37">line 37</a>
     </li></ul></dd>
     
 
@@ -499,7 +1184,7 @@ word like 'CREATE' concatenated by a ':'.</p></div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="state_actions_index.js.html">state/actions/index.js</a>, <a href="state_actions_index.js.html#line36">line 36</a>
+        <a href="state_actions_index.js.html">state/actions/index.js</a>, <a href="state_actions_index.js.html#line45">line 45</a>
     </li></ul></dd>
     
 
@@ -618,7 +1303,7 @@ word like 'CREATE' concatenated by a ':'.</p></div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="state_actions_index.js.html">state/actions/index.js</a>, <a href="state_actions_index.js.html#line44">line 44</a>
+        <a href="state_actions_index.js.html">state/actions/index.js</a>, <a href="state_actions_index.js.html#line53">line 53</a>
     </li></ul></dd>
     
 
@@ -760,7 +1445,7 @@ word like 'CREATE' concatenated by a ':'.</p></div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="state_actions_index.js.html">state/actions/index.js</a>, <a href="state_actions_index.js.html#line70">line 70</a>
+        <a href="state_actions_index.js.html">state/actions/index.js</a>, <a href="state_actions_index.js.html#line79">line 79</a>
     </li></ul></dd>
     
 
@@ -925,7 +1610,7 @@ word like 'CREATE' concatenated by a ':'.</p></div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="state_actions_index.js.html">state/actions/index.js</a>, <a href="state_actions_index.js.html#line52">line 52</a>
+        <a href="state_actions_index.js.html">state/actions/index.js</a>, <a href="state_actions_index.js.html#line61">line 61</a>
     </li></ul></dd>
     
 
@@ -996,7 +1681,7 @@ word like 'CREATE' concatenated by a ':'.</p></div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="state_actions_index.js.html">state/actions/index.js</a>, <a href="state_actions_index.js.html#line63">line 63</a>
+        <a href="state_actions_index.js.html">state/actions/index.js</a>, <a href="state_actions_index.js.html#line72">line 72</a>
     </li></ul></dd>
     
 
@@ -1110,7 +1795,7 @@ word like 'CREATE' concatenated by a ':'.</p></div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="state_actions_index.js.html">state/actions/index.js</a>, <a href="state_actions_index.js.html#line113">line 113</a>
+        <a href="state_actions_index.js.html">state/actions/index.js</a>, <a href="state_actions_index.js.html#line122">line 122</a>
     </li></ul></dd>
     
 
@@ -1346,7 +2031,7 @@ word like 'CREATE' concatenated by a ':'.</p></div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="state_actions_index.js.html">state/actions/index.js</a>, <a href="state_actions_index.js.html#line92">line 92</a>
+        <a href="state_actions_index.js.html">state/actions/index.js</a>, <a href="state_actions_index.js.html#line101">line 101</a>
     </li></ul></dd>
     
 
@@ -1543,7 +2228,7 @@ word like 'CREATE' concatenated by a ':'.</p></div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="state_actions_index.js.html">state/actions/index.js</a>, <a href="state_actions_index.js.html#line80">line 80</a>
+        <a href="state_actions_index.js.html">state/actions/index.js</a>, <a href="state_actions_index.js.html#line89">line 89</a>
     </li></ul></dd>
     
 
@@ -1588,7 +2273,7 @@ word like 'CREATE' concatenated by a ':'.</p></div>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.2</a> on Wed May 29 2019 22:28:26 GMT+0800 (Singapore Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Tue Sep 01 2020 22:17:20 GMT+0200 (Mitteleuropäische Sommerzeit)
 </footer>
 
 <script> prettyPrint(); </script>

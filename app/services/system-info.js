@@ -3,7 +3,7 @@ const si = require('systeminformation');
 const { promisify } = require('util');
 const publicIp = require('public-ip');
 const childProcess = require('child_process');
-const package = require('../../package.json');
+const pkg = require('../../package.json');
 const exec = promisify(childProcess.exec);
 
 module.exports = async function systemInformation() {
@@ -34,7 +34,7 @@ module.exports = async function systemInformation() {
 			architecture: osInfo.arch,
 			hostname: osInfo.hostname
 		},
-		version: package.version
+		version: pkg.version
 	};
 
 	const refreshInfo = async () => {
