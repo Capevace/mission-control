@@ -37,7 +37,7 @@ let config = require('rc')('mission-control', {
 	dashboard: {
 		path: path.resolve(
 			__dirname,
-			'../../resources/dashboard-ui'
+			'../resources/dashboard-ui'
 		), // static ui path
 	},
 	homebridge: {
