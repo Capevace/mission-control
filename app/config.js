@@ -44,7 +44,10 @@ let config = require('rc')('mission-control', {
 		pin: null,
 	},
 	spotify: {
-		path: path.resolve(__dirname, '../../../spotify-player/dist'), // ui path
+		path: path.resolve(
+			__dirname, 
+			'../resources/spotify-ui'
+		), // ui path
 		clientId: 'f1421bd3dada404da546902b6849f2d7',
 		secret: '2192e52bff6740cb8dbce0011305bb20'
 	},
