@@ -1,5 +1,17 @@
-# Mission Control
-> Beautiful home automation software built on Node.js and the Raspberry Pi.
+<div align="center">
+	<a href="https://mateffy.me/mission-control">
+		<img src="resources/icon-web.png">
+	</a>
+	<h1>Mission Control</h1>
+	<p>
+		Beautiful home dashboard
+	</p>
+	<!--<p>
+		<a href="https://mateffy.me/mission-control">Try it out!</a>
+	</p>-->
+</div>
+
+<br>
 
 When you start setting up software for your home – be it home automation, a NAS system or something else – you’ll end up having a few different dashboards for control, that are all kind of ugly anyway. That’s where Mission Control comes in. It is a beatutiful and easy-to-configure dashboard system for your home!
 
