@@ -87,5 +87,8 @@
         "always"
       ]
     }
+  },
+  "directories": {
+    "doc": "docs"
   }
 }
