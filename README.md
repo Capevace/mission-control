@@ -52,8 +52,10 @@ Options:
 ### Config
 A config file for mission-control will be created at `$HOME_DIR/.mission-control/config`. This can also be used to configure mission-control. However, options passed as command line arguments override settings in this file.
 
+## Screenshots
+<img src="resources/screenshot.png">
 
-### Planned
+## Planned
 - Stability: while Mission Control works gracefully in my home, keep in mind that I’ve mostly built this for myself so not every use case will be stable at the moment
 
 ## Authors
