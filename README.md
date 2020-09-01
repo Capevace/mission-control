@@ -7,6 +7,7 @@
 		Beautiful home dashboard software built on Node.js 
 	</p>
 	<p>
+		<a href="https://mateffy.me/mission-control-project">Project Homepage</a>
 		<a href="https://mateffy.me/mission-control">Docs</a>
 	</p>
 </div>
