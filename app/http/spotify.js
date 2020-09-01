@@ -64,14 +64,22 @@ module.exports = function spotifyAuthRoutes(app, requireAuth) {
 	// });
 
 	app.get('/spotify', requireAuth(), (req, res) => {
-		const indexFile = fs.readFileSync(config.spotify.path + '/index.html')
-			.toString()
-			.replace(/\<MISSION_CONTROL_URL\>/g, config.http.url)
-			.replace(/\<MISSION_CONTROL_TOKEN\>/g, req.session.jwt)
-			.replace(/\<MISSION_CONTROL_SPOTIFY_TOKEN\>/g, state.getState().spotify.accessToken)
-			.replace(/\<MISSION_CONTROL_SPOTIFY_EXPIRY\>/g, state.getState().spotify.expiresAt);
+		const spotifyData = state.getState().spotify;
+		if (!spotifyData || !spotifyData.accessToken) {
+			res.redirect('/spotify/auth');
+		} else {
+			const indexFile = fs.readFileSync(config.spotify.path + '/index.html')
+				.toString()
+				.replace(/\<MISSION_CONTROL_URL\>/g, config.http.url)
+				.replace(/\<MISSION_CONTROL_TOKEN\>/g, req.session.jwt)
+				.replace(/\<MISSION_CONTROL_SPOTIFY_TOKEN\>/g, state.getState().spotify.accessToken)
+				.replace(/\<MISSION_CONTROL_SPOTIFY_EXPIRY\>/g, state.getState().spotify.expiresAt);
 
-		res.type('text/html').send(indexFile);
+			res.type('text/html').send(indexFile);
+		}
+
+		console.log('token, ', state.getState().spotify)
+		
 	});
 
 	app.use(
