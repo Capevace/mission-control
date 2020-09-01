@@ -1,6 +1,6 @@
 const { program } = require('commander');
 program
-	.version('0.0.1')
+	.version('0.1.1')
 	.option('-u, --url <url>', 'the url mission control is reachable at')
 	.option('-p, --port <port>', 'the port to use for mission control')
 	.option('-n, --no-sso', 'disable internal auth server process (to use own)')

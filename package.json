@@ -1,6 +1,6 @@
 {
   "name": "@capevace/mission-control",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "The mission control server for HAL6900.",
   "main": "app/index.js",
   "scripts": {
@@ -8,7 +8,7 @@
     "lint": "eslint app",
     "docs-tutorials-for-later": "jsdoc -r app -d docs -c jsdoc.config.js -u tutorials --package ./package.json ",
     "docs": "jsdoc -d docs -c jsdoc.config.js -r app ./README.md",
-    "ui": "cp -r ../dashboard/dist/production/. resources/dashboard-ui/"
+    "ui": "cp -r ../mission-control-dashboard/dist/production/. resources/dashboard-ui/"
   },
   "repository": {
     "type": "git",
