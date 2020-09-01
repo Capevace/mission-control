@@ -3,14 +3,15 @@ const si = require('systeminformation');
 const { promisify } = require('util');
 const publicIp = require('public-ip');
 const childProcess = require('child_process');
+const package = require('../../package.json');
 const exec = promisify(childProcess.exec);
 
 module.exports = async function systemInformation() {
 	const [system, cpu, osInfo, gitCommitCount] = await Promise.all([
 		si.system(),
 		si.cpu(),
-		si.osInfo(),
-		exec('git rev-list --count master')
+		si.osInfo()
+		// exec('git rev-list --count master')
 	]);
 
 	const staticInfo = {
@@ -33,7 +34,7 @@ module.exports = async function systemInformation() {
 			architecture: osInfo.arch,
 			hostname: osInfo.hostname
 		},
-		version: `${process.env.npm_package_version}-${parseInt(gitCommitCount.stdout)}`
+		version: package.version
 	};
 
 	const refreshInfo = async () => {
