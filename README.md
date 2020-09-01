@@ -8,6 +8,7 @@
 	</p>
 	<p>
 		<a href="https://mateffy.me/mission-control-project">Project Homepage</a>
+		<span>&nbsp;|&nbsp;</span>
 		<a href="https://mateffy.me/mission-control">Docs</a>
 	</p>
 </div>
