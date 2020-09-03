@@ -25,7 +25,9 @@ module.exports = function dashboardRoutes(app, requireAuth) {
 			: dashboardIndexFile
 		).replace(/{{SERVER_REPLACE_API_KEY}}/gm, req.session.jwt)
 		.replace(/{{SERVER_REPLACE_URL}}/gm, config.http.url)
-		.replace(/index\.js/gm, 'mobile.js');
+		.replace(/index\.js/gm, 'mobile.js')
+		.replace('<!--DELETE-MOBILE', '')
+		.replace('DELETE-MOBILE-->', '');
 
 		res.set('Content-Type', 'text/html').send(indexFile);
 	});
