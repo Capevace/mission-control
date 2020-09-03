@@ -19,6 +19,23 @@ module.exports = function dashboardRoutes(app, requireAuth) {
 
 	app.get('/', requireAuth(), (req, res) => res.redirect('/dashboard/'));
 
+	app.get('/dashboard/mobile', addTrailingSlashMiddleware, requireAuth(), async (req, res) => {
+		const indexFile = (config.debug
+			? (await readFileAsync(dashboardHtmlPath)).toString()
+			: dashboardIndexFile
+		).replace(/{{SERVER_REPLACE_API_KEY}}/gm, req.session.jwt)
+		.replace(/{{SERVER_REPLACE_URL}}/gm, config.http.url)
+		.replace(/index\.js/gm, 'mobile.js');
+
+		res.set('Content-Type', 'text/html').send(indexFile);
+	});
+
+	app.use(
+		'/dashboard/mobile',
+		requireAuth(),
+		express.static(config.dashboard.path)
+	);
+
 	app.get('/dashboard/', addTrailingSlashMiddleware, requireAuth(), async (req, res) => {
 		const indexFile = (config.debug
 			? (await readFileAsync(dashboardHtmlPath)).toString()

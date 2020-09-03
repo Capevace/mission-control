@@ -9,8 +9,10 @@
     "docs-tutorials-for-later": "jsdoc -r app -d docs -c jsdoc.config.js -u tutorials --package ./package.json ",
     "docs": "jsdoc -d docs -c jsdoc.config.js -r app ./README.md",
     "ui": "cp -r ../mission-control-dashboard/dist/production/. resources/dashboard-ui/",
-    "spotify-ui": "cp -r ../mission-control-spotify/dist/. resources/spotify-ui/"
+    "spotify-ui": "cp -r ../mission-control-spotify/dist/. resources/spotify-ui/",
+    "mobile-ui": "babel resources/dashboard-ui/index.js --out-file resources/dashboard-ui/mobile.js"
   },
+  "browserslist": "defaults, last 1 version, >1%, ios_saf 9, ios_saf 9.3",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/capevace/hal-6900-mission-control.git"
@@ -55,6 +57,9 @@
     "@services": "app/services"
   },
   "devDependencies": {
+    "@babel/cli": "^7.11.5",
+    "@babel/core": "^7.11.5",
+    "@babel/preset-env": "^7.11.5",
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^4.3.0",
     "eslint-plugin-import": "^2.17.2",
