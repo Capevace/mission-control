@@ -1,3 +1,4 @@
+const config = require('@config');
 const proxy = require('http-proxy-middleware');
 
 module.exports = function filesRoutes(app, requireAuth) {
@@ -12,7 +13,8 @@ module.exports = function filesRoutes(app, requireAuth) {
 		// 	limit: '50mb'
 		// })
 		proxy('/', {
-			target: 'http://localhost:3002', 
+			target: 'http://localhost:3002',
+			logLevel: config.debug ? 'debug' : 'warn',
 			pathRewrite: {
 				'^/files': '/',
 				'^/files/': '/'

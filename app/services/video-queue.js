@@ -1,5 +1,5 @@
 const state = require('@state');
-const log = require('@helpers/log').logger('Video Queue');
+const log = require('@helpers/log').logger('Video Queue', 'greenBright');
 
 module.exports = async function videoQueue() {
 	state.subscribe('action:VIDEO-QUEUE:PUSH', data => {

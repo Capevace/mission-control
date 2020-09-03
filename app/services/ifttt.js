@@ -1,6 +1,6 @@
 const config = require('@config');
 const state = require('@state');
-const log = require('@helpers/log').logger('IFTTT');
+const log = require('@helpers/log').logger('IFTTT', 'greenBright');
 
 const superagent = require('superagent');
 

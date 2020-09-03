@@ -37,7 +37,7 @@ module.exports = function spotifyAuthRoutes(app, requireAuth) {
 				code
 			});
 
-			res.json('Logging in');
+			res.redirect('/spotify');
 		}
 	});
 

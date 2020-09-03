@@ -2,7 +2,7 @@
 const config = require('@config');
 const database = require('@database');
 const state = require('@state');
-const log = require('@helpers/log').logger('Spotify');
+const log = require('@helpers/log').logger('Spotify', 'greenBright');
 
 const superagent = require('superagent');
 

@@ -42,7 +42,7 @@ const actions = require('./actions');
 
 // const ActionEvent = require('@state/events/ActionEvent');
 
-const log = require('@helpers/log').logger('State');
+const log = require('@helpers/log').logger('State', 'blueBright');
 const logError = require('@helpers/log').error;
 
 const emitter = new EventEmitter({

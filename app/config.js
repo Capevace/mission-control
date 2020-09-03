@@ -111,4 +111,8 @@ if (argv.authPort) {
 	config.auth.port = argv.authPort;
 }
 
+if (argv.debug) {
+	config.debug = argv.debug;
+}
+
 module.exports = config;

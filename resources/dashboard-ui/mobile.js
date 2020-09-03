@@ -1,86 +1,18 @@
 "use strict";
 
-function _slicedToArray(arr, i) {
-  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
-}
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
-function _nonIterableRest() {
-  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-}
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function _unsupportedIterableToArray(o, minLen) {
-  if (!o) return;
-  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
-  var n = Object.prototype.toString.call(o).slice(8, -1);
-  if (n === "Object" && o.constructor) n = o.constructor.name;
-  if (n === "Map" || n === "Set") return Array.from(o);
-  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
-}
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
-function _arrayLikeToArray(arr, len) {
-  if (len == null || len > arr.length) len = arr.length;
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-  for (var i = 0, arr2 = new Array(len); i < len; i++) {
-    arr2[i] = arr[i];
-  }
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
-  return arr2;
-}
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
-function _iterableToArrayLimit(arr, i) {
-  if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
-  var _arr = [];
-  var _n = true;
-  var _d = false;
-  var _e = undefined;
-
-  try {
-    for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
-      _arr.push(_s.value);
-
-      if (i && _arr.length === i) break;
-    }
-  } catch (err) {
-    _d = true;
-    _e = err;
-  } finally {
-    try {
-      if (!_n && _i["return"] != null) _i["return"]();
-    } finally {
-      if (_d) throw _e;
-    }
-  }
-
-  return _arr;
-}
-
-function _arrayWithHoles(arr) {
-  if (Array.isArray(arr)) return arr;
-}
-
-function _instanceof(left, right) {
-  if (right != null && typeof Symbol !== "undefined" && right[Symbol.hasInstance]) {
-    return !!right[Symbol.hasInstance](left);
-  } else {
-    return left instanceof right;
-  }
-}
-
-function _typeof(obj) {
-  "@babel/helpers - typeof";
-
-  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
-    _typeof = function _typeof(obj) {
-      return typeof obj;
-    };
-  } else {
-    _typeof = function _typeof(obj) {
-      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-    };
-  }
-
-  return _typeof(obj);
-}
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 !function (t) {
   var e = {};
@@ -186,7 +118,7 @@ function _typeof(obj) {
   e.encodePacket = function (t, n, r, o) {
     "function" == typeof n && (o = n, n = !1), "function" == typeof r && (o = r, r = null);
     var i = void 0 === t.data ? void 0 : t.data.buffer || t.data;
-    if ("undefined" != typeof ArrayBuffer && _instanceof(i, ArrayBuffer)) return function (t, n, r) {
+    if ("undefined" != typeof ArrayBuffer && i instanceof ArrayBuffer) return function (t, n, r) {
       if (!n) return e.encodeBase64Packet(t, r);
       var o = t.data,
           i = new Uint8Array(o),
@@ -199,7 +131,7 @@ function _typeof(obj) {
 
       return r(s.buffer);
     }(t, n, o);
-    if (void 0 !== v && _instanceof(i, v)) return function (t, n, r) {
+    if (void 0 !== v && i instanceof v) return function (t, n, r) {
       if (!n) return e.encodeBase64Packet(t, r);
       if (f) return function (t, n, r) {
         if (!n) return e.encodeBase64Packet(t, r);
@@ -228,7 +160,7 @@ function _typeof(obj) {
     var r,
         o = "b" + e.packets[t.type];
 
-    if (void 0 !== v && _instanceof(t.data, v)) {
+    if (void 0 !== v && t.data instanceof v) {
       var i = new FileReader();
       return i.onload = function () {
         var t = i.result.split(",")[1];
@@ -380,7 +312,7 @@ function _typeof(obj) {
           t = r.buffer, e[0] = 0;
         }
 
-        var i = (_instanceof(t, ArrayBuffer) ? t.byteLength : t.size).toString(),
+        var i = (t instanceof ArrayBuffer ? t.byteLength : t.size).toString(),
             s = new Uint8Array(i.length + 1);
 
         for (o = 0; o < i.length; o++) {
@@ -846,7 +778,7 @@ function _typeof(obj) {
     }
 
     function c(t, e, n) {
-      if (!(c.TYPED_ARRAY_SUPPORT || _instanceof(this, c))) return new c(t, e, n);
+      if (!(c.TYPED_ARRAY_SUPPORT || this instanceof c)) return new c(t, e, n);
 
       if ("number" == typeof t) {
         if ("string" == typeof e) throw new Error("If encoding is specified then the first argument must be a string");
@@ -858,7 +790,7 @@ function _typeof(obj) {
 
     function u(t, e, n, r) {
       if ("number" == typeof e) throw new TypeError('"value" argument must not be a number');
-      return "undefined" != typeof ArrayBuffer && _instanceof(e, ArrayBuffer) ? function (t, e, n, r) {
+      return "undefined" != typeof ArrayBuffer && e instanceof ArrayBuffer ? function (t, e, n, r) {
         if (e.byteLength, n < 0 || e.byteLength < n) throw new RangeError("'offset' is out of bounds");
         if (e.byteLength < n + (r || 0)) throw new RangeError("'length' is out of bounds");
         e = void 0 === n && void 0 === r ? new Uint8Array(e) : void 0 === r ? new Uint8Array(e, n) : new Uint8Array(e, n, r);
@@ -878,7 +810,7 @@ function _typeof(obj) {
         }
 
         if (e) {
-          if ("undefined" != typeof ArrayBuffer && _instanceof(e.buffer, ArrayBuffer) || "length" in e) return "number" != typeof e.length || (r = e.length) != r ? a(t, 0) : p(t, e);
+          if ("undefined" != typeof ArrayBuffer && e.buffer instanceof ArrayBuffer || "length" in e) return "number" != typeof e.length || (r = e.length) != r ? a(t, 0) : p(t, e);
           if ("Buffer" === e.type && i(e.data)) return p(t, e.data);
         }
 
@@ -917,7 +849,7 @@ function _typeof(obj) {
 
     function d(t, e) {
       if (c.isBuffer(t)) return t.length;
-      if ("undefined" != typeof ArrayBuffer && "function" == typeof ArrayBuffer.isView && (ArrayBuffer.isView(t) || _instanceof(t, ArrayBuffer))) return t.byteLength;
+      if ("undefined" != typeof ArrayBuffer && "function" == typeof ArrayBuffer.isView && (ArrayBuffer.isView(t) || t instanceof ArrayBuffer)) return t.byteLength;
       "string" != typeof t && (t = "" + t);
       var n = t.length;
       if (0 === n) return 0;
@@ -1813,13 +1745,13 @@ function _typeof(obj) {
 }, function (t, e, n) {
   (function (e) {
     t.exports = function (t) {
-      return n && e.isBuffer(t) || r && (_instanceof(t, ArrayBuffer) || o(t));
+      return n && e.isBuffer(t) || r && (t instanceof ArrayBuffer || o(t));
     };
 
     var n = "function" == typeof e && "function" == typeof e.isBuffer,
         r = "function" == typeof ArrayBuffer,
         o = function o(t) {
-      return "function" == typeof ArrayBuffer.isView ? ArrayBuffer.isView(t) : _instanceof(t.buffer, ArrayBuffer);
+      return "function" == typeof ArrayBuffer.isView ? ArrayBuffer.isView(t) : t.buffer instanceof ArrayBuffer;
     };
   }).call(this, n(12).Buffer);
 }, function (t, e, n) {
@@ -1835,7 +1767,7 @@ function _typeof(obj) {
       p = Object.prototype.hasOwnProperty;
 
   function h(t, e) {
-    if (!_instanceof(this, h)) return new h(t, e);
+    if (!(this instanceof h)) return new h(t, e);
     t && "object" == _typeof(t) && (e = t, t = void 0), (e = e || {}).path = e.path || "/socket.io", this.nsps = {}, this.subs = [], this.opts = e, this.reconnection(!1 !== e.reconnection), this.reconnectionAttempts(e.reconnectionAttempts || 1 / 0), this.reconnectionDelay(e.reconnectionDelay || 1e3), this.reconnectionDelayMax(e.reconnectionDelayMax || 5e3), this.randomizationFactor(e.randomizationFactor || .5), this.backoff = new f({
       min: this.reconnectionDelay(),
       max: this.reconnectionDelayMax(),
@@ -2088,7 +2020,7 @@ function _typeof(obj) {
         return !1;
       }
 
-      if ("function" == typeof e && e.isBuffer && e.isBuffer(n) || "function" == typeof ArrayBuffer && _instanceof(n, ArrayBuffer) || i && _instanceof(n, Blob) || s && _instanceof(n, File)) return !0;
+      if ("function" == typeof e && e.isBuffer && e.isBuffer(n) || "function" == typeof ArrayBuffer && n instanceof ArrayBuffer || i && n instanceof Blob || s && n instanceof File) return !0;
       if (n.toJSON && "function" == typeof n.toJSON && 1 === arguments.length) return t(n.toJSON(), !0);
 
       for (var c in n) {
@@ -2812,7 +2744,7 @@ function _typeof(obj) {
       i = n(16);
 
   function s(t) {
-    if (!_instanceof(this, s)) return new s(t);
+    if (!(this instanceof s)) return new s(t);
     this._name = t || "nanobus", this._starListeners = [], this._listeners = {};
   }
 
@@ -2943,7 +2875,7 @@ function _typeof(obj) {
           try {
             var s = e[n](r),
                 a = s.value;
-            _instanceof(a, t) ? Promise.resolve(a.value).then(function (t) {
+            a instanceof t ? Promise.resolve(a.value).then(function (t) {
               o("next", t);
             }, function (t) {
               o("throw", t);
@@ -3191,7 +3123,7 @@ function _typeof(obj) {
           try {
             var s = e[n](r),
                 a = s.value;
-            _instanceof(a, t) ? Promise.resolve(a.value).then(function (t) {
+            a instanceof t ? Promise.resolve(a.value).then(function (t) {
               o("next", t);
             }, function (t) {
               o("throw", t);
@@ -3248,7 +3180,7 @@ function _typeof(obj) {
         return this._invoke("return", t);
       };
     }(), function (t, e) {
-      if (!_instanceof(t, e)) throw new TypeError("Cannot call a class as a function");
+      if (!(t instanceof e)) throw new TypeError("Cannot call a class as a function");
     }),
         o = function () {
       function t(t, e) {
@@ -3531,7 +3463,7 @@ function _typeof(obj) {
         if (o && i) return t.length === e.length && t.every(function (t, n) {
           return I(t, e[n]);
         });
-        if (_instanceof(t, Date) && _instanceof(e, Date)) return t.getTime() === e.getTime();
+        if (t instanceof Date && e instanceof Date) return t.getTime() === e.getTime();
         if (o || i) return !1;
         var s = Object.keys(t),
             a = Object.keys(e);
@@ -3740,7 +3672,7 @@ function _typeof(obj) {
 
     function St(t, e) {
       var n;
-      if (c(t) && !_instanceof(t, vt)) return w(t, "__ob__") && _instanceof(t.__ob__, At) ? n = t.__ob__ : kt && !ot() && (Array.isArray(t) || l(t)) && Object.isExtensible(t) && !t._isVue && (n = new At(t)), e && n && n.vmCount++, n;
+      if (c(t) && !(t instanceof vt)) return w(t, "__ob__") && t.__ob__ instanceof At ? n = t.__ob__ : kt && !ot() && (Array.isArray(t) || l(t)) && Object.isExtensible(t) && !t._isVue && (n = new At(t)), e && n && n.vmCount++, n;
     }
 
     function Et(t, e, n, r, o) {
@@ -4087,7 +4019,7 @@ function _typeof(obj) {
             o,
             i = Array.isArray(e);
 
-        if (!(!i && !c(e) || Object.isFrozen(e) || _instanceof(e, vt))) {
+        if (!(!i && !c(e) || Object.isFrozen(e) || e instanceof vt)) {
           if (e.__ob__) {
             var s = e.__ob__.dep.id;
             if (n.has(s)) return;
@@ -4143,7 +4075,7 @@ function _typeof(obj) {
 
     function ae(t, e, n) {
       var r;
-      _instanceof(t, vt) && (t = t.data.hook || (t.data.hook = {}));
+      t instanceof vt && (t = t.data.hook || (t.data.hook = {}));
       var a = t[e];
 
       function c() {
@@ -4585,7 +4517,7 @@ function _typeof(obj) {
             } else i(n.attrs) && Ie(c, n.attrs), i(n.props) && Ie(c, n.props);
             var f = new Re(n, c, s, o, t),
                 p = a.render.call(null, f._c, f);
-            if (_instanceof(p, vt)) return Fe(p, n, f.parent, a);
+            if (p instanceof vt) return Fe(p, n, f.parent, a);
 
             if (Array.isArray(p)) {
               for (var h = ue(p) || [], d = new Array(h.length), v = 0; v < h.length; v++) {
@@ -5197,7 +5129,7 @@ function _typeof(obj) {
           ze = null;
         }
 
-        return Array.isArray(t) && 1 === t.length && (t = t[0]), _instanceof(t, vt) || (t = yt()), t.parent = o, t;
+        return Array.isArray(t) && 1 === t.length && (t = t[0]), t instanceof vt || (t = yt()), t.parent = o, t;
       };
     }(xn);
     var On = [String, RegExp, Array],
@@ -7972,7 +7904,6 @@ function _typeof(obj) {
 
       if (!n.render) {
         var r = n.template;
-
         if (r) {
           if ("string" == typeof r) "#" === r.charAt(0) && (r = oa(r));else {
             if (!r.nodeType) return this;
@@ -8196,7 +8127,7 @@ function _typeof(obj) {
   }
 
   (e = t.exports = r.debug = r.default = r).coerce = function (t) {
-    return _instanceof(t, Error) ? t.stack || t.message : t;
+    return t instanceof Error ? t.stack || t.message : t;
   }, e.disable = function () {
     e.enable("");
   }, e.enable = function (t) {
@@ -8398,7 +8329,7 @@ function _typeof(obj) {
   }
 
   (e = t.exports = r.debug = r.default = r).coerce = function (t) {
-    return _instanceof(t, Error) ? t.stack || t.message : t;
+    return t instanceof Error ? t.stack || t.message : t;
   }, e.disable = function () {
     e.enable("");
   }, e.enable = function (t) {
@@ -8582,7 +8513,7 @@ function _typeof(obj) {
         return s;
       }
 
-      if ("object" == _typeof(e) && !_instanceof(e, Date)) {
+      if ("object" == _typeof(e) && !(e instanceof Date)) {
         var s = {};
 
         for (var c in e) {
@@ -8614,7 +8545,7 @@ function _typeof(obj) {
     !function t(c, u, l) {
       if (!c) return c;
 
-      if (s && _instanceof(c, Blob) || a && _instanceof(c, File)) {
+      if (s && c instanceof Blob || a && c instanceof File) {
         n++;
         var f = new FileReader();
         f.onload = function () {
@@ -8739,7 +8670,7 @@ function _typeof(obj) {
       u = n(6);
 
   function l(t, e) {
-    if (!_instanceof(this, l)) return new l(t, e);
+    if (!(this instanceof l)) return new l(t, e);
     e = e || {}, t && "object" == _typeof(t) && (e = t, t = null), t ? (t = c(t), e.hostname = t.host, e.secure = "https" === t.protocol || "wss" === t.protocol, e.port = t.port, t.query && (e.query = t.query)) : e.host && (e.hostname = c(e.host).host), this.secure = null != e.secure ? e.secure : "undefined" != typeof location && "https:" === location.protocol, e.hostname && !e.port && (e.port = this.secure ? "443" : "80"), this.agent = e.agent || !1, this.hostname = e.hostname || ("undefined" != typeof location ? location.hostname : "localhost"), this.port = e.port || ("undefined" != typeof location && location.port ? location.port : this.secure ? 443 : 80), this.query = e.query || {}, "string" == typeof this.query && (this.query = u.decode(this.query)), this.upgrade = !1 !== e.upgrade, this.path = (e.path || "/engine.io").replace(/\/$/, "") + "/", this.forceJSONP = !!e.forceJSONP, this.jsonp = !1 !== e.jsonp, this.forceBase64 = !!e.forceBase64, this.enablesXDR = !!e.enablesXDR, this.timestampParam = e.timestampParam || "t", this.timestampRequests = e.timestampRequests, this.transports = e.transports || ["polling", "websocket"], this.transportOptions = e.transportOptions || {}, this.readyState = "", this.writeBuffer = [], this.prevBufferLen = 0, this.policyPort = e.policyPort || 843, this.rememberUpgrade = e.rememberUpgrade || !1, this.binaryType = null, this.onlyBinaryUpgrades = e.onlyBinaryUpgrades, this.perMessageDeflate = !1 !== e.perMessageDeflate && (e.perMessageDeflate || {}), !0 === this.perMessageDeflate && (this.perMessageDeflate = {}), this.perMessageDeflate && null == this.perMessageDeflate.threshold && (this.perMessageDeflate.threshold = 1024), this.pfx = e.pfx || null, this.key = e.key || null, this.passphrase = e.passphrase || null, this.cert = e.cert || null, this.ca = e.ca || null, this.ciphers = e.ciphers || null, this.rejectUnauthorized = void 0 === e.rejectUnauthorized || e.rejectUnauthorized, this.forceNode = !!e.forceNode, this.isReactNative = "undefined" != typeof navigator && "string" == typeof navigator.product && "reactnative" === navigator.product.toLowerCase(), ("undefined" == typeof self || this.isReactNative) && (e.extraHeaders && Object.keys(e.extraHeaders).length > 0 && (this.extraHeaders = e.extraHeaders), e.localAddress && (this.localAddress = e.localAddress)), this.id = null, this.upgrades = null, this.pingInterval = null, this.pingTimeout = null, this.pingIntervalTimer = null, this.pingTimeoutTimer = null, this.open();
   }
 
@@ -9302,7 +9233,7 @@ function _typeof(obj) {
 
   function s(t) {
     return t.map(function (t) {
-      if (_instanceof(t.buffer, ArrayBuffer)) {
+      if (t.buffer instanceof ArrayBuffer) {
         var e = t.buffer;
 
         if (t.byteLength !== e.byteLength) {
@@ -9380,7 +9311,7 @@ function _typeof(obj) {
   }
 
   (e = t.exports = r.debug = r.default = r).coerce = function (t) {
-    return _instanceof(t, Error) ? t.stack || t.message : t;
+    return t instanceof Error ? t.stack || t.message : t;
   }, e.disable = function () {
     e.enable("");
   }, e.enable = function (t) {
@@ -9849,7 +9780,7 @@ function _typeof(obj) {
           return e ? e.querySelector(t) : document.querySelector(t);
         }.call(this, t, n);
 
-        if (window.HTMLIFrameElement && _instanceof(r, window.HTMLIFrameElement)) try {
+        if (window.HTMLIFrameElement && r instanceof window.HTMLIFrameElement) try {
           r = r.contentDocument.head;
         } catch (t) {
           r = null;
@@ -11399,7 +11330,7 @@ function _typeof(obj) {
   }
 
   function Rt(t, e, n) {
-    return yt(e) || (n = e || n, e = []), n = n || {}, _instanceof(t, RegExp) ? function (t, e) {
+    return yt(e) || (n = e || n, e = []), n = n || {}, t instanceof RegExp ? function (t, e) {
       var n = t.source.match(/\((?!\?)/g);
       if (n) for (var r = 0; r < n.length; r++) {
         e.push({
@@ -12198,7 +12129,7 @@ function _typeof(obj) {
     }), !this.app) {
       this.app = t;
       var n = this.history;
-      if (_instanceof(n, fe)) n.transitionTo(n.getCurrentLocation());else if (_instanceof(n, he)) {
+      if (n instanceof fe) n.transitionTo(n.getCurrentLocation());else if (n instanceof he) {
         var r = function r() {
           n.setupListeners();
         };

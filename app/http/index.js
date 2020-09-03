@@ -78,9 +78,28 @@ module.exports = function http() {
 	filesRoutes(app, requireAuthentication);
 	youtubeRoutes(app, requireAuthentication);
 
-	server.listen(config.http.port, () =>
-		log(`Mission Control available on ${logging.format('cyan', config.http.url)}.`)
-	);
+	server.listen(config.http.port, () => {
+		const qrcode = require('qrcode-terminal');
+		qrcode.generate('This will be a QRCode, eh!', {small: true}, function (qrCode) {
+			log(`HTTP server listening on port ${config.http.port}
+		.  . .-. .-. .-. .-. .-. . .   .-. .-. . . .-. .-. .-. .   
+        |\\/|  |  \`-. \`-.  |  | | |\\|   |   | | |\\|  |  |(  | | |   
+        '  \` \`-' \`-' \`-' \`-' \`-' ' \`   \`-' \`-' ' \`  '  ' ' \`-' \`-' 
+       
+${qrCode
+       		.split('\n')
+       		.map(
+       			(line, index) => index === 1 
+       				? `        ${line} Dashboard available at ${config.http.url}` 
+       				: index === 2 
+	       				? `        ${line} SSO available at ${config.auth.url}` 
+	       				: `        ${line}`
+       		)
+       		.join('\n')
+       	}
+			`);
+		});
+	});
 
 	return server;
 };

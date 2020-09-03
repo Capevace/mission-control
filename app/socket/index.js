@@ -12,7 +12,7 @@
  * @requires jsonwebtoken
  */
 
-const log = require('@helpers/log').logger('Socket');
+const log = require('@helpers/log').logger('Socket', 'magenta');
 const state = require('@state');
 const socketIO = require('socket.io');
 const socketAuth = require('./auth');

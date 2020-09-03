@@ -1,3 +1,4 @@
+const config = require('@config');
 const proxy = require('http-proxy-middleware');
 
 module.exports = function youtubeRoutes(app, requireAuth) {
@@ -8,7 +9,7 @@ module.exports = function youtubeRoutes(app, requireAuth) {
 			'/', 
 			{
 				target: 'http://localhost:3003', 
-				// logLevel: 'debug',
+				logLevel: config.debug ? 'debug' : 'warn',
 				ws: true,
 				pathRewrite: {
 					'^/youtube-downloader': '/',

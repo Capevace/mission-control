@@ -17,7 +17,14 @@ const startSSOProcess = require('@helpers/sso-process');
 module.exports = function startMissionControl() {
 	const log = require('@helpers/log').logger('Main', 'cyan');
 	const eventLog = require('@helpers/log').logger('Event', 'green');
-	log('Starting Mission Control\n');
+	
+	log(`Booting...
+
+.  . .-. .-. .-. .-. .-. . .   .-. .-. . . .-. .-. .-. .   
+|\\/|  |  \`-. \`-.  |  | | |\\|   |   | | |\\|  |  |(  | | |   
+'  \` \`-' \`-' \`-' \`-' \`-' ' \`   \`-' \`-' ' \`  '  ' ' \`-' \`-' 
+
+	`);
 
 	const database = require('@database'); // eslint-disable-line no-unused-vars
 
@@ -46,9 +53,11 @@ module.exports = function startMissionControl() {
 	const services = require('@services');
 	services.startServices();
 
-	state.subscribe('*', (event, data) =>
-		config.debug ? eventLog(event, data) : eventLog(event)
-	);
+	if (config.debug) {
+		state.subscribe('*', (event, data) =>
+			eventLog(event, data.actionData || data)
+		);
+	}
 }
 
 

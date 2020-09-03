@@ -1,6 +1,6 @@
 const config = require("@config");
 const state = require("@state");
-const log = require("@helpers/log").logger("HomeKit");
+const log = require("@helpers/log").logger("HomeKit", 'greenBright');
 
 const { HapClient } = require('@oznu/hap-client');
 

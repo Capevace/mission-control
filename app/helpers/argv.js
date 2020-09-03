@@ -6,7 +6,8 @@ program
 	.option('-p, --port <port>', 'the port to use for mission control')
 	.option('-n, --no-sso', 'disable internal auth server process (to use own)')
 	.option('--auth-url <url>', 'the url to use for the single-sign-on server')
-	.option('--auth-port <port>', 'the port to use for the single-sign-on server');
+	.option('--auth-port <port>', 'the port to use for the single-sign-on server')
+	.option('-d, --debug', 'enable debug mode');
 
 program.parse(process.argv);
 
