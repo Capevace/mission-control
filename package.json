@@ -1,6 +1,6 @@
 {
   "name": "@capevace/mission-control",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "The mission control server for HAL6900.",
   "main": "app/index.js",
   "scripts": {
