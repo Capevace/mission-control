@@ -56,7 +56,7 @@ A config file for mission-control will be created at `$HOME_DIR/.mission-control
 <img src="resources/screenshot.png">
 
 ## Changelog
-### Version 0.3.3
+### Version 0.4.0
 - The SSO server is now being proxied by default. This can be disabled with the `--no-proxy` option or by disabling it in the config file.
 - Instead of localhost, the default url is now the local ip
 
