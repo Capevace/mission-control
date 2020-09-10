@@ -1,10 +1,11 @@
 /**
  * Logging Helpers
  * @module @helpers/log
- * @requires chalk
+ * @requires chalk, qrcode-terminal
  */
 
 const chalk = require('chalk');
+const qrcode = require('qrcode-terminal');
 
 /**
  * Color some text
@@ -36,6 +37,30 @@ module.exports.logger = function logger(title, color = 'blue') {
  */
 module.exports.error = function error(title, ...args) {
 	console.log(`[${module.exports.format('red', title)}]`, ...args); // eslint-disable-line no-console
+};
+
+/**
+ * Ouput the styled ready message including a QR code that leads to the base url.
+ *
+ * @param  {String} url - The url to encode and log.
+ * @param  {String} authUrl - The auth url to display.
+ */
+module.exports.logReadyMessage = function logReadyMessage(url, authUrl) {
+	qrcode.generate(url, { small: true }, function (qrCode) {
+		const message =
+`
+.  . .-. .-. .-. .-. .-. . .   .-. .-. . . .-. .-. .-. .   
+|\\/|  |  \`-. \`-.  |  | | |\\|   |   | | |\\|  |  |(  | | |   
+'  \` \`-' \`-' \`-' \`-' \`-' ' \`   \`-' \`-' ' \`  '  ' ' \`-' \`-' 
+       
+${qrCode}
+
+Dashboard available at ${module.exports.format('cyan', url)}
+SSO available at ${module.exports.format('cyan', authUrl)}
+`;
+
+			console.log(message); // eslint-disable-line no-console
+		});
 };
 
 /**

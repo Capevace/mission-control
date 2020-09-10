@@ -79,26 +79,8 @@ module.exports = function http() {
 	youtubeRoutes(app, requireAuthentication);
 
 	server.listen(config.http.port, () => {
-		const qrcode = require('qrcode-terminal');
-		qrcode.generate('This will be a QRCode, eh!', {small: true}, function (qrCode) {
-			log(`HTTP server listening on port ${config.http.port}
-		.  . .-. .-. .-. .-. .-. . .   .-. .-. . . .-. .-. .-. .   
-        |\\/|  |  \`-. \`-.  |  | | |\\|   |   | | |\\|  |  |(  | | |   
-        '  \` \`-' \`-' \`-' \`-' \`-' ' \`   \`-' \`-' ' \`  '  ' ' \`-' \`-' 
-       
-${qrCode
-       		.split('\n')
-       		.map(
-       			(line, index) => index === 1 
-       				? `        ${line} Dashboard available at ${config.http.url}` 
-       				: index === 2 
-	       				? `        ${line} SSO available at ${config.auth.url}` 
-	       				: `        ${line}`
-       		)
-       		.join('\n')
-       	}
-			`);
-		});
+		log(`HTTP server listening on port ${config.http.port}`);
+		logging.logReadyMessage(config.http.url, config.auth.url);
 	});
 
 	return server;

@@ -6,6 +6,8 @@ const jwt = require('jsonwebtoken');
 const JWTStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 const queryString = require('querystring');
+const proxy = require('http-proxy-middleware');
+
 
 /*
 	How the auth system works
@@ -111,7 +113,24 @@ module.exports = function authRoutes(app, requireAuthentication) {
 	});
 
 
-	app.get('/auth/v2/login')
+	// app.get('/auth/v2/login')
+
+	app.use(
+		'/sso',
+		proxy(
+			'/', 
+			{
+				target: config.auth.url, 
+				logLevel: config.debug ? 'debug' : 'warn',
+				// ws: true,
+				pathRewrite: {
+					'^/sso': '/',
+					'^/sso/': '/'
+				}
+			}
+		)
+	);
+
 
 	/**
 		GET /login - Serve Login Page

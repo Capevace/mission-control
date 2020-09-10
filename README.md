@@ -32,7 +32,7 @@ $ npm install -g @capevace/mission-control @capevace/single-sign-on
 You can now start the server like you would any binary.
 ```sh
 $ mission-control --version
-v0.1.3
+v0.3.2
 ```
 
 ### Options
@@ -55,8 +55,20 @@ A config file for mission-control will be created at `$HOME_DIR/.mission-control
 ## Screenshots
 <img src="resources/screenshot.png">
 
-## Planned
-- Stability: while Mission Control works gracefully in my home, keep in mind that I’ve mostly built this for myself so not every use case will be stable at the moment
+## Changelog
+### Version 0.3.3
+- The SSO server is now being proxied by default. This can be disabled with the `--no-proxy` option or by disabling it in the config file.
+- Instead of localhost, the default url is now the local ip
+
+## FAQ
+### Running Mission Control on port 80
+On Linux, running an http server on port 80 requires root priviliges. Generally this isn't a problem as you can simply `sudo mission-control -p 80` which works, but this approach falls apart when using systemd.
+
+I found this workaround which seems to be the safest option to use instead:
+```sh
+sudo apt-get install libcap2-bin 
+sudo setcap 'cap_net_bind_service=+ep' /usr/bin/node # Replace path to node binary
+```
 
 ## Authors
 

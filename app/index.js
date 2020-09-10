@@ -18,13 +18,7 @@ module.exports = function startMissionControl() {
 	const log = require('@helpers/log').logger('Main', 'cyan');
 	const eventLog = require('@helpers/log').logger('Event', 'green');
 	
-	log(`Booting...
-
-.  . .-. .-. .-. .-. .-. . .   .-. .-. . . .-. .-. .-. .   
-|\\/|  |  \`-. \`-.  |  | | |\\|   |   | | |\\|  |  |(  | | |   
-'  \` \`-' \`-' \`-' \`-' \`-' ' \`   \`-' \`-' ' \`  '  ' ' \`-' \`-' 
-
-	`);
+	log(`Starting Mission Control...`);
 
 	const database = require('@database'); // eslint-disable-line no-unused-vars
 
@@ -33,7 +27,12 @@ module.exports = function startMissionControl() {
 	// We do this, so the user doesn't have to do so manually,
 	// and the mission-control binary is self-contained to run everything needed.
 	if (argv.sso) {
-		startSSOProcess(config.auth.url, config.auth.port);
+		const ssoProcess = startSSOProcess(config.auth.url, config.auth.port);
+
+		process.on('SIGINT', () => {
+			ssoProcess.kill();
+			process.exit();
+		});
 	} else {
 		log('Skipping internal SSO server process');
 	}

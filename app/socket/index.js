@@ -115,6 +115,4 @@ module.exports = function socket(http) {
 	// 		next(new Error('Unauthorized'));
 	// 	}
 	// });
-
-	log('Listening via HTTP server.');
 };

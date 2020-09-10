@@ -13,6 +13,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const internalIp = require('internal-ip');
 const log = require('@helpers/log').logger('Config', 'cyan');
 const argv = require('@helpers/argv');
 
@@ -24,14 +25,15 @@ let config = require('rc')('mission-control', {
 	basePath,
 	debug: false,
 	auth: {
-		url: 'http://localhost:3001',
+		url: '/sso',
 		issuer: 'mission-control-sso',
 		audience: 'mission-control',
 		secret: 'applepie',
-		port: 3001
+		port: 3001,
+		proxy: true
 	},
 	http: {
-		url: 'http://localhost:3000',
+		url: `http://${internalIp.v4.sync()}:3000`,
 		port: process.env.PORT || 3000
 	},
 	dashboard: {
@@ -74,12 +76,14 @@ if (!fs.existsSync(config.basePath + '/config')) {
 ;debug=true
 
 ;[http]
-;url=
+;url=/sso
 ;port=3000
 
 [auth]
 ;secret=applepie
-;url=
+;url=/sso
+;port=3001
+;proxy=false
 
 ;[homebridge]
 ;pin=
@@ -113,6 +117,10 @@ if (argv.authPort) {
 
 if (argv.debug) {
 	config.debug = argv.debug;
+}
+
+if (argv.proxy) {
+	config.auth.proxy = argv.proxy;
 }
 
 module.exports = config;
