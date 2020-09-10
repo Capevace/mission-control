@@ -73,7 +73,7 @@ module.exports = function authRoutes(app, requireAuthentication) {
 
 		req.session.save(err => {
 			if (err) log('Error saving session', err);
-
+			console.log(config.auth.url);
 			res.redirect(
 				`${config.auth.url}/api/v1/authenticate` +
 					'?' +
@@ -115,22 +115,23 @@ module.exports = function authRoutes(app, requireAuthentication) {
 
 	// app.get('/auth/v2/login')
 
-	app.use(
-		'/sso',
-		proxy(
-			'/', 
-			{
-				target: config.auth.url, 
-				logLevel: config.debug ? 'debug' : 'warn',
-				// ws: true,
-				pathRewrite: {
-					'^/sso': '/',
-					'^/sso/': '/'
+	if (config.auth.proxy) {
+		app.use(
+			'/sso',
+			proxy(
+				'/', 
+				{
+					target: `http://localhost:${config.auth.port}`,
+					logLevel: config.debug ? 'debug' : 'warn',
+					// ws: true,
+					pathRewrite: {
+						'^/sso': '/',
+						'^/sso/': '/'
+					}
 				}
-			}
-		)
-	);
-
+			)
+		);
+	}
 
 	/**
 		GET /login - Serve Login Page
