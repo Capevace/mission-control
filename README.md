@@ -56,6 +56,9 @@ A config file for mission-control will be created at `$HOME_DIR/.mission-control
 <img src="resources/screenshot.png">
 
 ## Changelog
+### Version 0.4.2
+- Fixes error preventing the auth proxy from returning properly
+
 ### Version 0.4.1
 - Fixes some minor security issues with dependencies
 
