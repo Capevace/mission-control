@@ -4,7 +4,6 @@ module.exports.call = function(state, data) {
 };
 
 module.exports.validate = function(data = {}) {
-	console.log('data', data)
 	if ('kodiId' in data && 'command' in data) return data;
 	
 	return false;

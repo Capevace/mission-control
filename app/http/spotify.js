@@ -77,9 +77,6 @@ module.exports = function spotifyAuthRoutes(app, requireAuth) {
 
 			res.type('text/html').send(indexFile);
 		}
-
-		console.log('token, ', state.getState().spotify)
-		
 	});
 
 	app.use(
