@@ -163,7 +163,17 @@ const rawActions = [
 	 * @example
 	 * state.callAction('BAHN:UPDATE', { })
 	 */
-	'BAHN:UPDATE'
+	'BAHN:UPDATE',
+
+	/**
+	 * Update dashboard layout
+	 *
+	 * @constant LAYOUT:UPDATE
+	 * @property {object} changes The data to be set
+	 * @example
+	 * state.callAction('LAYOUT:UPDATE', { layout: [] })
+	 */
+	'LAYOUT:UPDATE'
 ];
 
 // Take the actions and require their respective js files.

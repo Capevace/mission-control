@@ -73,7 +73,7 @@ module.exports = function authRoutes(app, requireAuthentication) {
 
 		req.session.save(err => {
 			if (err) log('Error saving session', err);
-			console.log(config.auth.url);
+
 			res.redirect(
 				`${config.auth.url}/api/v1/authenticate` +
 					'?' +

@@ -25,5 +25,6 @@ module.exports = {
 	},
 	homekit: {
 		services: {}
-	}
+	},
+	layout: []
 };

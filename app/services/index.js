@@ -13,6 +13,7 @@ const spotifyService = require('./spotify');
 const systemInfoService = require('./system-info');
 const homekitService = require('./homekit');
 const bahn = require('./bahn');
+const layout = require('./layout');
 
 let services = {};
 
@@ -38,7 +39,8 @@ module.exports = {
 			spotify: spotifyService(),
 			systemInfo: systemInfoService(),
 			homekit: homekitService(),
-			bahn: bahn()
+			bahn: bahn(),
+			layout: layout()
 		};
 	}
 };
