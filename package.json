@@ -1,6 +1,6 @@
 {
   "name": "@capevace/mission-control",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Beautiful smart home dashboard software built on Node.js",
   "main": "app/index.js",
   "scripts": {
