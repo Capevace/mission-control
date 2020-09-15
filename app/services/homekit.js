@@ -22,7 +22,7 @@ module.exports = async function homekit() {
 		log(
 			'Won\'t be able to connect to Homebridge, as the secret pin is not defined in config file.'
 		);
-
+		state.callAction('HOMEKIT:SET-INITIALIZED', { initialized: false });
 		return;
 	}
 
@@ -41,6 +41,10 @@ module.exports = async function homekit() {
 			debug: true
 		},
 	});
+
+	// TODO: Error detection for homebridge connection or something. I do
+	// think that HapClient does error logging on its own but ¯\_(ツ)_/¯
+	state.callAction('HOMEKIT:SET-INITIALIZED', { initialized: true });
 
 	let monitor = null;
 	

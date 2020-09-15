@@ -145,6 +145,16 @@ const rawActions = [
 	'HOMEKIT:SET-SERVICES',
 
 	/**
+	 * Set homebridge config initialization state to indicate wether the pin is configured.
+	 *
+	 * @constant HOMEKIT:SET-INITIALIZED
+	 * @property {Boolean} initialized 
+	 * @example
+	 * state.callAction('HOMEKIT:SET-INITIALIZED', { initialized: false })
+	 */
+	'HOMEKIT:SET-INITIALIZED',
+
+	/**
 	 * Set the devices homebridge sees
 	 *
 	 * @constant HOMEKIT:MODIFY-CHARACTERISTICS
