@@ -56,6 +56,12 @@ A config file for mission-control will be created at `$HOME_DIR/.mission-control
 <img src="resources/screenshot.png">
 
 ## Changelog
+### Version 0.5.1
+- Fixed dashboard layout now being loaded from database correctly
+
+### Version 0.5.0
+- New Dashboard is now customizeable
+
 ### Version 0.4.2
 - Fixes error preventing the auth proxy from returning properly
 
