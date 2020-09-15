@@ -12,7 +12,7 @@ module.exports = async function dashboardLayout() {
 
 	const layout = db.get('layout', initialLayout);
 	state.callAction('LAYOUT:UPDATE', {
-		layout: initialLayout
+		layout
 	});
 
 	state.subscribe('action:LAYOUT:UPDATE', (data) => {
