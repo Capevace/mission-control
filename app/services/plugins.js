@@ -1,31 +1,83 @@
 const config = require('@config');
 const state = require('@state');
-const log = require('@helpers/log').logger('Plugins');
+const logger = require('@helpers/log');
+const log = logger.logger('Plugins');
 
 const fs = require('fs');
 const path = require('path');
-const readFileAsync = require('util').promisify(fs.readFile);
+const { promisify } = require('util');
+const readFileAsync = promisify(fs.readFile);
+const readdir = promisify(fs.readdir);
+const lstat = promisify(fs.lstat);
 
+async function isDirectory(path) {
+	const stat = await lstat(path);
 
-function simplifyService(inputService) {
-	return {
-		uniqueId: inputService.uniqueId,
-		iid: inputService.iid,
-		name: inputService.serviceName,
-		type: inputService.type,
-		characteristics: inputService.serviceCharacteristics,
-		values: inputService.values
-	};
+	return stat.isDirectory();
 }
-
 
 async function initializePlugins() {
-	const pluginsDir = '';
-	const 
+	const pluginsDir = path.join(config.basePath, 'plugins');
+	
+	const pluginFiles = await readdir(pluginsDir);
+	
+	for (const pluginFile of pluginFiles) {
+		if (pluginFile.startsWith('_')) {
+			continue;
+		}
+
+		const pluginPath = path.join(pluginsDir, pluginFile);
+		const isPluginFolder = await isDirectory(pluginPath);
+
+		let plugins = [];
+		const pluginStart = isPluginFolder 
+			? require(path.join(pluginPath, 'index.js'))
+			: require(pluginPath);
+
+		try {
+			const pluginData = await pluginStart({
+				config,
+				state,
+				dashboard: {
+					registerPage(path, title, componentName) {},
+					registerComponent() {}
+				}
+			});
+			plugins.push({
+				active: true,
+				id: pluginFile,
+				...pluginData
+			});
+			log(`Plugin "${pluginData.name}" loaded successfully`);
+		} catch(e) {
+			plugins.push({
+				active: false,
+				error: e.message,
+				id: pluginFile,
+				name: pluginFile
+			});
+			logger.error('Plugins', e);
+		}
+
+		return plugins;
+	}
 }
 
+// module.exports = function pluginStart({ config, http, state, dashboard }) {
+
+// 	dashboard.registerPage('/path', 'Title', 'component-name');
+// 	dashboard.registerComponent('', '')
+
+
+
+// 	return {
+// 		name: 'HomeKit',
+// 		version: '0.0.1'
+// 	};
+// }
+
 module.exports = async function plugins() {
-	const plugins
+	const plugins = await initializePlugins();
 
 	// state.subscribe('action:HOMEKIT:MODIFY-CHARACTERISTICS', async (context) => {
 	// 	const { uniqueId, changes = {} } = context.actionData;

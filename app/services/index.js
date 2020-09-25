@@ -14,6 +14,7 @@ const systemInfoService = require('./system-info');
 const homekitService = require('./homekit');
 const bahn = require('./bahn');
 const layout = require('./layout');
+const plugins = require('./plugins');
 
 let services = {};
 
@@ -41,6 +42,7 @@ module.exports = {
 			homekit: homekitService(),
 			bahn: bahn(),
 			layout: layout()
+			// plugins: plugins()
 		};
 	}
 };
