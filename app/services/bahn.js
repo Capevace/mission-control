@@ -14,7 +14,6 @@ module.exports = async function bahn() {
 	const refreshInfo = async () => {
 		try {
 			const hlRoutes = await routesToHL();
-
 			const data = {
 				routes: hlRoutes
 			};
@@ -32,10 +31,15 @@ module.exports = async function bahn() {
 async function routesToHL() {
 	try {
 		const { journeys } = await hafas.journeys(stations['Lüneburg'], stations['Lübeck'], {results: 20});
-
 		const routes = [];
 		for (const journey of journeys) {
-			if (journey.legs.length > 1)
+			const skipJourney = journey.legs
+				.reduce((skip, leg) => 
+					skip || leg.line.product !== 'regional',
+					false
+				);
+
+			if (skipJourney)
 				continue;
 
 			const route = await parseJourney(journey);
@@ -122,11 +126,12 @@ function busesToText(buses) {
 // Parse a train journey's legs into our needed info
 function parseJourney(journey) {
 	const leg = journey.legs[0];
+	const lastLeg = journey.legs[journey.legs.length - 1];
 
 	return {
 		departure: new Date(leg.departure),
-		arrival: new Date(leg.arrival),
-		arrivalDelay: leg.arrivalDelay, // delay is in seconds, acc. to docs
+		arrival: new Date(lastLeg.arrival),
+		arrivalDelay: lastLeg.arrivalDelay, // delay is in seconds, acc. to docs
 		departureDelay: leg.departureDelay
 	};
 }
