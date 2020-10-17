@@ -56,6 +56,9 @@ A config file for mission-control will be created at `$HOME_DIR/.mission-control
 <img src="resources/screenshot.png">
 
 ## Changelog
+### Version 0.5.2
+- Fixed bahn algorithm skipping not displaying trains with SEV present
+
 ### Version 0.5.1
 - Fixed dashboard layout now being loaded from database correctly
 
