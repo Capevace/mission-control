@@ -14,8 +14,8 @@
 const fs = require('fs');
 const path = require('path');
 const internalIp = require('internal-ip');
-const log = require('@helpers/log').logger('Config', 'cyan');
-const argv = require('@helpers/argv');
+const log = require('./helpers/log').logger('Config', 'cyan');
+const argv = require('./helpers/argv');
 
 const basePath = process.env.NODE_ENV === 'production'
 	? '/etc/mission-control'
@@ -47,7 +47,7 @@ let config = require('rc')('mission-control', {
 	},
 	spotify: {
 		path: path.resolve(
-			__dirname, 
+			__dirname,
 			'../resources/spotify-ui'
 		), // ui path
 		clientId: 'f1421bd3dada404da546902b6849f2d7',
@@ -69,8 +69,8 @@ if (!fs.existsSync(config.basePath)) {
 if (!fs.existsSync(config.basePath + '/config')) {
 	log('Config file not found. Creating...');
 
-	fs.writeFileSync(config.basePath + '/config', 
-`; Mission Control Config File
+	fs.writeFileSync(config.basePath + '/config',
+		`; Mission Control Config File
 
 ; Enable debug mode here
 ;debug=true

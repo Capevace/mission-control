@@ -17,7 +17,7 @@ const startSSOProcess = require('@helpers/sso-process');
 module.exports = function startMissionControl() {
 	const log = require('@helpers/log').logger('Main', 'cyan');
 	const eventLog = require('@helpers/log').logger('Event', 'green');
-	
+
 	log(`Starting Mission Control...`);
 
 	const database = require('@database'); // eslint-disable-line no-unused-vars
@@ -57,7 +57,7 @@ module.exports = function startMissionControl() {
 			eventLog(event, data.actionData || data)
 		);
 	}
-}
+};
 
 
 // setTimeout(

@@ -13,17 +13,25 @@ const spotifyService = require('./spotify');
 const systemInfoService = require('./system-info');
 const homekitService = require('./homekit');
 const bahn = require('./bahn');
+const covid = require('./covid');
 const layout = require('./layout');
 const plugins = require('./plugins');
 
 let services = {};
 
+// module.exports = function createServiceContainer(config, http, state) {
+// 	const serviceContext = {
+// 		config,
+// 		http,
+// 		state
+// 	};
+
+// 	const 
+
+// 	return services;
+// };
+
 module.exports = {
-	/**
-	 * Get all registered services.
-	 * @return {Object.<string, Object>} The services.
-	 */
-	getServices: () => services,
 
 	/**
 	 * Start the services last and populate the services object.
@@ -41,7 +49,8 @@ module.exports = {
 			systemInfo: systemInfoService(),
 			homekit: homekitService(),
 			bahn: bahn(),
-			layout: layout()
+			covid: covid(),
+			layout: layout(),
 			// plugins: plugins()
 		};
 	}

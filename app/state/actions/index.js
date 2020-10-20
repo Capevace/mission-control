@@ -176,6 +176,16 @@ const rawActions = [
 	'BAHN:UPDATE',
 
 	/**
+	 * Update COVID data
+	 *
+	 * @constant COVID:UPDATE
+	 * @property {object} changes The data to be set
+	 * @example
+	 * state.callAction('COVID:UPDATE', { cities: { 'city-id': { } } })
+	 */
+	'COVID:UPDATE',
+
+	/**
 	 * Update dashboard layout
 	 *
 	 * @constant LAYOUT:UPDATE
@@ -183,7 +193,16 @@ const rawActions = [
 	 * @example
 	 * state.callAction('LAYOUT:UPDATE', { layout: [] })
 	 */
-	'LAYOUT:UPDATE'
+	'LAYOUT:UPDATE',
+
+	/**
+	 * Reset the dashboard layout to defaults
+	 *
+	 * @constant LAYOUT:RESET
+	 * @example
+	 * state.callAction('LAYOUT:RESET')
+	 */
+	'LAYOUT:RESET'
 ];
 
 // Take the actions and require their respective js files.
