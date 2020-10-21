@@ -1,5 +1,5 @@
 const config = require('@config');
-const log = require('@helpers/log').logger('Socket Auth');
+const logger = require('@helpers/logger').createLogger('Socket Auth');
 const jwt = require('jsonwebtoken');
 
 module.exports = function socketAuth(socketIO, onAuthentication) {
@@ -43,7 +43,7 @@ module.exports = function socketAuth(socketIO, onAuthentication) {
 
 				socket.emit('authenticated');
 			} catch (e) {
-				log('Client couldnt be authorized:', e.message);
+				logger.debug('Client couldnt be authorized:', e.message);
 
 				// Send the unauthorized event and disconnect
 				socket.emit(

@@ -11,14 +11,16 @@
 require('module-alias/register');
 const config = require('@config');
 const argv = require('@helpers/argv');
+const logging = require('@helpers/logger');
 
 const startSSOProcess = require('@helpers/sso-process');
 
 module.exports = function startMissionControl() {
-	const log = require('@helpers/log').logger('Main', 'cyan');
-	const eventLog = require('@helpers/log').logger('Event', 'green');
+	const logger = logging.createLogger('Main', 'cyan');
+	const eventLogger = logging.createLogger('Event', 'green');
 
-	log(`Starting Mission Control...`);
+	logging.logConfig(config);
+	logger.info(`Starting Mission Control...`);
 
 	const database = require('@database'); // eslint-disable-line no-unused-vars
 
@@ -34,7 +36,7 @@ module.exports = function startMissionControl() {
 			process.exit();
 		});
 	} else {
-		log('Skipping internal SSO server process');
+		logger.info('Skipping internal SSO server process');
 	}
 
 	// Start the state machine
@@ -54,7 +56,7 @@ module.exports = function startMissionControl() {
 
 	if (config.debug) {
 		state.subscribe('*', (event, data) =>
-			eventLog(event, data.actionData || data)
+			eventLogger.debug(event, data.actionData || data)
 		);
 	}
 };

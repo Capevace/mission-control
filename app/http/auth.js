@@ -1,5 +1,6 @@
 const config = require('@config');
-const log = require('@helpers/log').logger('Auth');
+const logging = require('@helpers/logger');
+const logger = logging.createLogger('Auth');
 
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
@@ -53,7 +54,7 @@ module.exports = function authRoutes(app, requireAuthentication) {
 			},
 			(jwtPayload, done) => {
 				if (!jwtPayload.user) {
-					log('JWT did not contain a user object.', jwtPayload);
+					logger.warn('JWT did not contain a user object.', jwtPayload);
 					return done(null, false);
 				}
 
@@ -67,26 +68,22 @@ module.exports = function authRoutes(app, requireAuthentication) {
 	});
 
 	app.get('/auth/login', (req, res) => {
-		log('Redirecting authentication attempt to SSO server.');
-
 		req.session.redirectUrl = req.query.redirect_url;
 
 		req.session.save(err => {
-			if (err) log('Error saving session', err);
+			if (err) logger.error('Error saving session', err);
 
 			res.redirect(
 				`${config.auth.url}/api/v1/authenticate` +
-					'?' +
-					queryString.stringify({
-						redirect_url: `${config.http.url}/auth/callback`
-					})
+				'?' +
+				queryString.stringify({
+					redirect_url: `${config.http.url}/auth/callback`
+				})
 			);
 		});
 	});
 
 	app.get('/auth/callback', (req, res) => {
-		log('Received SSO auth callback with JWT.');
-
 		const token = req.query.auth_token;
 		try {
 			// Verify JWT received with the secret
@@ -101,7 +98,7 @@ module.exports = function authRoutes(app, requireAuthentication) {
 
 			res.redirect(redirectUrl);
 		} catch (e) {
-			log('Authorization callback failed.', e);
+			logger.debug('Authorization callback failed', e);
 			res.status(401).json('Unauthorized');
 		}
 	});
@@ -119,7 +116,7 @@ module.exports = function authRoutes(app, requireAuthentication) {
 		app.use(
 			'/sso',
 			proxy(
-				'/', 
+				'/',
 				{
 					target: `http://localhost:${config.auth.port}`,
 					logLevel: config.debug ? 'debug' : 'warn',
@@ -140,5 +137,5 @@ module.exports = function authRoutes(app, requireAuthentication) {
 
 		POST /v2/auth/token
 		POST /v2/auth/logout - Logout the User
-	*/ 
+	*/
 };

@@ -1,6 +1,6 @@
-const config = require("@config");
-const state = require("@state");
-const log = require("@helpers/log").logger("HomeKit", 'greenBright');
+const config = require('@config');
+const state = require('@state');
+const logger = require('@helpers/logger').createLogger('HomeKit', 'greenBright');
 
 const { HapClient } = require('@oznu/hap-client');
 
@@ -19,23 +19,21 @@ function simplifyService(inputService) {
 
 module.exports = async function homekit() {
 	if (!config.homebridge.pin) {
-		log(
+		logger.warn(
 			'Won\'t be able to connect to Homebridge, as the secret pin is not defined in config file.'
 		);
 		state.callAction('HOMEKIT:SET-INITIALIZED', { initialized: false });
 		return;
 	}
 
-	const debugLog = config.debug ? log : () => {};
-
 	const hap = new HapClient({
 		pin: config.homebridge.pin,
 		logger: {
-			log: debugLog,
-			info: debugLog,
-			error: log,
-			warning: log,
-			verbose: debugLog
+			log: logger.debug,
+			info: logger.debug,
+			error: logger.error,
+			warning: logger.warn,
+			verbose: logger.debug
 		},
 		config: {
 			debug: true
@@ -47,11 +45,11 @@ module.exports = async function homekit() {
 	state.callAction('HOMEKIT:SET-INITIALIZED', { initialized: true });
 
 	let monitor = null;
-	
+
 	hap.on('instance-discovered', async () => {
-		log('Discovered new HAP instance');
+		logger.debug('Discovered new HAP instance');
 		const servicesList = await hap.getAllServices();
-	
+
 		let servicesData = {};
 		for (const service of servicesList) {
 			// servicesActions[service.uniqueId] = {
@@ -62,8 +60,8 @@ module.exports = async function homekit() {
 		}
 
 		state.callAction(
-			'HOMEKIT:SET-SERVICES', 
-			{ 
+			'HOMEKIT:SET-SERVICES',
+			{
 				services: servicesData,
 				reset: true
 			}
@@ -77,16 +75,16 @@ module.exports = async function homekit() {
 		// Setup monitoring of characteristics to detect changes
 		monitor = await hap.monitorCharacteristics();
 		const updateHandler = (data) => {
-			log('Received characteristics update', data);
+			logger.debug('Received characteristics update', data);
 
 			let servicesData = {};
 			for (const service of data) {
 				servicesData[service.uniqueId] = simplifyService(service);
 			}
-			
+
 			state.callAction(
-				'HOMEKIT:SET-SERVICES', 
-				{ 
+				'HOMEKIT:SET-SERVICES',
+				{
 					services: servicesData
 				}
 			);
@@ -97,12 +95,12 @@ module.exports = async function homekit() {
 	state.subscribe('action:HOMEKIT:MODIFY-CHARACTERISTICS', async (context) => {
 		const { uniqueId, changes = {} } = context.actionData;
 
-		log(`Modifying characteristics in service ${uniqueId} with changes ${JSON.stringify(changes, null, 2)}`);
+		logger.debug(`Modifying characteristics in service ${uniqueId} with changes ${JSON.stringify(changes, null, 2)}`);
 
 		const services = await hap.getAllServices();
 		const service = services.find(service => service.uniqueId === uniqueId);
 		if (!service) {
-			log(`Could not find service with id: ${uniqueId}`);
+			logger.error(`Could not find service with id: ${uniqueId}`);
 			return;
 		}
 
@@ -112,7 +110,7 @@ module.exports = async function homekit() {
 			const characteristic = service.getCharacteristic(characteristicName);
 
 			if (!characteristic || !characteristic.setValue) {
-				log(`Could not find characteristic with name: ${characteristicName}`);
+				logger.error(`Could not find characteristic with name: ${characteristicName}`);
 				continue;
 			}
 

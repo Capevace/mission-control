@@ -38,6 +38,7 @@
     "internal-ip": "^6.1.0",
     "module-alias": "^2.2.0",
     "object-diff": "0.0.4",
+    "on-finished": "^2.3.0",
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0",
     "public-ip": "^3.0.0",

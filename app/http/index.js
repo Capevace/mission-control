@@ -15,8 +15,7 @@
 
 const config = require('@config');
 const database = require('@database');
-const logging = require('@helpers/log');
-const log = logging.logger('HTTP', 'magenta');
+const logger = require('@helpers/logger');
 
 const express = require('express');
 const app = express();
@@ -61,6 +60,8 @@ module.exports = function http() {
 		})
 	);
 
+	app.use(logger.logMiddleware);
+
 	const requireAuthentication = () => (req, res, next) => {
 		passport.authenticate('jwt', {
 			session: false,
@@ -79,8 +80,8 @@ module.exports = function http() {
 	youtubeRoutes(app, requireAuthentication);
 
 	server.listen(config.http.port, () => {
-		log(`HTTP server listening on port ${config.http.port}`);
-		logging.logReadyMessage(config.http.url, config.auth.url);
+		logger.http(`Server listening on port`, config.http.port);
+		logger.logReadyMessage(config.http.url, config.auth.url);
 	});
 
 	return server;

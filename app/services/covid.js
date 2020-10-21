@@ -1,10 +1,9 @@
 const state = require('@state');
-const log = require('@helpers/log').logger('COVID');
-const logError = require('@helpers/log').error;
+const logger = require('@helpers/logger').createLogger('COVID');
 const superagent = require('superagent');
 
 const cities = {
-	'de.nd.03355': 'Lüneburg',
+	'de.ni.03355': 'Lüneburg',
 	'de.sh.01003': 'Lübeck'
 };
 
@@ -22,7 +21,7 @@ module.exports = async function covid() {
 				cities: citiesData
 			});
 		} catch (e) {
-			logError('COVID', 'Error occurred during covid check', e);
+			logger.error('Error occurred during covid API check', e);
 		}
 	};
 
@@ -38,7 +37,7 @@ async function newestCovidCSV() {
 
 		return text;
 	} catch (e) {
-		logError('COVID', 'Could not fetch COVID data', e);
+		logger.error('Could not fetch COVID data', e);
 		return [];
 	}
 }

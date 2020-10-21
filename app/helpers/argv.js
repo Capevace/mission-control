@@ -8,7 +8,9 @@ program
 	.option('--no-proxy', 'disable proxiing of the single sign on server')
 	.option('--auth-url <url>', 'the url to use for the single-sign-on server')
 	.option('--auth-port <port>', 'the port to use for the single-sign-on server')
-	.option('-d, --debug', 'enable debug mode');
+	.option('-l, --log-level <level>', 'set the log level')
+	.option('-d, --debug', 'enable debug mode')
+	.option('-s, --silent', 'disable all output');
 
 program.parse(process.argv);
 

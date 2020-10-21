@@ -12,7 +12,7 @@
  * @requires jsonwebtoken
  */
 
-const log = require('@helpers/log').logger('Socket', 'magenta');
+const logger = require('@helpers/logger').createLogger('Socket', 'magenta');
 const state = require('@state');
 const socketIO = require('socket.io');
 const socketAuth = require('./auth');
@@ -27,7 +27,7 @@ module.exports = function socket(http) {
 	socketAuth(server, client => {
 		let subscriptions = {};
 
-		log('A new client connected.');
+		logger.debug('A new client connected');
 
 		// On connection, we emit a initial-state event.
 		// The client can use this to populate its state.
@@ -38,7 +38,7 @@ module.exports = function socket(http) {
 		// The client can call actions by emitting the action event.
 		// It has to pass the action and associated data.
 		client.on('action', ({ action, data }) => {
-			log(`Client requested action ${action}.`);
+			logger.debug(`Client requested action ${action}`);
 			state.callAction(action, data);
 		});
 
@@ -47,7 +47,7 @@ module.exports = function socket(http) {
 		client.on('subscribe', ({ event }) => {
 			if (event in subscriptions) return;
 
-			log(`A client subscribed to ${event}.`);
+			logger.debug(`Client subscribed to ${event}.`);
 
 			const relayAllEvents = (actualEvent, data) => {
 				client.emit('all-events', {
@@ -73,7 +73,7 @@ module.exports = function socket(http) {
 		client.on('unsubscribe', ({ event }) => {
 			if (!(event in subscriptions)) return;
 
-			log(`Unsubscribing client from event ${event}.`);
+			logger.debug(`Unsubscribing client from event ${event}.`);
 
 			subscriptions[event]();
 			delete subscriptions[event];
@@ -81,7 +81,7 @@ module.exports = function socket(http) {
 
 		// When the client disconnects unsubscribe all subscriptions
 		client.on('disconnect', () => {
-			log('A client disconnected.');
+			logger.debug('A client disconnected.');
 
 			Object.values(subscriptions).forEach(unsubscribe => unsubscribe());
 			subscriptions = null;

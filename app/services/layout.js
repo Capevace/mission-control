@@ -1,6 +1,5 @@
 const state = require('@state');
 const db = require('@database');
-const log = require('@helpers/log').logger('Layout');
 
 module.exports = async function dashboardLayout() {
 	const initialLayout = [

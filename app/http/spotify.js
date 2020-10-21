@@ -1,7 +1,7 @@
 const fs = require('fs');
 const config = require('@config');
 const state = require('@state');
-const log = require('@helpers/log').logger('Spotify');
+const logger = require('@helpers/logger').createLogger('Spotify');
 
 const express = require('express');
 const queryString = require('querystring');
@@ -27,7 +27,7 @@ module.exports = function spotifyAuthRoutes(app, requireAuth) {
 		const stateId = req.query.state || null;
 
 		if (stateId === null) {
-			log('Authentication failed. State mismatch:', stateId);
+			logger.error('Authentication failed. State mismatch:', stateId);
 			res.status(500).json({
 				message: 'State mismatch.'
 			});

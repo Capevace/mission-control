@@ -1,12 +1,9 @@
-const { promisify } = require('util');
-const publicIp = require('public-ip');
 const childProcess = require('child_process');
-const log = require('@helpers/log').logger('SSO', 'magenta');
-const exec = promisify(childProcess.spawn);
+const logger = require('@helpers/logger').createLogger('SSO', 'magenta');
 
 // Spawn a mission-control-sso process
 module.exports = function spawnSSOProcess(url, port) {
-	log('Spawning SSO process');
+	logger.info('Spawning SSO process');
 
 	let args = [];
 
@@ -24,17 +21,16 @@ module.exports = function spawnSSOProcess(url, port) {
 
 	proc.stdout.on('data', (data) => {
 		const str = data.toString();
-		log(str.substring(0, str.length - 2));
+		logger.debug(str.substring(0, str.length - 2));
 	});
 
 	proc.stderr.on('data', (data) => {
-	  log('Error', data.toString());
+		logger.error('Error', data.toString());
 	});
 
 	proc.on('exit', function (code, signal) {
-		log('Process exited with ' +
-		`code ${code} and signal ${signal}`);
+		logger.error(`SSO process quit unexpectedly with code ${code} and signal ${signal}`);
 	});
 
 	return proc;
-}
+};

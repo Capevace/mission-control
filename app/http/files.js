@@ -19,7 +19,7 @@ module.exports = function filesRoutes(app, requireAuth) {
 				'^/files': '/',
 				'^/files/': '/'
 			},
-			onProxyReq(proxyReq, req, res) {
+			onProxyReq(proxyReq, req) {
 				proxyReq.setHeader('X-Files-Auth', req.user.id);
 			}
 		})

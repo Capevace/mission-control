@@ -35,15 +35,14 @@
  * @requires @state/initial-state
  */
 
-const config = require('@config');
+// const config = require('@config');
 const EventEmitter = require('eventemitter2');
 const diff = require('object-diff');
 const actions = require('./actions');
 
 // const ActionEvent = require('@state/events/ActionEvent');
 
-const log = require('@helpers/log').logger('State', 'blueBright');
-const logError = require('@helpers/log').error;
+const logger = require('@helpers/logger').createLogger('State', 'blueBright');
 
 const emitter = new EventEmitter({
 	wildcard: true,
@@ -94,27 +93,23 @@ function subscribe(event, callback) {
  * @emits 'update'
  */
 function callAction(actionKey, data) {
-	if (config.debug) {
-		log(`Running action ${actionKey} with data: ${JSON.stringify(
-			data
-		)}`);
-	} else {
-		log(`Running action ${actionKey}`);
-	}
+	logger.debug(`Running action ${actionKey} with data: ${JSON.stringify(
+		data
+	)}`);
 
 	// Normalize action name
 	actionKey = actionKey.toUpperCase();
 
 	// Throw an error if action doesn't exist
 	if (!(actionKey in actions)) {
-		logError('State', `State machine could not find action '${actionKey}'.`);
+		logger.error(`Could not find action '${actionKey}'`);
 		return;
 	}
 
 	const action = actions[actionKey];
 
 	if (!action.validate(data)) {
-		logError('State', `Data for action '${actionKey}' is invalid.`);
+		logger.error(`Data for action '${actionKey}' is invalid`);
 		return;
 	}
 

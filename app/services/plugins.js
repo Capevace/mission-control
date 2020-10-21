@@ -1,7 +1,6 @@
 const config = require('@config');
 const state = require('@state');
-const logger = require('@helpers/log');
-const log = logger.logger('Plugins');
+const logger = require('@helpers/logger').createLogger('Plugins');
 
 const fs = require('fs');
 const path = require('path');
@@ -18,9 +17,9 @@ async function isDirectory(path) {
 
 async function initializePlugins() {
 	const pluginsDir = path.join(config.basePath, 'plugins');
-	
+
 	const pluginFiles = await readdir(pluginsDir);
-	
+
 	for (const pluginFile of pluginFiles) {
 		if (pluginFile.startsWith('_')) {
 			continue;
@@ -30,7 +29,7 @@ async function initializePlugins() {
 		const isPluginFolder = await isDirectory(pluginPath);
 
 		let plugins = [];
-		const pluginStart = isPluginFolder 
+		const pluginStart = isPluginFolder
 			? require(path.join(pluginPath, 'index.js'))
 			: require(pluginPath);
 
@@ -38,25 +37,26 @@ async function initializePlugins() {
 			const pluginData = await pluginStart({
 				config,
 				state,
-				dashboard: {
-					registerPage(path, title, componentName) {},
-					registerComponent() {}
-				}
+				// app,
+				// dashboard: {
+				// 	registerPage(path, title, componentName) {},
+				// 	registerComponent() {}
+				// }
 			});
 			plugins.push({
 				active: true,
 				id: pluginFile,
 				...pluginData
 			});
-			log(`Plugin "${pluginData.name}" loaded successfully`);
-		} catch(e) {
+			logger.debug(`Plugin "${pluginData.name}" loaded successfully`);
+		} catch (e) {
 			plugins.push({
 				active: false,
 				error: e.message,
 				id: pluginFile,
 				name: pluginFile
 			});
-			logger.error('Plugins', e);
+			logger.error(`Error loading plugin ${pluginFile}`, e);
 		}
 
 		return plugins;

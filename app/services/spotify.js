@@ -2,7 +2,7 @@
 const config = require('@config');
 const database = require('@database');
 const state = require('@state');
-const log = require('@helpers/log').logger('Spotify', 'greenBright');
+const logger = require('@helpers/logger').createLogger('Spotify', 'greenBright');
 
 const superagent = require('superagent');
 
@@ -78,7 +78,7 @@ function authorizeSpotify(accessToken, expiresAt, refreshToken) {
 	// Schedule a token refresh at a given time
 	scheduleTokenRefresh(expiresAt, refreshToken);
 
-	log('Successfully authorized Spotify.');
+	logger.info('Successfully authorized Spotify');
 
 	// Save to database so its persistent and then update state so clients are notified.
 	database.set('spotify', data);
@@ -87,7 +87,7 @@ function authorizeSpotify(accessToken, expiresAt, refreshToken) {
 
 function scheduleTokenRefresh(expiresAt, refreshToken) {
 	const dateDifference = Math.max(0, expiresAt.getTime() - Date.now());
-	log(`Scheduled token refresh in ${dateDifference / 1000}s.`);
+	logger.debug(`Scheduled token refresh in ${dateDifference / 1000}s.`);
 
 	setTimeout(async () => {
 		try {
@@ -98,7 +98,7 @@ function scheduleTokenRefresh(expiresAt, refreshToken) {
 				data.refreshToken
 			);
 		} catch (e) {
-			log('Couldnt refresh access token.', e);
+			logger.error('Couldn\'t refresh access token', e);
 			state.callAction('NOTIFICATIONS:CREATE', {
 				title: `Spotify couldn't be authorized.`,
 				message: e.message
@@ -111,7 +111,7 @@ module.exports = function spotify() {
 	const spotifyData = database.get('spotify', {});
 
 	state.subscribe('spotify:callback', async ({ code }) => {
-		log('Requesting access token from Spotify.');
+		logger.debug('Requesting access token from Spotify.');
 
 		try {
 			const data = await requestAccessToken(code);
@@ -121,13 +121,13 @@ module.exports = function spotify() {
 				data.refreshToken
 			);
 		} catch (e) {
-			log('Couldnt request access token.', e);
+			logger.error('Couldnt request access token.', e);
 		}
 	});
 
 	// If Spotify isnt authorized, we cant use it.
 	if (!spotifyData.accessToken) {
-		log(
+		logger.warn(
 			`Spotify isnt authorized. Visit ${require('chalk').cyan(
 				`${config.http.url}/spotify/auth`
 			)} and log in.`
@@ -139,11 +139,11 @@ module.exports = function spotify() {
 		// Get a new token, if the old one has expired.
 		// If not, set a timeout to get a new token ahead of time.
 		if (expiresAt <= now) {
-			log('Access token has expired. Requesting new token.');
+			logger.debug('Access token has expired. Requesting new token.');
 
 			scheduleTokenRefresh(new Date(), spotifyData.refreshToken);
 		} else {
-			log(`Access token is still fresh.`);
+			logger.debug(`Access token is still fresh.`);
 			authorizeSpotify(
 				spotifyData.accessToken,
 				new Date(spotifyData.expiresAt),

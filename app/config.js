@@ -14,7 +14,8 @@
 const fs = require('fs');
 const path = require('path');
 const internalIp = require('internal-ip');
-const log = require('./helpers/log').logger('Config', 'cyan');
+const logging = require('./helpers/logger');
+const logger = logging.createLogger('Config', 'cyan');
 const argv = require('./helpers/argv');
 
 const basePath = process.env.NODE_ENV === 'production'
@@ -23,6 +24,7 @@ const basePath = process.env.NODE_ENV === 'production'
 
 let config = require('rc')('mission-control', {
 	basePath,
+	logLevel: logging.LogLevel.http,
 	debug: false,
 	auth: {
 		url: '/sso',
@@ -61,13 +63,13 @@ let config = require('rc')('mission-control', {
 });
 
 if (!fs.existsSync(config.basePath)) {
-	log('Base path not found. Creating base directory ' + config.basePath);
+	logger.warn('Base path not found. Creating base directory ' + config.basePath);
 
 	fs.mkdirSync(config.basePath, { recursive: true });
 }
 
 if (!fs.existsSync(config.basePath + '/config')) {
-	log('Config file not found. Creating...');
+	logger.warn('Config file not found. Creating...');
 
 	fs.writeFileSync(config.basePath + '/config',
 		`; Mission Control Config File
@@ -99,6 +101,10 @@ if (!fs.existsSync(config.basePath + '/config')) {
 	);
 }
 
+if (argv.logLevel) {
+	config.logLevel = argv.logLevel;
+}
+
 if (argv.url) {
 	config.http.url = argv.url;
 }
@@ -122,5 +128,19 @@ if (argv.debug) {
 if (argv.proxy) {
 	config.auth.proxy = argv.proxy;
 }
+
+// If we can parse a log level from the logLevel config, then a string was passed and we can
+// parse the log level value.
+const parsedLogLevel = logging.logLevelFromString(config.logLevel);
+if (parsedLogLevel) {
+	config.logLevel = parsedLogLevel;
+}
+
+if (config.debug) {
+	config.logLevel = logging.LogLevel.debug;
+}
+
+// Set debug mode
+logging.setLogLevel(config.logLevel);
 
 module.exports = config;

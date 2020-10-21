@@ -1,5 +1,5 @@
 const state = require('@state');
-const log = require('@helpers/log').logger('Bahn');
+const logger = require('@helpers/logger').createLogger('Bahn');
 const createHafas = require('db-hafas');
 const hafas = createHafas('mission-control');
 
@@ -20,8 +20,8 @@ module.exports = async function bahn() {
 
 			state.callAction('BAHN:UPDATE', data);
 		} catch (e) {
-			log('Error occurred during route check', e);
-		}	
+			logger.error('Error occurred during route check', e);
+		}
 	};
 	refreshInfo();
 	setInterval(refreshInfo, 20000);
@@ -30,11 +30,11 @@ module.exports = async function bahn() {
 // Return routes to Lübeck (includes buses)
 async function routesToHL() {
 	try {
-		const { journeys } = await hafas.journeys(stations['Lüneburg'], stations['Lübeck'], {results: 20});
+		const { journeys } = await hafas.journeys(stations['Lüneburg'], stations['Lübeck'], { results: 20 });
 		const routes = [];
 		for (const journey of journeys) {
 			const skipJourney = journey.legs
-				.reduce((skip, leg) => 
+				.reduce((skip, leg) =>
 					skip || leg.line.product !== 'regional',
 					false
 				);
@@ -53,7 +53,7 @@ async function routesToHL() {
 
 		return routes;
 	} catch (e) {
-		console.error('Could not fetch routes', e);
+		logger.error('Could not fetch routes to Lübeck', e);
 		return [];
 	}
 }
@@ -61,7 +61,7 @@ async function routesToHL() {
 // Return routes to Lüneburg (no buses needed)
 async function routesToLG() {
 	try {
-		const { journeys } = await hafas.journeys(stations['Lübeck'], stations['Lüneburg'], {results: 20});
+		const { journeys } = await hafas.journeys(stations['Lübeck'], stations['Lüneburg'], { results: 20 });
 
 		const routes = [];
 		for (const journey of journeys) {
@@ -75,7 +75,7 @@ async function routesToLG() {
 
 		return routes;
 	} catch (e) {
-		console.error('Could not fetch routes', e);
+		logger.error('Could not fetch routes to Lübeck', e);
 		return [];
 	}
 }
@@ -139,12 +139,12 @@ function parseJourney(journey) {
 // Get the buses to catch a given route/journey
 async function busForJourney(journey) {
 	const departure = journey.legs[0].departure;
-	
+
 	const { journeys } = await hafas.journeys(
-		stations['Munstermannskamp'], 
-		stations['Lüneburg'], 
+		stations['Munstermannskamp'],
+		stations['Lüneburg'],
 		{
-			results: 20, 
+			results: 20,
 			arrival: departure
 		}
 	);
@@ -164,7 +164,7 @@ async function busForJourney(journey) {
 		// Minutes between train departure and bus arrival
 		const trainDeparture = new Date(departure);
 		const timeScore = (trainDeparture - bus.arrival) / (1000 * 60);
-		
+
 		// Time spent at train station should be less than 30 but more than 4 minutes long
 		if (timeScore >= 30 || timeScore < 4)
 			continue;
@@ -177,5 +177,5 @@ async function busForJourney(journey) {
 
 // Converts JS date to normal time format (e.g. 15:45)
 function dateToTime(date) {
-	return date.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+	return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }

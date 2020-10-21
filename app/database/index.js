@@ -3,7 +3,7 @@
  * @module @database
  * @since 1.0.0
  */
-const log = require('@helpers/log').logger('Database', 'cyan');
+const logger = require('@helpers/logger').createLogger('Database', 'cyan');
 const config = require('@config');
 const fs = require('fs');
 
@@ -11,7 +11,7 @@ let database = {};
 
 // If the storage folder doesnt exist, create it
 if (!fs.existsSync(config.storagePath)) {
-	log("Storage folder doesn't exist. Creating /storage.");
+	logger.warn("Storage folder doesn't exist. Creating /storage.");
 	fs.mkdirSync(config.storagePath, { recursive: true });
 }
 
@@ -42,7 +42,7 @@ module.exports.set = function set(key, value) {
 		config.databasePath,
 		JSON.stringify(database, null, 2),
 		err => {
-			if (err) log('Error writing Database file', err);
+			if (err) logger.error('Error writing database file', err);
 		}
 	);
 };

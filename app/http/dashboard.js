@@ -13,9 +13,10 @@ module.exports = function dashboardRoutes(app, requireAuth) {
 			.readFileSync(dashboardHtmlPath)
 			.toString();
 	} catch (e) {
-		require('@helpers/log').error('HTTP:Dashboard', 'No dashboard html found at ' + dashboardHtmlPath);
+		require('@helpers/logger').fatal('No dashboard html found at ' + dashboardHtmlPath);
+		process.exit(1);
 	}
-	
+
 
 	app.get('/', requireAuth(), (req, res) => res.redirect('/dashboard/'));
 
@@ -24,10 +25,10 @@ module.exports = function dashboardRoutes(app, requireAuth) {
 			? (await readFileAsync(dashboardHtmlPath)).toString()
 			: dashboardIndexFile
 		).replace(/{{SERVER_REPLACE_API_KEY}}/gm, req.session.jwt)
-		.replace(/{{SERVER_REPLACE_URL}}/gm, config.http.url)
-		.replace(/index\.js/gm, 'mobile.js')
-		.replace('<!--DELETE-MOBILE', '')
-		.replace('DELETE-MOBILE-->', '');
+			.replace(/{{SERVER_REPLACE_URL}}/gm, config.http.url)
+			.replace(/index\.js/gm, 'mobile.js')
+			.replace('<!--DELETE-MOBILE', '')
+			.replace('DELETE-MOBILE-->', '');
 
 		res.set('Content-Type', 'text/html').send(indexFile);
 	});
