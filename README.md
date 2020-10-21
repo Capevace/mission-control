@@ -65,6 +65,10 @@ A config file for mission-control will be created at `$HOME_DIR/.mission-control
 
 ## Changelog
 
+### Version 0.5.4
+
+- Rewrote logging system
+
 ### Version 0.5.3
 
 - Added COVID widget to dashboard
