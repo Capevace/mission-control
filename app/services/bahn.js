@@ -24,7 +24,7 @@ module.exports = async function bahn() {
 		}
 	};
 	refreshInfo();
-	setInterval(refreshInfo, 20000);
+	setInterval(refreshInfo, 1000 * 60 * 3); // refresh every 3 minutes
 };
 
 // Return routes to Lübeck (includes buses)
