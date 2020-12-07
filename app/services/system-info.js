@@ -1,17 +1,13 @@
 const state = require('@state');
 const si = require('systeminformation');
-const { promisify } = require('util');
 const publicIp = require('public-ip');
-const childProcess = require('child_process');
 const pkg = require('../../package.json');
-const exec = promisify(childProcess.exec);
 
-module.exports = async function systemInformation() {
-	const [system, cpu, osInfo, gitCommitCount] = await Promise.all([
+async function systemInformationInit() {
+	const [system, cpu, osInfo] = await Promise.all([
 		si.system(),
 		si.cpu(),
 		si.osInfo()
-		// exec('git rev-list --count master')
 	]);
 
 	const staticInfo = {
@@ -87,4 +83,28 @@ module.exports = async function systemInformation() {
 	};
 	refreshInfo();
 	setInterval(refreshInfo, 20000);
+};
+
+module.exports = {
+	actions: {
+		/**
+		 * Update the system info statistics table.
+		 *
+		 * @constant SYSTEM-INFO:UPDATE
+		 */
+		'SYSTEM-INFO:UPDATE': {
+			update(state, data) {
+				return {
+					...state,
+					systemInfo: data
+				};
+			},
+			validate(data) {
+				if (typeof data === 'object') return data;
+
+				return false;
+			}
+		}
+	},
+	init: systemInformationInit
 };

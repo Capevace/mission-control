@@ -6,7 +6,6 @@
  * @since 1.0.0
  * @module @services
  */
-const iftttService = require('./ifttt');
 // const kodiService = require('./kodi');
 const notificationsService = require('./notifications');
 const spotifyService = require('./spotify');
@@ -15,9 +14,7 @@ const homekitService = require('./homekit');
 const bahn = require('./bahn');
 const covid = require('./covid');
 const layout = require('./layout');
-const plugins = require('./plugins');
-
-let services = {};
+// const plugins = require('./plugins');
 
 // module.exports = function createServiceContainer(config, http, state) {
 // 	const serviceContext = {
@@ -32,6 +29,18 @@ let services = {};
 // };
 
 module.exports = {
+	actions: {
+		...notificationsService.actions,
+		...spotifyService.actions,
+		...systemInfoService.actions,
+		...homekitService.actions,
+		...bahn.actions,
+		...covid.actions,
+		...layout.actions,
+	},
+	events: {
+		...homekitService.events
+	},
 
 	/**
 	 * Start the services last and populate the services object.
@@ -40,18 +49,13 @@ module.exports = {
 	 *
 	 * @protected
 	 */
-	startServices() {
-		services = {
-			ifttt: iftttService(),
-			// kodi: kodiService(),
-			notifications: notificationsService(),
-			spotify: spotifyService(),
-			systemInfo: systemInfoService(),
-			homekit: homekitService(),
-			bahn: bahn(),
-			covid: covid(),
-			layout: layout(),
-			// plugins: plugins()
-		};
+	async startServices() {
+		await notificationsService.init();
+		await spotifyService.init();
+		await systemInfoService.init();
+		await homekitService.init();
+		await bahn.init();
+		await covid.init();
+		await layout.init();
 	}
 };

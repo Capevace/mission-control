@@ -107,7 +107,7 @@ function scheduleTokenRefresh(expiresAt, refreshToken) {
 	}, dateDifference);
 }
 
-module.exports = function spotify() {
+function spotifyInit() {
 	const spotifyData = database.get('spotify', {});
 
 	state.subscribe('spotify:callback', async ({ code }) => {
@@ -151,4 +151,38 @@ module.exports = function spotify() {
 			);
 		}
 	}
+};
+
+module.exports = {
+	actions: {
+		/**
+		 * Update the Spotify access token thats saved in the database and state.
+		 *
+		 * @constant SPOTIFY:UPDATE-TOKEN
+		 * @property {string} accessToken The access token to update.
+		 * @property {Date} expiresAt The date the access token expires at.
+		 * @property {string} refreshToken The token to request a new access token with.
+		 * @example demo-action-call
+		 */
+		'SPOTIFY:UPDATE-TOKEN': {
+			update(state, { accessToken, expiresAt, refreshToken }) {
+				return {
+					...state,
+					spotify: {
+						...state.spotify,
+						accessToken,
+						expiresAt,
+						refreshToken
+					}
+				};
+			},
+			validate(data) {
+				if ('accessToken' in data && 'expiresAt' in data && 'refreshToken' in data)
+					return data;
+
+				return false;
+			}
+		}
+	},
+	init: spotifyInit
 };

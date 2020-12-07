@@ -24,7 +24,7 @@ const basePath = process.env.NODE_ENV === 'production'
 
 let config = require('rc')('mission-control', {
 	basePath,
-	logLevel: logging.LogLevel.http,
+	logLevel: 'http',
 	debug: false,
 	auth: {
 		url: '/sso',
@@ -127,13 +127,6 @@ if (argv.debug) {
 
 if (argv.proxy) {
 	config.auth.proxy = argv.proxy;
-}
-
-// If we can parse a log level from the logLevel config, then a string was passed and we can
-// parse the log level value.
-const parsedLogLevel = logging.logLevelFromString(config.logLevel);
-if (parsedLogLevel) {
-	config.logLevel = parsedLogLevel;
 }
 
 if (config.debug) {

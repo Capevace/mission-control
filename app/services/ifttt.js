@@ -5,8 +5,7 @@ const logger = require('@helpers/logger').createLogger('IFTTT', 'greenBright');
 const superagent = require('superagent');
 
 function getWebhookUrl(event) {
-	return `https://maker.ifttt.com/trigger/${event}/with/key/${config.secrets.iftttWebhook
-		}`;
+	return `https://maker.ifttt.com/trigger/${event}/with/key/${config.secrets.iftttWebhook}`;
 }
 
 async function triggerWebhook(event, value1, value2, value3) {

@@ -10,7 +10,7 @@ const stations = {
 	'Universitätsallee': '597762'
 };
 
-module.exports = async function bahn() {
+async function bahnInit() {
 	const refreshInfo = async () => {
 		try {
 			const hlRoutes = await routesToHL();
@@ -25,6 +25,33 @@ module.exports = async function bahn() {
 	};
 	refreshInfo();
 	setInterval(refreshInfo, 1000 * 60 * 3); // refresh every 3 minutes
+}
+
+module.exports = {
+	actions: {
+		/**
+		 * Update Deutsche Bahn route data
+		 *
+		 * @constant BAHN:UPDATE
+		 * @property {object} changes The data to be set
+		 * @example
+		 * state.callAction('BAHN:UPDATE', { })
+		 */
+		'BAHN:UPDATE': {
+			update(state, data) {
+				return {
+					...state,
+					bahn: data
+				};
+			},
+			validate(data) {
+				if (typeof data === 'object') return data;
+
+				return false;
+			}
+		}
+	},
+	init: bahnInit
 };
 
 // Return routes to Lübeck (includes buses)

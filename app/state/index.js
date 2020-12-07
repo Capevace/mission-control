@@ -38,7 +38,6 @@
 // const config = require('@config');
 const EventEmitter = require('eventemitter2');
 const diff = require('object-diff');
-const actions = require('./actions');
 
 // const ActionEvent = require('@state/events/ActionEvent');
 
@@ -48,7 +47,22 @@ const emitter = new EventEmitter({
 	wildcard: true,
 	delimiter: ':'
 });
+
+let actions = {};
 let state = require('./initial-state');
+
+/**
+ * Register a reducer for a given state action
+ * @param {string} action The action to register a reducer for
+ * @param {Function} reducer The reducer function
+ * @param {Function} validate The data validation function
+ */
+function registerReducer(action, reducer, validate) {
+	actions[action] = {
+		reducer,
+		validate
+	};
+}
 
 /**
  * Subscribe to mission control events.
@@ -115,7 +129,7 @@ function callAction(actionKey, data) {
 
 	// Run the action with the old state
 	const oldState = state;
-	const newState = action.call(oldState, data);
+	const newState = action.reducer(oldState, data);
 
 	// We extend an empty object to remove all ties to the old state
 	/*
@@ -170,6 +184,7 @@ function getState() {
 }
 
 module.exports = {
+	registerReducer,
 	subscribe,
 	callAction,
 	emitEvent,

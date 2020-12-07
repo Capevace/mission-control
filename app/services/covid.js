@@ -7,7 +7,7 @@ const cities = {
 	'de.sh.01003': 'Lübeck'
 };
 
-module.exports = async function covid() {
+async function covidInit() {
 	const refreshInfo = async () => {
 		try {
 			const csvText = await newestCovidCSV();
@@ -28,6 +28,33 @@ module.exports = async function covid() {
 	const every6Hours = 1000 * 60 * 60 * 6;
 	refreshInfo();
 	setInterval(refreshInfo, every6Hours);
+};
+
+module.exports = {
+	actions: {
+		/**
+		 * Update COVID data
+		 *
+		 * @constant COVID:UPDATE
+		 * @property {object} changes The data to be set
+		 * @example
+		 * state.callAction('COVID:UPDATE', { cities: { 'city-id': { } } })
+		 */
+		'COVID:UPDATE': {
+			update(state, data) {
+				return {
+					...state,
+					covid: data
+				};
+			},
+			validate(data) {
+				if (typeof data === 'object') return data;
+
+				return false;
+			}
+		}
+	},
+	init: covidInit
 };
 
 // Return routes to Lübeck (includes buses)

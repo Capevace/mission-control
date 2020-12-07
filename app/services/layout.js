@@ -1,7 +1,7 @@
 const state = require('@state');
 const db = require('@database');
 
-module.exports = async function dashboardLayout() {
+async function layoutInit() {
 	const initialLayout = [
 		{ x: 0, y: 0, w: 12, h: 2, i: '0', component: 'basicHeader', moved: false },
 		{ x: 0, y: 8, w: 4, h: 3, i: '1', component: 'links', moved: false },
@@ -27,3 +27,48 @@ module.exports = async function dashboardLayout() {
 	});
 };
 
+module.exports = {
+	actions: {
+		/**
+		 * Update dashboard layout
+		 *
+		 * @constant LAYOUT:UPDATE
+		 * @property {object} changes The data to be set
+		 * @example
+		 * state.callAction('LAYOUT:UPDATE', { layout: [] })
+		 */
+		'LAYOUT:UPDATE': {
+			update(state, data) {
+				return {
+					...state,
+					layout: data.layout
+				};
+			},
+			validate(data) {
+				if (Array.isArray(data.layout)) return data;
+
+				return false;
+			}
+		},
+
+		/**
+		 * Reset the dashboard layout to defaults
+		 *
+		 * @constant LAYOUT:RESET
+		 * @example
+		 * state.callAction('LAYOUT:RESET')
+		 */
+		'LAYOUT:RESET': {
+			update(state) {
+				return {
+					...state,
+					layout: []
+				};
+			},
+			validate() {
+				return true;
+			}
+		}
+	},
+	init: layoutInit
+};

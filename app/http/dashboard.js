@@ -1,59 +1,40 @@
 const config = require('@config');
 const fs = require('fs');
 const path = require('path');
-const readFileAsync = require('util').promisify(fs.readFile);
 const express = require('express');
 const addTrailingSlashMiddleware = require('@helpers/add-trailing-slash-middleware');
 
+const dashboardHtmlPath = path.resolve(__dirname, '../views/dashboard.html');
+const dashboardHtml = fs.readFileSync(dashboardHtmlPath)
+	.toString()
+	.replace(/{{SERVER_REPLACE_URL}}/gm, config.http.url);
+
+// HTML for the mobile dashboard (uses JS optimized for old iOS Safari)
+const dashboardHtmlMobile = dashboardHtml
+	.replace(/index\.js/gm, 'mobile.js')
+	.replace('<!--DELETE-MOBILE', '')
+	.replace('DELETE-MOBILE-->', '');
+
+function renderDashboard(mobile = false) {
+	return async (req, res) => {
+		const html = (mobile ? dashboardHtmlMobile : dashboardHtml)
+			.replace(/{{SERVER_REPLACE_API_KEY}}/gm, req.session.jwt);
+
+		res.set('Content-Type', 'text/html').send(html);
+	};
+}
+
 module.exports = function dashboardRoutes(app, requireAuth) {
-	const dashboardHtmlPath = path.resolve(__dirname, '../views/dashboard.html');
-	let dashboardIndexFile = '';
-	try {
-		dashboardIndexFile = fs
-			.readFileSync(dashboardHtmlPath)
-			.toString();
-	} catch (e) {
-		require('@helpers/logger').fatal('No dashboard html found at ' + dashboardHtmlPath);
-		process.exit(1);
-	}
+	// Dashboard HTML routes
+	app.get('/', addTrailingSlashMiddleware, requireAuth(), renderDashboard(false));
+	app.get('/mobile', addTrailingSlashMiddleware, requireAuth(), renderDashboard(true));
 
+	// Redirect old dashboard routes
+	app.get('/dashboard', requireAuth(), (req, res) => res.redirect('/'));
+	app.get('/dashboard/mobile', requireAuth(), (req, res) => res.redirect('/mobile'));
 
-	app.get('/', requireAuth(), (req, res) => res.redirect('/dashboard/'));
-
-	app.get('/dashboard/mobile', addTrailingSlashMiddleware, requireAuth(), async (req, res) => {
-		const indexFile = (config.debug
-			? (await readFileAsync(dashboardHtmlPath)).toString()
-			: dashboardIndexFile
-		).replace(/{{SERVER_REPLACE_API_KEY}}/gm, req.session.jwt)
-			.replace(/{{SERVER_REPLACE_URL}}/gm, config.http.url)
-			.replace(/index\.js/gm, 'mobile.js')
-			.replace('<!--DELETE-MOBILE', '')
-			.replace('DELETE-MOBILE-->', '');
-
-		res.set('Content-Type', 'text/html').send(indexFile);
-	});
-
-	app.use(
-		'/dashboard/mobile',
-		requireAuth(),
-		express.static(config.dashboard.path)
-	);
-
-	app.get('/dashboard/', addTrailingSlashMiddleware, requireAuth(), async (req, res) => {
-		const indexFile = (config.debug
-			? (await readFileAsync(dashboardHtmlPath)).toString()
-			: dashboardIndexFile
-		).replace(/{{SERVER_REPLACE_API_KEY}}/gm, req.session.jwt)
-			.replace(/{{SERVER_REPLACE_URL}}/gm, config.http.url);
-
-		res.set('Content-Type', 'text/html').send(indexFile);
-	});
-
-	app.use(
-		'/dashboard',
-		requireAuth(),
-		express.static(config.dashboard.path)
-	);
+	// JS & CSS Assets
+	app.use('/assets', requireAuth(), express.static(config.dashboard.path));
 
 	app.get('/apple-touch-icon.png', (req, res) => {
 		res.sendFile(path.resolve(__dirname, '../../resources/mission-control-icon.png'));

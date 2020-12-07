@@ -50,8 +50,15 @@ module.exports = function startMissionControl() {
 	// Initialize the socket server
 	const io = socket(server); // eslint-disable-line no-unused-vars
 
-	// Start all our services
 	const services = require('@services');
+
+	// Register all the reducers in the state machine
+	for (const actionKey in services.actions) {
+		const action = services.actions[actionKey];
+		state.registerReducer(actionKey, action.update, action.validate);
+	}
+
+	// Start the services
 	services.startServices();
 
 	if (config.debug) {

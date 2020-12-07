@@ -30,7 +30,7 @@ module.exports.LogLevel = LogLevel;
  * @returns LogLevel | null
  */
 module.exports.logLevelFromString = function logLevelFromString(level) {
-	return LogLevel[level] || null;
+	return LogLevel[level];
 };
 
 /**
@@ -141,11 +141,13 @@ module.exports.createLogger = function createLogger(label, color = 'reset') {
  * Set the global log level.
  * @param {LogLevel} level 
  */
-module.exports.setLogLevel = function setLogLevel(level) {
-	if (!level)
+module.exports.setLogLevel = function setLogLevel(levelString = 'debug') {
+	if (!levelString)
 		return;
 
-	logLevel = level;
+	// If we can parse a log level from the logLevel config, then a string was passed and we can
+	// parse the log level value.
+	logLevel = this.logLevelFromString(levelString) || 0;
 };
 
 /**
