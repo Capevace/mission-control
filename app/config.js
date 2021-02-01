@@ -36,7 +36,8 @@ let config = require('rc')('mission-control', {
 	},
 	http: {
 		url: `http://${internalIp.v4.sync()}:3000`,
-		port: process.env.PORT || 3000
+		port: process.env.PORT || 3000,
+		allowedDomains: []
 	},
 	dashboard: {
 		path: path.resolve(
@@ -52,8 +53,8 @@ let config = require('rc')('mission-control', {
 			__dirname,
 			'../resources/spotify-ui'
 		), // ui path
-		clientId: 'f1421bd3dada404da546902b6849f2d7',
-		secret: '2192e52bff6740cb8dbce0011305bb20'
+		clientId: '', // 'f1421bd3dada404da546902b6849f2d7',
+		secret: '' // '2192e52bff6740cb8dbce0011305bb20'
 	},
 	ifttt: {
 		token: 'dq0U6fRhl-t35dc_HnDem5'
@@ -80,6 +81,9 @@ if (!fs.existsSync(config.basePath + '/config')) {
 ;[http]
 ;url=/sso
 ;port=3000
+;allowedDomains[]=url1.com
+;allowedDomains[]=url2.com
+; Allowed Urls will also contain http.url
 
 [auth]
 ;secret=applepie
@@ -135,5 +139,13 @@ if (config.debug) {
 
 // Set debug mode
 logging.setLogLevel(config.logLevel);
+
+if (config.http.allowedDomains.length === 0) {
+	const url = new URL(config.http.url);
+
+	config.http.allowedDomains.push(
+		`${url.hostname}${url.port ? ':' + url.port : ''}`
+	);
+}
 
 module.exports = config;

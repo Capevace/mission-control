@@ -196,15 +196,17 @@ module.exports.logMiddleware = function logMiddleware(req, res, next) {
 
 module.exports.logConfig = function logConfig(config) {
 	const spotifyCredentialsPresent = config.spotify.clientId && config.spotify.secret;
+	
 	module.exports._log(
 		chalk`=== {bold Mission Control Config} ===
-Log Level:		${module.exports.logLevelToString(config.logLevel)}
+Log Level:		${config.logLevel}
 DB Path:		{cyan ${config.databasePath}}
 Dashboard Path: 	{cyan ${config.dashboard.path}}
 Homebridge Pin:		${config.homebridge.pin || chalk.reset.gray('None')}
 Spotify Creds:		${spotifyCredentialsPresent ? 'Provided' : 'Not provided'}
 HTTP URL:		{cyan ${config.http.url}}
 HTTP Port:		${config.http.port}
+HTTP Domains:		${config.http.allowedDomains.map(domain => chalk`{cyan ${domain}}`).join(', ')}
 Auth URL:		{cyan ${config.auth.url}}
 Auth Port:		${config.auth.port}
 Auth Proxy:		${config.auth.proxy ? 'Enabled' : 'Disabled'}\n`

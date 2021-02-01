@@ -50,7 +50,6 @@ module.exports = function http() {
 		database.set('session-secret', sessionSecret);
 	}
 
-
 	app.use(
 		session({
 			secret: sessionSecret,
@@ -61,6 +60,15 @@ module.exports = function http() {
 	);
 
 	app.use(logger.logMiddleware);
+
+	// Parse host domain from headers
+	app.use((req, res, next) => {		
+		req.hostUrl = config.http.allowedDomains.includes(req.headers['host'])
+			? req.protocol + '://' + req.headers['host']
+			: config.http.url;
+
+		next();
+	});
 
 	const requireAuthentication = () => (req, res, next) => {
 		passport.authenticate('jwt', {

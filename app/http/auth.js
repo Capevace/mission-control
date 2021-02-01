@@ -68,6 +68,7 @@ module.exports = function authRoutes(app, requireAuthentication) {
 	});
 
 	app.get('/auth/login', (req, res) => {
+		console.log(req.hostUrl);
 		req.session.redirectUrl = req.query.redirect_url;
 
 		req.session.save(err => {
@@ -77,7 +78,8 @@ module.exports = function authRoutes(app, requireAuthentication) {
 				`${config.auth.url}/api/v1/authenticate` +
 				'?' +
 				queryString.stringify({
-					redirect_url: `${config.http.url}/auth/callback`
+					// TODO: Verify Host Url
+					redirect_url: `${req.hostUrl}/auth/callback`
 				})
 			);
 		});
