@@ -15,7 +15,7 @@
 	</body>
 	<script type="text/javascript">
 		window.MISSION_CONTROL_API_KEY = '{{SERVER_REPLACE_API_KEY}}';
-		window.MISSION_CONTROL_URL = '/' || `${window.location.protocol}//${window.location.hostname}${window.location.port ? ':' + window.location.port : ''}`
+		window.MISSION_CONTROL_URL = `${window.location.protocol}//${window.location.hostname}${window.location.port ? ':' + window.location.port : ''}`
 			|| '{{SERVER_REPLACE_URL}}';
 	</script>
 	<script type="text/javascript" src="/assets/index.js"></script>
