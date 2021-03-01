@@ -7,9 +7,16 @@
 const chalk = require('chalk');
 const qrcode = require('qrcode-terminal');
 const onFinished = require('on-finished');
+const cliProgress = require('cli-progress');
+
+let logBuffer = [];
+let progressBar = null;
 
 module.exports._log = function _log(...msgs) {
-	console.log(...msgs); // eslint-disable-line
+	if (progressBar)
+		logBuffer.push(msgs);
+	else
+		console.log(...msgs); // eslint-disable-line
 };
 
 const LogLevel = {
@@ -160,14 +167,14 @@ module.exports.logReadyMessage = function logReadyMessage(url, authUrl) {
 	qrcode.generate(url, { small: true }, function (qrCode) {
 		const message =
 			`
-${chalk.bold.gray`.  . .-. .-. .-. .-. .-. . .   .-. .-. . . .-. .-. .-. .   
+${`.  . .-. .-. .-. .-. .-. . .   .-. .-. . . .-. .-. .-. .   
 |\\/|  |  \`-. \`-.  |  | | |\\|   |   | | |\\|  |  |(  | | |   
 '  ' '-' '-' '-' '-' '-' ' '   '-' '-' ' '  '  ' ' '-' '-' `}
-       
-${chalk.gray(qrCode)}
 
 Dashboard available at ${chalk.cyan(url)}
 SSO available at ${chalk.cyan(authUrl)}
+
+${qrCode}
 `;
 
 		module.exports._log(message); // eslint-disable-line no-console
@@ -211,6 +218,37 @@ Auth URL:		{cyan ${config.auth.url}}
 Auth Port:		${config.auth.port}
 Auth Proxy:		${config.auth.proxy ? 'Enabled' : 'Disabled'}\n`
 	);
+};
+
+module.exports.progress = async function progress(callback) {
+	progressBar = new cliProgress.SingleBar({
+	    format: `Starting Mission Control... |${chalk.cyan('{bar}')}| {percentage}% {label}`,
+	    barCompleteChar: '\u2588',
+	    barIncompleteChar: '\u2591',
+	    hideCursor: true
+	}, cliProgress.Presets.rect);
+
+	progressBar.start(1, 0, {
+	    label: ''
+	});
+
+	function cleanup() {
+		if (progressBar)
+			progressBar.stop();
+
+		logBuffer.forEach(msgs => console.log(...msgs));
+		logBuffer = [];
+
+		progressBar = null;
+	}
+
+	try {
+		await callback((label, percentage) => progressBar.update(percentage, { label }));
+		cleanup();
+	} catch (e) {
+		cleanup();
+		module.exports.error(e);
+	}
 };
 
 process.on('uncaughtException', function (err) {

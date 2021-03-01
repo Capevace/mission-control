@@ -17,12 +17,14 @@ const internalIp = require('internal-ip');
 const logging = require('./helpers/logger');
 const logger = logging.createLogger('Config', 'cyan');
 const argv = require('./helpers/argv');
+const pkg = require('../package.json');
 
 const basePath = process.env.NODE_ENV === 'production'
 	? '/etc/mission-control'
 	: require('os').homedir() + '/.mission-control';
 
 let config = require('rc')('mission-control', {
+	version: pkg.version,
 	basePath,
 	logLevel: 'http',
 	debug: false,

@@ -15,12 +15,17 @@ const logging = require('@helpers/logger');
 
 const startSSOProcess = require('@helpers/sso-process');
 
-module.exports = function startMissionControl() {
+module.exports = async function start() {
+	logging.logConfig(config);
+	logging.progress(startMissionControl);
+};
+
+async function startMissionControl(updateProgressBar) {
 	const logger = logging.createLogger('Main', 'cyan');
 	const eventLogger = logging.createLogger('Event', 'green');
 
-	logging.logConfig(config);
 	logger.info(`Starting Mission Control...`);
+	updateProgressBar('Starting', 0.01);
 
 	const database = require('@database'); // eslint-disable-line no-unused-vars
 
@@ -29,6 +34,7 @@ module.exports = function startMissionControl() {
 	// We do this, so the user doesn't have to do so manually,
 	// and the mission-control binary is self-contained to run everything needed.
 	if (argv.sso) {
+		updateProgressBar('Start SSO', 0.10);
 		const ssoProcess = startSSOProcess(config.auth.url, config.auth.port);
 
 		process.on('SIGINT', () => {
@@ -40,26 +46,34 @@ module.exports = function startMissionControl() {
 	}
 
 	// Start the state machine
+	updateProgressBar('Boot State Machine', 0.10);
 	const state = require('@state');
 
-	const http = require('./http');
+	const initHttp = require('./http');
 	const socket = require('./socket');
 
+	updateProgressBar('Boot HTTP Server', 0.20);
 	// Initialize the main mission control http server
-	const server = http();
+	const http = initHttp();
+
+	updateProgressBar('Boot Socket Server', 0.30);
 	// Initialize the socket server
-	const io = socket(server); // eslint-disable-line no-unused-vars
+	const io = socket(http.server); // eslint-disable-line no-unused-vars
 
-	const services = require('@services');
+	updateProgressBar('Init Plugins', 0.75);
+	const plugins = require('./plugins');
+	await plugins.initPlugins({
+		http,
+		state,
+		database,
+		config
+	}, updateProgressBar);
 
-	// Register all the reducers in the state machine
-	for (const actionKey in services.actions) {
-		const action = services.actions[actionKey];
-		state.registerReducer(actionKey, action.update, action.validate);
-	}
-
-	// Start the services
-	services.startServices();
+	updateProgressBar('HTTP Listen', 0.95);
+	http.server.listen(config.http.port, () => {
+		logging.http(`Server listening on port`, config.http.port);
+		logging.logReadyMessage(config.http.url, config.auth.url);
+	});
 
 	if (config.debug) {
 		state.subscribe('*', (event, data) =>

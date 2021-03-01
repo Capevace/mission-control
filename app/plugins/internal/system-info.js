@@ -1,9 +1,26 @@
-const state = require('@state');
 const si = require('systeminformation');
 const publicIp = require('public-ip');
-const pkg = require('../../package.json');
+const pkg = require('../../../package.json');
 
-async function systemInformationInit() {
+
+module.exports = async function systemInfoInit(APP) {
+	const { state, database, config } = APP;
+
+	/**
+	 * @ACTION
+	 * Update the system info statistics table.
+	 *
+	 * @constant SYSTEM-INFO:UPDATE
+	 */
+	state.registerAction(
+		'SYSTEM-INFO:UPDATE', 
+		(state, data) => ({
+			...state,
+			systemInfo: data
+		}),
+		(data) => (typeof data === 'object') ? data : false
+	);
+
 	const [system, cpu, osInfo] = await Promise.all([
 		si.system(),
 		si.cpu(),
@@ -30,7 +47,7 @@ async function systemInformationInit() {
 			architecture: osInfo.arch,
 			hostname: osInfo.hostname
 		},
-		version: pkg.version
+		version: config.version
 	};
 
 	const refreshInfo = async () => {
@@ -79,32 +96,14 @@ async function systemInformationInit() {
 			}
 		};
 
-		state.callAction('SYSTEM-INFO:UPDATE', data);
+		state.run('SYSTEM-INFO:UPDATE', data);
 	};
 	refreshInfo();
 	setInterval(refreshInfo, 20000);
-};
 
-module.exports = {
-	actions: {
-		/**
-		 * Update the system info statistics table.
-		 *
-		 * @constant SYSTEM-INFO:UPDATE
-		 */
-		'SYSTEM-INFO:UPDATE': {
-			update(state, data) {
-				return {
-					...state,
-					systemInfo: data
-				};
-			},
-			validate(data) {
-				if (typeof data === 'object') return data;
-
-				return false;
-			}
-		}
-	},
-	init: systemInformationInit
+	return {
+		internal: true,
+		version: '0.0.1',
+		description: 'System Information plugin'
+	};
 };

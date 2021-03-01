@@ -1,5 +1,3 @@
-const state = require('@state');
-const logger = require('@helpers/logger').createLogger('Bahn');
 const createHafas = require('db-hafas');
 const hafas = createHafas('mission-control');
 
@@ -10,101 +8,51 @@ const stations = {
 	'Universitätsallee': '597762'
 };
 
-async function bahnInit() {
-	const refreshInfo = async () => {
-		try {
-			const hlRoutes = await routesToHL();
-			const data = {
-				routes: hlRoutes
-			};
-
-			state.callAction('BAHN:UPDATE', data);
-		} catch (e) {
-			logger.error('Error occurred during route check', e);
-		}
-	};
-	refreshInfo();
-	setInterval(refreshInfo, 1000 * 60 * 3); // refresh every 3 minutes
-}
-
 module.exports = {
-	actions: {
-		/**
-		 * Update Deutsche Bahn route data
-		 *
-		 * @constant BAHN:UPDATE
-		 * @property {object} changes The data to be set
-		 * @example
-		 * state.callAction('BAHN:UPDATE', { })
-		 */
-		'BAHN:UPDATE': {
-			update(state, data) {
-				return {
-					...state,
-					bahn: data
-				};
-			},
-			validate(data) {
-				if (typeof data === 'object') return data;
-
-				return false;
-			}
-		}
-	},
-	init: bahnInit
+	routesToHL
 };
 
 // Return routes to Lübeck (includes buses)
 async function routesToHL() {
-	try {
-		const { journeys } = await hafas.journeys(stations['Lüneburg'], stations['Lübeck'], { results: 20 });
-		const routes = [];
-		for (const journey of journeys) {
-			const skipJourney = journey.legs
-				.reduce((skip, leg) =>
-					skip || leg.line.product !== 'regional',
-					false
-				);
+	const { journeys } = await hafas.journeys(stations['Lüneburg'], stations['Lübeck'], { results: 20 });
+	const routes = [];
+	for (const journey of journeys) {
+		const skipJourney = journey.legs
+			.reduce((skip, leg) =>
+				skip || leg.line.product !== 'regional',
+				false
+			);
 
-			if (skipJourney)
-				continue;
+		if (skipJourney)
+			continue;
 
-			const route = await parseJourney(journey);
-			const buses = await busForJourney(journey);
+		const route = await parseJourney(journey);
+		const buses = await busForJourney(journey);
 
-			routes.push({
-				...route,
-				buses
-			});
-		}
-
-		return routes;
-	} catch (e) {
-		logger.error('Could not fetch routes to Lübeck', e);
-		return [];
+		routes.push({
+			...route,
+			buses
+		});
 	}
+
+	return routes;
 }
 
 // Return routes to Lüneburg (no buses needed)
 async function routesToLG() {
-	try {
-		const { journeys } = await hafas.journeys(stations['Lübeck'], stations['Lüneburg'], { results: 20 });
+	const { journeys } = await hafas.journeys(stations['Lübeck'], stations['Lüneburg'], { results: 20 });
 
-		const routes = [];
-		for (const journey of journeys) {
-			if (journey.legs.length > 1)
-				continue;
+	const routes = [];
+	for (const journey of journeys) {
+		if (journey.legs.length > 1)
+			continue;
 
-			const route = await parseJourney(journey);
+		const route = await parseJourney(journey);
 
-			routes.push(route);
-		}
-
-		return routes;
-	} catch (e) {
-		logger.error('Could not fetch routes to Lübeck', e);
-		return [];
+		routes.push(route);
 	}
+
+	return routes;
 }
 
 function routesToText(routes) {

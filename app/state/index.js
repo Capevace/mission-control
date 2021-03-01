@@ -131,6 +131,11 @@ function callAction(actionKey, data) {
 	const oldState = state;
 	const newState = action.reducer(oldState, data);
 
+	if (!newState) {
+		logger.error(`Reducer for action ${actionKey} must return a state`);
+		return;
+	}
+
 	// We extend an empty object to remove all ties to the old state
 	/*
 	 * !!! ONLY TIME WE EVER SET STATE VARIABLE !!!

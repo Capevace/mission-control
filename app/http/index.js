@@ -24,16 +24,13 @@ const server = require('http').createServer(app);
 const session = require('express-session');
 const passport = require('passport');
 const queryString = require('querystring');
+const proxy = require('http-proxy-middleware');
 
 const uuid = require('uuid/v4');
 
 const authRoutes = require('./auth');
 const stateRoutes = require('./state');
-const spotifyRoutes = require('./spotify');
-const iftttRoutes = require('./ifttt');
 const dashboardRoutes = require('./dashboard');
-const filesRoutes = require('./files');
-const youtubeRoutes = require('./youtube');
 
 /**
  * Initialize the main HTTP server for the mission control sysyem.
@@ -81,16 +78,55 @@ module.exports = function http() {
 
 	authRoutes(app, requireAuthentication);
 	stateRoutes(app, requireAuthentication);
-	spotifyRoutes(app, requireAuthentication);
-	iftttRoutes(app, requireAuthentication);
 	dashboardRoutes(app, requireAuthentication);
-	filesRoutes(app, requireAuthentication);
-	youtubeRoutes(app, requireAuthentication);
 
-	server.listen(config.http.port, () => {
-		logger.http(`Server listening on port`, config.http.port);
-		logger.logReadyMessage(config.http.url, config.auth.url);
-	});
+	return {
+		server,
+		createRouter(pluginName) {
+			const baseUrl = `/plugins/${pluginName}`;
 
-	return server;
+			const rawRouter = makeRouter('');
+			const unsafeRouter = makeRouter(baseUrl);
+
+			const router = makeRouter(baseUrl);
+			router.noAuth = unsafeRouter; // Router for routes that don't use auth
+			router.raw = rawRouter; // Router for routes that start at URL root. Useful for pretty URLs
+		
+			app.use(rawRouter);
+			app.use(baseUrl, unsafeRouter);
+			app.use(baseUrl, requireAuthentication(), router);
+
+			return router;
+		}
+	};
 };
+
+function makeRouter(baseUrl) {
+	const router = express.Router();
+	router.baseUrl = baseUrl;
+
+	/**
+	 * Proxy an HTTP route to another target URL.
+	 * This is useful if you want to proxy something through mission-control auth.
+	 */
+	router.proxy = function _proxy(route, target, options = {}) {
+		router.use(
+			route,
+			proxy(
+				'/',
+				{
+					target,
+					logLevel: config.debug ? 'debug' : 'warn',
+					ws: true,
+					pathRewrite: {
+						[`^${route}`]: '/',
+						[`^${route}/`]: '/'
+					},
+					...options
+				}
+			)
+		);
+	};
+
+	return router;
+}
