@@ -19,7 +19,7 @@ function renderDashboard(mobile = false) {
 	return async (req, res) => {
 		const html = (mobile ? dashboardHtmlMobile : dashboardHtml)
 			.replace(/{{SERVER_REPLACE_API_KEY}}/gm, req.session.jwt)
-			.replace(/{{SERVER_ISSUED_VUE_COMPONENTS}}/, '');
+			.replace(/{{SERVER_REPLACE_DASHBOARD_DATA}}/, req.componentsHtml());
 
 		res.set('Content-Type', 'text/html').send(html);
 	};

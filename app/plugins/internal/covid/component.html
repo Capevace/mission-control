@@ -1,0 +1,49 @@
+<script>
+    MISSION_CONTROL.dashboard.component('covid', {
+        template: `
+            <section class="">
+                <div class="dashboard-title mb-2">
+                    COVID-19 Data <span class="ml-1 text-main">(Last 7 days)</span>
+                </div>
+                <div class="list-none p-0 inline-block">
+                    <div class="list-reset bg-main-dark mb-3 rounded px-3 py-2 min-w-sm" v-for="city of cities">
+                        <div class="text-sm text-main-lighter mb-2 flex justify-between items-center">
+                            <div class="font-medium">{{city.label}}</div>
+                        </div>
+                        <div class="flex mb-2">
+                            <div class="mr-2">
+                                <div class="font-bold text-2xl">{{city.casesPerPopulation | round}}</div>
+                                <div class="text-sm text-main-lighter ">per 100.000</div>
+                            </div>
+                            <div>
+                                <div class="font-bold text-2xl">{{city.casesLast7Days}}</div>
+                                <div class="text-sm text-main-lighter ">cases</div>
+                            </div>
+                        </div>
+                        <div class="text-xs text-main-light">Date: {{city.date | dateify}}</div>
+                    </div>
+                </div>
+            </section>
+        `,
+        computed: {
+            covidState() {
+                return this.$mcState('covid', {
+                    cities: {}
+                });
+            },
+            cities() {
+                return Object.values(this.covidState.cities);
+            }
+        },
+        filters: {
+            dateify(value) {
+                return new Date(value).toLocaleDateString();
+            },
+
+            round(value) {
+                return value.toFixed(2);
+            }
+        }
+    });
+
+</script>

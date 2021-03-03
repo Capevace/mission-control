@@ -1,0 +1,47 @@
+<script>
+    MISSION_CONTROL.dashboard.component('homekitSwitches', {
+        template: `
+            <section class="mt-16">
+                <span class="dashboard-title mb-2 w-full">Devices</span>
+                <div class="flex">
+                    <template v-for="(service) in homekitState.services">
+
+                         <virtual-switch
+                            v-if="service.name !== 'Homebridge 4E81'"
+                            :key="service.uniqueId"
+                            :active="isServiceActive(service)"
+                            icon="home"
+                            @click="toggle(service.uniqueId, { On: !isServiceActive(service) })"
+                        >
+                            {{ service.name }}
+                        </virtual-switch>
+                    </template>
+
+                </div>
+            </section>
+        `,
+        components: {
+            'virtual-switch': MISSION_CONTROL.components.switch
+        },
+        computed: {
+            homekitState() {
+                return this.$mcState('homekit', {
+                    services: {}
+                });
+            }
+        },
+        methods: {
+            toggle(uniqueId, changes) {
+                MISSION_CONTROL.dashboard.callAction('HOMEKIT:MODIFY-CHARACTERISTICS', {
+                    uniqueId,
+                    changes
+                });
+            },
+
+            isServiceActive(service) {
+                return !!service.values.On;
+            }
+        }
+    });
+
+</script>

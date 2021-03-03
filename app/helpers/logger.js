@@ -222,7 +222,7 @@ Auth Proxy:		${config.auth.proxy ? 'Enabled' : 'Disabled'}\n`
 
 module.exports.progress = async function progress(callback) {
 	progressBar = new cliProgress.SingleBar({
-	    format: `Starting Mission Control... |${chalk.cyan('{bar}')}| {percentage}% {label}`,
+	    format: `|${chalk.cyan('{bar}')}| {percentage}% {label}`,
 	    barCompleteChar: '\u2588',
 	    barIncompleteChar: '\u2591',
 	    hideCursor: true

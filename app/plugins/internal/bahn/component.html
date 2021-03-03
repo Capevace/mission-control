@@ -1,0 +1,72 @@
+<script>
+    const leftPad = MISSION_CONTROL.utils.leftPad;
+
+    function dateToTime(date) {
+        const hours = leftPad(date.getHours(), 2, '0');
+        const minutes = leftPad(date.getMinutes(), 2, '0');
+
+        return `${hours}:${minutes}`;
+    }
+
+
+    MISSION_CONTROL.dashboard.component('bahn', {
+        template: `
+            <section class="mt-16">
+                <div class="dashboard-title mb-2">Trains to Lübeck Hbf</div>
+                <div class="list-none p-0  text-main-lightest inline-block">
+                    <div
+                        v-for="(route) in bahnState.routes"
+                        class="list-reset bg-main-dark mb-3 flex rounded px-3 py-2"
+                    >
+
+                        <div class="border-main-darker border-r pr-3 mr-3 text-2xl">
+                            <div>{{route.departure | dateify}}<span v-if="route.departureDelay">{{route.departureDelay}}</span></div>
+                            <div>{{route.arrival | dateify}}<span v-if="route.arrivalDelay">{{route.arrivalDelay}}</span></div>
+                        </div>
+                        <table class="text-base" v-if="route.buses && route.buses.length > 0">
+                            <tr
+                                v-for="bus in route.buses"
+                                class="text-left"
+                            >
+                                <td class="pr-2">{{bus.name}}</td>
+                                <td class="text-main-lighter font-medium pr-1">{{bus.departure | dateify}}</td>
+                                <td class="text-main-lighter font-medium">- {{bus.arrival | dateify}}</td>
+                            </tr>
+                        </table>
+                        <div v-else class="text-sm text-main-light">No busses found</div>
+                    </div>
+                </div>
+            </section>
+        `,
+        computed: {
+            bahnState() {
+                return this.$mcState('bahn', {
+                    routes: []
+                });
+            }
+        },
+        methods: {
+
+        },
+        filters: {
+            dateify(value) {
+                return dateToTime(new Date(value));
+            },
+
+            minuteify(value) {
+                const v = new Date(value)
+                    .toLocaleTimeString([], {minute: '2-digit'});
+
+                return v.length === 1
+                    ? `0${v}`
+                    : v;
+            }
+        }
+    })
+</script>
+
+<style type="text/css">
+table td, table td * {
+    vertical-align: top;
+}
+</style>

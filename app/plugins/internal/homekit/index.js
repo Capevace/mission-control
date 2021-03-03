@@ -1,7 +1,7 @@
 const { HapClient } = require('@oznu/hap-client');
 
 module.exports = function homekitInit(APP) {
-	const { state, logger, config } = APP;
+	const { state, logger, config, http } = APP;
 
 	/**
 	 * @ACTION
@@ -100,6 +100,9 @@ module.exports = function homekitInit(APP) {
 			return false;
 		}
 	);
+
+	http.registerComponentFile('homekitSwitches', __dirname + '/component.html');
+
 
 	if (!config.homebridge.pin) {
 		logger.warn(

@@ -1,7 +1,7 @@
 const { routesToHL } = require('./api');
 
 module.exports = function bahnInit(APP) {
-	const { state, logger } = APP;
+	const { state, logger, http } = APP;
 
 	/**
 	 * @ACTION
@@ -20,6 +20,8 @@ module.exports = function bahnInit(APP) {
 		}),
 		(data) => (typeof data === 'object') ? data : false
 	);
+
+	http.registerComponentFile('bahn', __dirname + '/component.html');
 
 	const refreshInfo = async () => {
 		try {
