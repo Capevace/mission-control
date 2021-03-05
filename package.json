@@ -1,6 +1,6 @@
 {
   "name": "@capevace/mission-control",
-  "version": "1.1.2",
+  "version": "2.0.0-0",
   "description": "Beautiful smart home dashboard software built on Node.js",
   "main": "app/index.js",
   "scripts": {
@@ -58,14 +58,6 @@
     "superagent": "^5.0.2",
     "systeminformation": "^4.27.3",
     "uuid": "^3.3.2"
-  },
-  "_moduleAliases": {
-    "@root": "app",
-    "@config": "app/config",
-    "@database": "app/database",
-    "@state": "app/state",
-    "@helpers": "app/helpers",
-    "@auth": "app/auth"
   },
   "devDependencies": {
     "@babel/cli": "^7.11.5",
