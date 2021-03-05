@@ -1,103 +1,111 @@
 {
-  "name": "@capevace/mission-control",
-  "version": "2.0.0-1",
-  "description": "Beautiful smart home dashboard software built on Node.js",
-  "main": "app/index.js",
-  "scripts": {
-    "start": "node scripts/start.js",
-    "lint": "eslint app",
-    "docs-tutorials-for-later": "jsdoc -r app -d docs -c jsdoc.config.js -u tutorials --package ./package.json ",
-    "docs": "jsdoc -d docs -c jsdoc.config.js -r app ./README.md",
-    "ui": "cp -r ../mission-control-dashboard/dist/production/. resources/dashboard-ui/",
-    "spotify-ui": "cp -r ../mission-control-spotify/dist/. resources/spotify-ui/",
-    "mobile-ui": "babel resources/dashboard-ui/index.js --out-file resources/dashboard-ui/mobile.js"
-  },
-  "browserslist": "defaults, last 1 version, >1%, ios_saf 9, ios_saf 9.3",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/capevace/hal-6900-mission-control.git"
-  },
-  "bin": {
-    "mission-control": "scripts/start.js"
-  },
-  "author": "Lukas Mateffy (@Capevace)",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/capevace/hal-6900-mission-control/issues"
-  },
-  "homepage": "https://github.com/capevace/hal-6900-mission-control#readme",
-  "dependencies": {
-    "@oznu/hap-client": "^1.6.0",
-    "bcrypt": "^5.0.1",
-    "body-parser": "^1.18.3",
-    "chalk": "^2.4.2",
-    "cli-progress": "^3.9.0",
-    "commander": "^6.1.0",
-    "connect-flash": "^0.1.1",
-    "db-hafas": "^5.0.2",
-    "eventemitter2": "^5.0.1",
-    "express": "^4.16.4",
-    "express-session": "^1.16.1",
-    "html-minifier": "^4.0.0",
-    "http-proxy-middleware": "^0.20.0",
-    "internal-ip": "^6.1.0",
-    "jsonwebtoken": "^8.5.1",
-    "module-alias": "^2.2.0",
-    "object-diff": "0.0.4",
-    "on-finished": "^2.3.0",
-    "passport": "^0.4.0",
-    "passport-jwt": "^4.0.0",
-    "passport-local": "^1.0.0",
-    "public-ip": "^3.0.0",
-    "qrcode-terminal": "^0.12.0",
-    "querystring": "^0.2.0",
-    "rc": "^1.2.8",
-    "session-file-store": "^1.5.0",
-    "socket.io": "^2.2.0",
-    "socketio-auth": "^0.1.1",
-    "superagent": "^5.0.2",
-    "systeminformation": "^4.27.3",
-    "uuid": "^3.3.2"
-  },
-  "devDependencies": {
-    "@babel/cli": "^7.11.5",
-    "@babel/core": "^7.11.5",
-    "@babel/preset-env": "^7.11.5",
-    "eslint": "^5.16.0",
-    "eslint-config-prettier": "^4.3.0",
-    "eslint-plugin-import": "^2.17.2",
-    "eslint-plugin-prettier": "^3.1.0",
-    "jsdoc": "^3.6.3"
-  },
-  "eslintConfig": {
-    "env": {
-      "node": true,
-      "commonjs": true,
-      "es6": true
+    "name": "@capevace/mission-control",
+    "version": "2.0.0-2",
+    "description": "Beautiful smart home dashboard software built on Node.js",
+    "main": "app/index.js",
+    "scripts": {
+        "start": "node scripts/start.js",
+        "lint": "eslint app",
+        "docs-tutorials-for-later": "jsdoc -r app -d docs -c jsdoc.config.js -u tutorials --package ./package.json ",
+        "docs": "jsdoc -d docs -c jsdoc.config.js -r app ./README.md",
+        "ui": "cp -r ../mission-control-dashboard/dist/production/. resources/dashboard-ui/",
+        "spotify-ui": "cp -r ../mission-control-spotify/dist/. resources/spotify-ui/",
+        "mobile-ui": "babel resources/dashboard-ui/index.js --out-file resources/dashboard-ui/mobile.js"
     },
-    "extends": [
-      "eslint:recommended",
-      "prettier"
-    ],
-    "globals": {
-      "Atomics": "readonly",
-      "SharedArrayBuffer": "readonly"
+    "browserslist": "defaults, last 1 version, >1%, ios_saf 9, ios_saf 9.3",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/capevace/hal-6900-mission-control.git"
     },
-    "parserOptions": {
-      "ecmaVersion": 2018
+    "bin": {
+        "mission-control": "scripts/start.js"
     },
-    "rules": {
-      "linebreak-style": [
-        "error",
-        "unix"
-      ],
-      "semi": [
-        "error",
-        "always"
-      ]
+    "author": "Lukas Mateffy (@Capevace)",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/capevace/hal-6900-mission-control/issues"
+    },
+    "homepage": "https://github.com/capevace/hal-6900-mission-control#readme",
+    "dependencies": {
+        "@oznu/hap-client": "^1.6.0",
+        "bcrypt": "^5.0.1",
+        "body-parser": "^1.18.3",
+        "chalk": "^2.4.2",
+        "cli-progress": "^3.9.0",
+        "commander": "^6.1.0",
+        "connect-flash": "^0.1.1",
+        "db-hafas": "^5.0.2",
+        "eventemitter2": "^5.0.1",
+        "express": "^4.16.4",
+        "express-session": "^1.16.1",
+        "html-minifier": "^4.0.0",
+        "http-proxy-middleware": "^0.20.0",
+        "internal-ip": "^6.1.0",
+        "jsonwebtoken": "^8.5.1",
+        "module-alias": "^2.2.0",
+        "object-diff": "0.0.4",
+        "on-finished": "^2.3.0",
+        "passport": "^0.4.0",
+        "passport-jwt": "^4.0.0",
+        "passport-local": "^1.0.0",
+        "public-ip": "^3.0.0",
+        "qrcode-terminal": "^0.12.0",
+        "querystring": "^0.2.0",
+        "rc": "^1.2.8",
+        "session-file-store": "^1.5.0",
+        "socket.io": "^2.2.0",
+        "socketio-auth": "^0.1.1",
+        "superagent": "^5.0.2",
+        "systeminformation": "^4.27.3",
+        "uuid": "^3.3.2"
+    },
+    "devDependencies": {
+        "@babel/cli": "^7.11.5",
+        "@babel/core": "^7.11.5",
+        "@babel/preset-env": "^7.11.5",
+        "eslint": "^5.16.0",
+        "eslint-config-prettier": "^4.3.0",
+        "eslint-plugin-import": "^2.17.2",
+        "eslint-plugin-prettier": "^3.1.0",
+        "jsdoc": "^3.6.3"
+    },
+    "eslintConfig": {
+        "env": {
+            "node": true,
+            "commonjs": true,
+            "es6": true
+        },
+        "extends": [
+            "eslint:recommended",
+            "prettier"
+        ],
+        "globals": {
+            "Atomics": "readonly",
+            "SharedArrayBuffer": "readonly"
+        },
+        "parserOptions": {
+            "ecmaVersion": 2018
+        },
+        "rules": {
+            "linebreak-style": [
+                "error",
+                "unix"
+            ],
+            "semi": [
+                "error",
+                "always"
+            ]
+        }
+    },
+    "directories": {
+        "doc": "docs"
+    },
+    "_moduleAliases": {
+        "@root": "app",
+        "@config": "app/config",
+        "@database": "app/database",
+        "@state": "app/state",
+        "@helpers": "app/helpers",
+        "@services": "app/services"
     }
-  },
-  "directories": {
-    "doc": "docs"
-  }
 }
