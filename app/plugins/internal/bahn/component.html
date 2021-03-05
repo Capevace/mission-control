@@ -11,30 +11,34 @@
 
     MISSION_CONTROL.dashboard.component('bahn', {
         template: `
-            <section class="mt-16">
+            <section class="w-full h-full flex flex-col justify-start">
                 <div class="dashboard-title mb-2">Trains to Lübeck Hbf</div>
-                <div class="list-none p-0  text-main-lightest inline-block">
+                <div class="list-none p-0 w-full text-main-lightest inline-block overflow-y-scroll h-full">
+                    <div class="absolute bottom-0 w-full h-8 bg-gradient-to-t from-main to-transparent rounded-xl"></div>
                     <div
                         v-for="(route) in bahnState.routes"
-                        class="list-reset bg-main-dark mb-3 flex rounded px-3 py-2"
+                        class="list-reset bg-main-dark mb-3 flex rounded-2xl overflow-hidden"
                     >
-
-                        <div class="border-main-darker border-r pr-3 mr-3 text-2xl">
+                        <div class="pr-3 text-2xl font-mono text-main-lightest px-3 py-2">
                             <div>{{route.departure | dateify}}<span v-if="route.departureDelay">{{route.departureDelay}}</span></div>
                             <div>{{route.arrival | dateify}}<span v-if="route.arrivalDelay">{{route.arrivalDelay}}</span></div>
                         </div>
-                        <table class="text-base" v-if="route.buses && route.buses.length > 0">
-                            <tr
-                                v-for="bus in route.buses"
-                                class="text-left"
-                            >
-                                <td class="pr-2">{{bus.name}}</td>
-                                <td class="text-main-lighter font-medium pr-1">{{bus.departure | dateify}}</td>
-                                <td class="text-main-lighter font-medium">- {{bus.arrival | dateify}}</td>
-                            </tr>
-                        </table>
-                        <div v-else class="text-sm text-main-light">No busses found</div>
+
+                        <div class="bg-main-darkest border-main-dark border-8 rounded-2xl w-full px-2 py-1">
+                            <table class="text-base" v-if="route.buses && route.buses.length > 0">
+                                <tr
+                                    v-for="bus in route.buses"
+                                    class="text-left"
+                                >
+                                    <td class="pr-2 text-main-lightest">{{bus.name}}</td>
+                                    <td class="text-main-lighter font-mono pr-1 text-sm">{{bus.departure | dateify}}</td>
+                                    <td class="text-main-lighter font-mono text-sm">- {{bus.arrival | dateify}}</td>
+                                </tr>
+                            </table>
+                            <div v-else class="text-sm text-main-lighter">No busses found</div>
+                        </div>
                     </div>
+
                 </div>
             </section>
         `,

@@ -67,7 +67,7 @@ module.exports = function socket(http) {
 		// It has to pass the action and associated data.
 		client.on('action', ({ action, data }) => {
 			log(`Client requested action ${action}.`);
-			state.callAction(action, data);
+			state.invokeAction(action, data);
 		});
 
 		// The client can emit a 'subscribe' event to subscribe to the state machines events.

@@ -122,7 +122,7 @@ const rawActions = [
 	 * @property {string} video.url The url to download the file from.
 	 * @property {string} video.format The format to download the file as.
 	 * @example
-	 * state.callAction('VIDEO-QUEUE:PUSH', { video: { url: 'https://...', format: 'mp4' || 'mp3' || 'm4a' } })
+	 * state.invokeAction('VIDEO-QUEUE:PUSH', { video: { url: 'https://...', format: 'mp4' || 'mp3' || 'm4a' } })
 	 */
 	'VIDEO-QUEUE:PUSH',
 
@@ -136,7 +136,7 @@ const rawActions = [
 	 * @property {number} progress.totalBytes The total number of bytes.
 	 * @property {number} progress.state A status message.
 	 * @example
-	 * state.callAction('VIDEO-QUEUE:PROGRESS', {
+	 * state.invokeAction('VIDEO-QUEUE:PROGRESS', {
 	 *     videoUrl: 'https://..',
 	 *     progress: {
 	 *         downloaded: 30,
@@ -168,7 +168,7 @@ const rawActions = [
 	 * @property {Array} service.characteristics Array of characteristics
 	 * @property {Array} service.values Array of values for the characteristics
 	 * @example
-	 * state.callAction('HOMEKIT:SET-SERVICES', { services: { 'serviceID': { ...service }}})
+	 * state.invokeAction('HOMEKIT:SET-SERVICES', { services: { 'serviceID': { ...service }}})
 	 */
 	'HOMEKIT:SET-SERVICES',
 
@@ -179,7 +179,7 @@ const rawActions = [
 	 * @property {number} uniqueId The service ID
 	 * @property {object} changes The changes to be applied
 	 * @example
-	 * state.callAction('HOMEKIT:MODIFY-CHARACTERISTICS', { uniqueId: 0, changes: { 'On': false }})
+	 * state.invokeAction('HOMEKIT:MODIFY-CHARACTERISTICS', { uniqueId: 0, changes: { 'On': false }})
 	 */
 	'HOMEKIT:MODIFY-CHARACTERISTICS',
 
@@ -189,7 +189,7 @@ const rawActions = [
 	 * @constant BAHN:UPDATE
 	 * @property {object} changes The data to be set
 	 * @example
-	 * state.callAction('BAHN:UPDATE', { })
+	 * state.invokeAction('BAHN:UPDATE', { })
 	 */
 	'BAHN:UPDATE'
 ];

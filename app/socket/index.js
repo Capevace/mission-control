@@ -13,18 +13,18 @@
  */
 
 const logger = require('@helpers/logger').createLogger('Socket', 'magenta');
-const state = require('@state');
 const socketIO = require('socket.io');
 const socketAuth = require('./auth');
 
 /**
  * Initialize the socket module.
  * @param  {Object} http A http server object.
+ * @param  {Object} auth The auth object.
  */
-module.exports = function socket(http) {
-	const server = socketIO(http);
+module.exports = function socket(state, http, auth) {
+	const server = socketIO(http.server);
 
-	socketAuth(server, client => {
+	socketAuth(server, auth.verifyAPIToken, client => {
 		let subscriptions = {};
 
 		logger.debug('A new client connected');
@@ -39,7 +39,7 @@ module.exports = function socket(http) {
 		// It has to pass the action and associated data.
 		client.on('action', ({ action, data }) => {
 			logger.debug(`Client requested action ${action}`);
-			state.callAction(action, data);
+			state.invokeAction(action, data);
 		});
 
 		// The client can emit a 'subscribe' event to subscribe to the state machines events.

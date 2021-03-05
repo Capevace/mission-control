@@ -10,9 +10,9 @@ module.exports = function bahnInit(APP) {
 	 * @constant BAHN:UPDATE
 	 * @property {object} changes The data to be set
 	 * @example
-	 * state.run('BAHN:UPDATE', { })
+	 * state.invoke('BAHN:UPDATE', { })
 	 */
-	state.registerAction(
+	state.addAction(
 		'BAHN:UPDATE', 
 		(state, data) => ({
 			...state,
@@ -21,19 +21,19 @@ module.exports = function bahnInit(APP) {
 		(data) => (typeof data === 'object') ? data : false
 	);
 
-	http.registerComponentFile('bahn', __dirname + '/component.html');
+	http.addComponentFile('bahn', __dirname + '/component.html');
 
 	const refreshInfo = async () => {
 		try {
 			const hlRoutes = await routesToHL();
 			
-			state.run('BAHN:UPDATE', {
+			state.invoke('BAHN:UPDATE', {
 				routes: hlRoutes
 			});
 		} catch (e) {
 			logger.error('Error occurred during route check', e);
 
-			state.run('BAHN:UPDATE', {
+			state.invoke('BAHN:UPDATE', {
 				routes: []
 			});
 		}

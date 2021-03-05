@@ -4,12 +4,12 @@ const pkg = require('../../package.json');
 module.exports = function createPluginContext(name, { http, state, database, config }) {
 	return {
 		logger: loggers.createLogger(`${name}`),
-		http: http.createRouter(name),
+		http: http.composeAPIContext(name),
 		state: {
 			get: state.getState,
 			subscribe: state.subscribe,
-			run: state.callAction,
-			registerAction(name, reducer, validate = (data) => data) {
+			run: state.invokeAction,
+			addAction(name, reducer, validate = (data) => data) {
 				state.registerReducer(name, reducer, validate);
 			}
 		},

@@ -121,7 +121,7 @@ function subscribe(event, callback) {
  *
  * @emits 'update'
  */
-function callAction(actionKey, data) {
+function invokeAction(actionKey, data) {
 	if (config.debug) {
 		log(`Running action ${actionKey} with data: ${JSON.stringify(
 			data
@@ -204,7 +204,7 @@ function getState() {
 
 module.exports = {
 	subscribe,
-	callAction,
+	invokeAction,
 	emitEvent,
 	getState
 };

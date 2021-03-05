@@ -42,7 +42,7 @@ exports.handlers = {
 
 			e.doclet.examples[
 				e.doclet.examples.indexOf('demo-action-call')
-			] = `state.callAction('${e.doclet.name}', { ${parameterString}${
+			] = `state.invokeAction('${e.doclet.name}', { ${parameterString}${
 				properties.length > MAX_PROPERTIES_LINE ? '\n' : ' '
 			}})`;
 

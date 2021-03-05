@@ -105,7 +105,7 @@ module.exports = {
 						};
 
 						// Call Action to reflect new plugin state
-						globalContext.state.callAction('PLUGINS:ADD', { 
+						globalContext.state.invokeAction('PLUGINS:ADD', {
 							name: plugins[name].name, 
 							version: plugins[name].version, 
 							description: plugins[name].description

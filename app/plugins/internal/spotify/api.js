@@ -77,7 +77,7 @@ module.exports = function api(APP) {
 
 		// Save to database so its persistent and then update state so clients are notified.
 		database.set('spotify', data);
-		state.run('SPOTIFY:UPDATE-TOKEN', data);
+		state.invoke('SPOTIFY:UPDATE-TOKEN', data);
 	}
 
 	function scheduleTokenRefresh(expiresAt, refreshToken) {
@@ -94,7 +94,7 @@ module.exports = function api(APP) {
 				);
 			} catch (e) {
 				logger.error('Couldn\'t refresh access token', e);
-				state.run('NOTIFICATIONS:CREATE', {
+				state.invoke('NOTIFICATIONS:CREATE', {
 					title: `Spotify couldn't be authorized.`,
 					message: e.message
 				});

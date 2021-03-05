@@ -2,7 +2,7 @@ const config = require('@config');
 const logger = require('@helpers/logger').createLogger('Socket Auth');
 const jwt = require('jsonwebtoken');
 
-module.exports = function socketAuth(socketIO, onAuthentication) {
+module.exports = function socketAuth(socketIO, verifyAPIToken, onAuthentication) {
 	forbidNamespaceConnections(socketIO.nsps);
 
 	socketIO.on('connection', socket => {
@@ -24,16 +24,8 @@ module.exports = function socketAuth(socketIO, onAuthentication) {
 		socket.on('authenticate', ({ token }) => {
 			clearTimeout(authTimeoutId);
 
-			try {
-				// Verify JWT received with the secret
-				const payload = jwt.verify(token, config.auth.secret, {
-					issuer: config.auth.issuer,
-					audience: config.auth.audience
-				});
-
-				socket.jwt = token;
-				socket.jwtPayload = payload;
-
+			// Verify JWT received with the secret
+			if (verifyAPIToken(token)) {
 				// AUTH SUCCESSFUL
 				// We set the authenticated var in the socket instance to true and
 				// restore any connections the socket tried to make to namespaces.
@@ -42,7 +34,7 @@ module.exports = function socketAuth(socketIO, onAuthentication) {
 				restoreNamespaceConnection(socketIO.nsps, socket);
 
 				socket.emit('authenticated');
-			} catch (e) {
+			} else {
 				logger.debug('Client couldnt be authorized:', e.message);
 
 				// Send the unauthorized event and disconnect

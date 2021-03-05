@@ -106,7 +106,7 @@ function subscribe(event, callback) {
  *
  * @emits 'update'
  */
-function callAction(actionKey, data) {
+function invokeAction(actionKey, data) {
 	logger.debug(`Running action ${actionKey} with data: ${JSON.stringify(
 		data
 	)}`);
@@ -191,7 +191,7 @@ function getState() {
 module.exports = {
 	registerReducer,
 	subscribe,
-	callAction,
+	invokeAction,
 	emitEvent,
 	getState
 };

@@ -12,7 +12,7 @@ module.exports = async function systemInfoInit(APP) {
 	 *
 	 * @constant SYSTEM-INFO:UPDATE
 	 */
-	state.registerAction(
+	state.addAction(
 		'SYSTEM-INFO:UPDATE', 
 		(state, data) => ({
 			...state,
@@ -96,7 +96,7 @@ module.exports = async function systemInfoInit(APP) {
 			}
 		};
 
-		state.run('SYSTEM-INFO:UPDATE', data);
+		state.invoke('SYSTEM-INFO:UPDATE', data);
 	};
 	refreshInfo();
 	setInterval(refreshInfo, 20000);

@@ -20369,7 +20369,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     console.log("Received Initial State:", t), T.commit("fullUpdateMcState", t.state);
   }), U.subscribe("update", function (t) {
     console.log("State Update:", t), T.commit("updateMcState", t.state);
-  }), window.callAction = W;
+  }), window.invokeAction = W;
   var V = {
     name: "RouterView",
     functional: !0,
@@ -22400,7 +22400,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       markAsReadDeferred: function markAsReadDeferred(t) {
         var e = this;
         t && setTimeout(function () {
-          socket.callAction("NOTIFICATIONS:MARK-AS-READ", {
+          socket.invokeAction("NOTIFICATIONS:MARK-AS-READ", {
             id: e.notification.id
           });
         }, 1500);

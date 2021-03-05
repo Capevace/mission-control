@@ -14,24 +14,24 @@
  */
 
 const config = require('@config');
-const database = require('@database');
 const logger = require('@helpers/logger');
 
 const express = require('express');
-const app = express();
-const server = require('http').createServer(app);
+const { createServer } = require('http');
 
 const session = require('express-session');
-const passport = require('passport');
-const queryString = require('querystring');
+const FileStore = require('session-file-store')(session);
 const proxy = require('http-proxy-middleware');
-
-const uuid = require('uuid/v4');
+const flash = require('connect-flash');
+const bodyParser = require('body-parser');
+const passport = require('passport');
 const fs = require('fs');
 
-const authRoutes = require('./auth');
-const stateRoutes = require('./state');
-const dashboardRoutes = require('./dashboard');
+// const minify = require('html-minifier').minify;
+
+const authRoutes = require('./routes/auth');
+const stateRoutes = require('./routes/state');
+const dashboardRoutes = require('./routes/dashboard');
 
 /**
  * Initialize the main HTTP server for the mission control sysyem.
@@ -40,25 +40,34 @@ const dashboardRoutes = require('./dashboard');
  * might still create their own HTTP servers.
  * @return {module:express~Server} The express HTTP server.
  */
-module.exports = function http() {
-	let sessionSecret = database.get('session-secret', null);
+module.exports = function http(database, auth, sessionSecret) {
+	const app = express();
+	const server = createServer(app);
+
 	let components = {};
 
-	if (!sessionSecret) {
-		sessionSecret = uuid();
-		database.set('session-secret', sessionSecret);
-	}
-
+	app.use(logger.logMiddleware);
+	app.use(bodyParser.urlencoded({ extended: true }));
 	app.use(
 		session({
+			store: new FileStore({
+				path: config.basePath + '/session',
+				secret: sessionSecret,
+			}),
 			secret: sessionSecret,
 			resave: true,
 			saveUninitialized: true,
-			name: 'mc.sid'
+			name: 'mc.sid',
+			cookie: {
+				httpOnly: true,
+				maxAge: 1000 * 60 * 60 * 24 * 365 // sessions are active for a year
+			}
 		})
 	);
+	app.use(flash());
 
-	app.use(logger.logMiddleware);
+	app.use(passport.initialize());
+	app.use(passport.session());
 
 	// Parse host domain from headers
 	app.use((req, res, next) => {		
@@ -74,32 +83,28 @@ module.exports = function http() {
 		req.componentsHtml = () => {
 			let html = Object.values(components)
 				.map((component) => `<!-- ${component.name} COMPONENT HTML -->
-					${component.content}
+					${component.contentFn ? component.contentFn() : component.content}
 				`)
 				.reduce((html, component) => html + component, '');
 
 			return html;
+
+			// return minify(html, {
+			// 	minifyJS: true,
+			// 	minifyCSS: true
+			// });
 		};
 
 		next();
 	});
 
-	const requireAuthentication = () => (req, res, next) => {
-		passport.authenticate('jwt', {
-			session: false,
-			failureRedirect:
-				'/auth/login?' +
-				queryString.stringify({ redirect_url: req.originalUrl })
-		})(req, res, next);
-	};
-
-	authRoutes(app, requireAuthentication);
-	stateRoutes(app, requireAuthentication);
-	dashboardRoutes(app, requireAuthentication);
+	app.use(authRoutes(new express.Router(), auth));
+	app.use(stateRoutes(new express.Router(), auth));
+	app.use(dashboardRoutes(new express.Router(), auth));
 
 	const context = {
 		server,
-		createRouter(pluginName) {
+		composeAPIContext(pluginName) {
 			const baseUrl = `/plugins/${pluginName}`;
 
 			const getComponents = {
@@ -111,16 +116,16 @@ module.exports = function http() {
 				}
 			};
 
-			const rawRouter = makeRouter(getComponents, '');
-			const unsafeRouter = makeRouter(getComponents, baseUrl);
+			const rawRouter = composeAPIContextFromRouter(getComponents, '');
+			const unsafeRouter = composeAPIContextFromRouter(getComponents, baseUrl);
 
-			const router = makeRouter(getComponents, baseUrl);
+			const router = composeAPIContextFromRouter(getComponents, baseUrl);
 			router.noAuth = unsafeRouter; // Router for routes that don't use auth
 			router.raw = rawRouter; // Router for routes that start at URL root. Useful for pretty URLs
 		
 			app.use(rawRouter);
 			app.use(baseUrl, unsafeRouter);
-			app.use(baseUrl, requireAuthentication(), router);
+			app.use(baseUrl, auth.authenticate, router);
 
 			return router;
 		}
@@ -129,7 +134,7 @@ module.exports = function http() {
 	return context;
 };
 
-function makeRouter(components, baseUrl) {
+function composeAPIContextFromRouter(components, baseUrl) {
 	const router = express.Router();
 	router.baseUrl = baseUrl;
 
@@ -156,21 +161,22 @@ function makeRouter(components, baseUrl) {
 		);
 	};
 
-	router.registerComponent = (name, htmlContent) => {
+	router.addComponent = (name, htmlContent) => {
 		components.set(name, {
 			name,
 			content: htmlContent
 		});
 	};
 
-	router.registerComponentFile = (name, filePath) => {
+	router.addComponentFile = (name, filePath) => {
 		components.set(name, {
 			name,
+			contentFn: () => fs.readFileSync(filePath).toString(),
 			content: fs.readFileSync(filePath).toString()
 		});
 	};
 
-	router.registerComponentScript = (name, scriptContent) => {
+	router.addComponentScript = (name, scriptContent) => {
 		router.registerComponent(`
 			<script>
 				${scriptContent}

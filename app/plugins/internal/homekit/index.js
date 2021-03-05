@@ -10,7 +10,7 @@ module.exports = function homekitInit(APP) {
 	 * This is supposed to be a no op action because 
 	 * we still have to register it with the state system.
 	 */
-	state.registerAction(
+	state.addAction(
 		'HOMEKIT:MODIFY-CHARACTERISTICS', 
 		(state) => {
 			return {
@@ -27,9 +27,9 @@ module.exports = function homekitInit(APP) {
 	 * @constant HOMEKIT:SET-INITIALIZED
 	 * @property {Boolean} initialized 
 	 * @example
-	 * state.run('HOMEKIT:SET-INITIALIZED', { initialized: false })
+	 * state.invoke('HOMEKIT:SET-INITIALIZED', { initialized: false })
 	 */
-	state.registerAction(
+	state.addAction(
 		'HOMEKIT:SET-INITIALIZED', 
 		(state, { initialized = false }) => {
 			return {
@@ -55,9 +55,9 @@ module.exports = function homekitInit(APP) {
 	 * @property {Array} service.characteristics Array of characteristics
 	 * @property {Array} service.values Array of values for the characteristics
 	 * @example
-	 * state.run('HOMEKIT:SET-SERVICES', { services: { 'serviceID': { ...service }}})
+	 * state.invoke('HOMEKIT:SET-SERVICES', { services: { 'serviceID': { ...service }}})
 	 */
-	state.registerAction(
+	state.addAction(
 		'HOMEKIT:SET-SERVICES', 
 		(state, { services = {}, reset = false }) => {
 			/*
@@ -101,14 +101,14 @@ module.exports = function homekitInit(APP) {
 		}
 	);
 
-	http.registerComponentFile('homekitSwitches', __dirname + '/component.html');
+	http.addComponentFile('homekitSwitches', __dirname + '/component.html');
 
 
 	if (!config.homebridge.pin) {
 		logger.warn(
 			'Won\'t be able to connect to Homebridge, as the secret pin is not defined in config file.'
 		);
-		state.run('HOMEKIT:SET-INITIALIZED', { initialized: false });
+		state.invoke('HOMEKIT:SET-INITIALIZED', { initialized: false });
 		return;
 	}
 
@@ -128,7 +128,7 @@ module.exports = function homekitInit(APP) {
 
 	// TODO: Error detection for homebridge connection or something. I do
 	// think that HapClient does error logging on its own but ¯\_(ツ)_/¯
-	state.run('HOMEKIT:SET-INITIALIZED', { initialized: true });
+	state.invoke('HOMEKIT:SET-INITIALIZED', { initialized: true });
 
 	let monitor = null;
 
@@ -145,7 +145,7 @@ module.exports = function homekitInit(APP) {
 			servicesData[service.uniqueId] = simplifyService(service);
 		}
 
-		state.run(
+		state.invoke(
 			'HOMEKIT:SET-SERVICES',
 			{
 				services: servicesData,
@@ -168,7 +168,7 @@ module.exports = function homekitInit(APP) {
 				servicesData[service.uniqueId] = simplifyService(service);
 			}
 
-			state.run(
+			state.invoke(
 				'HOMEKIT:SET-SERVICES',
 				{
 					services: servicesData

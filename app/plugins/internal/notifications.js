@@ -12,7 +12,7 @@ module.exports = function bahnInit(APP) {
 	 * @property {string} message The message of the notification.
 	 * @example demo-action-call
 	 */
-	state.registerAction(
+	state.addAction(
 		'NOTIFICATIONS:CREATE', 
 		(state, { title, message }) => ({
 			...state,
@@ -31,7 +31,7 @@ module.exports = function bahnInit(APP) {
 	 * @property {string} id The id.
 	 * @example demo-action-call
 	 */
-	state.registerAction(
+	state.addAction(
 		'NOTIFICATIONS:DELETE', 
 		(state, { id }) => {
 			const newNotifications = state.notifications.filter(
@@ -53,7 +53,7 @@ module.exports = function bahnInit(APP) {
 	 * @property {string} id The id.
 	 * @example demo-action-call
 	 */
-	state.registerAction(
+	state.addAction(
 		'NOTIFICATIONS:MARK-AS-READ', 
 		(state, { id }) => {
 			const newNotifications = state.notifications.map(notification =>
@@ -77,7 +77,7 @@ module.exports = function bahnInit(APP) {
 	 * @property {array} notifications An array of notifications.
 	 * @example demo-action-call
 	 */
-	state.registerAction(
+	state.addAction(
 		'NOTIFICATIONS:SET', 
 		(state, { notifications }) => {
 			return {

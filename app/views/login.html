@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Sign In</title>
+		<link rel="stylesheet" type="text/css" href="/assets/index.css" />
+		<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+	</head>
+	<body class="bg-main-darker text-white antialiased font-sans flex justify-center mt-10 sm:mt-24">
+		<form action="/login" method="post" class="max-w-2xl bg-main-dark rounded-2xl p-5 m-5">
+			<h1 class="text-2xl font-bold mb-5 w-full text-center text-main-lighter">Sign In</h1>
+			{{ERROR_MSG}}
+			<div class="flex flex-wrap mb-5 w-full ">
+				<label for="username" class="w-full text-xs mb-2 font-medium text-main-lighter">Username</label>
+				<input type="text" id="username" name="username" autofocus="autofocus" class="outline-none bg-main-darker text-main-light w-full rounded-xl border-2 border-transparent hover:shadow-lg focus:shadow-lg focus:border-main px-5 py-3 text-main-darkest"/>
+			</div>
+
+			<div class="flex flex-wrap mb-8 w-full">
+				<label for="password" class="w-full text-xs mb-2 font-medium text-main-lighter">Password</label>
+				<input type="password" id="password" name="password" class="outline-none bg-main-darker text-main-light w-full rounded-xl border-2 border-transparent hover:shadow-lg focus:shadow-lg focus:border-main px-5 py-3 text-main-darkest" />
+			</div>
+
+			<div class="submit-container">
+				<button type="submit" class="rounded-xl bg-main-darker text-xl cursor-pointer font-bold w-full p-3 text-main-lighter hover:shadow-lg">Login</button>
+			</div>
+		</form>
+
+		<link
+			href="https://fonts.googleapis.com/css?family=Fira+Sans:400|500"
+			rel="stylesheet"
+		/>
+	</body>
+</html>

@@ -26,7 +26,7 @@ module.exports = function spotifyInit(APP) {
 	 * @property {string} refreshToken The token to request a new access token with.
 	 * @example demo-action-call
 	 */
-	state.registerAction(
+	state.addAction(
 		'SPOTIFY:UPDATE-TOKEN', 
 		API.updateTokenState, 
 		API.validateTokenUpdate

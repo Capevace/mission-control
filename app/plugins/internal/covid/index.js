@@ -16,9 +16,9 @@ module.exports = function bahnInit(APP) {
 	 * @constant COVID:UPDATE
 	 * @property {object} changes The data to be set
 	 * @example
-	 * state.run('COVID:UPDATE', { cities: { 'city-id': { } } })
+	 * state.invoke('COVID:UPDATE', { cities: { 'city-id': { } } })
 	 */
-	state.registerAction(
+	state.addAction(
 		'COVID:UPDATE', 
 		(state, data) => ({
 			...state,
@@ -27,7 +27,7 @@ module.exports = function bahnInit(APP) {
 		(data) => (typeof data === 'object') ? data : false
 	);
 
-	http.registerComponentFile('covid', __dirname + '/component.html');
+	http.addComponentFile('covid', __dirname + '/component.html');
 
 
 	const refreshInfo = async () => {
@@ -39,13 +39,13 @@ module.exports = function bahnInit(APP) {
 				citiesData[id] = parseCityData(csvText, id);
 			}
 
-			state.run('COVID:UPDATE', {
+			state.invoke('COVID:UPDATE', {
 				cities: citiesData
 			});
 		} catch (e) {
 			logger.error('Error occurred during covid API check', e);
 
-			state.run('COVID:UPDATE', {
+			state.invoke('COVID:UPDATE', {
 				cities: {}
 			});
 		}

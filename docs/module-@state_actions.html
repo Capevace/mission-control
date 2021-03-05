@@ -255,7 +255,7 @@ word like 'CREATE' concatenated by a ':'.</p></div>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>state.callAction('BAHN:UPDATE', { })</code></pre>
+    <pre class="prettyprint"><code>state.invokeAction('BAHN:UPDATE', { })</code></pre>
 
 
 
@@ -397,7 +397,7 @@ word like 'CREATE' concatenated by a ':'.</p></div>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>state.callAction('HOMEKIT:MODIFY-CHARACTERISTICS', { uniqueId: 0, changes: { 'On': false }})</code></pre>
+    <pre class="prettyprint"><code>state.invokeAction('HOMEKIT:MODIFY-CHARACTERISTICS', { uniqueId: 0, changes: { 'On': false }})</code></pre>
 
 
 
@@ -679,7 +679,7 @@ word like 'CREATE' concatenated by a ':'.</p></div>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>state.callAction('HOMEKIT:SET-SERVICES', { services: { 'serviceID': { ...service }}})</code></pre>
+    <pre class="prettyprint"><code>state.invokeAction('HOMEKIT:SET-SERVICES', { services: { 'serviceID': { ...service }}})</code></pre>
 
 
 
@@ -821,7 +821,7 @@ word like 'CREATE' concatenated by a ':'.</p></div>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>state.callAction('KODI:RUN', { command: "The command to execute.", args: [] })</code></pre>
+    <pre class="prettyprint"><code>state.invokeAction('KODI:RUN', { command: "The command to execute.", args: [] })</code></pre>
 
 
 
@@ -963,7 +963,7 @@ word like 'CREATE' concatenated by a ':'.</p></div>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>state.callAction('NOTIFICATIONS:CREATE', { title: "The title of the notification.", message: "The message of the notification." })</code></pre>
+    <pre class="prettyprint"><code>state.invokeAction('NOTIFICATIONS:CREATE', { title: "The title of the notification.", message: "The message of the notification." })</code></pre>
 
 
 
@@ -1082,7 +1082,7 @@ word like 'CREATE' concatenated by a ':'.</p></div>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>state.callAction('NOTIFICATIONS:DELETE', { id: "The id." })</code></pre>
+    <pre class="prettyprint"><code>state.invokeAction('NOTIFICATIONS:DELETE', { id: "The id." })</code></pre>
 
 
 
@@ -1201,7 +1201,7 @@ word like 'CREATE' concatenated by a ':'.</p></div>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>state.callAction('NOTIFICATIONS:MARK-AS-READ', { id: "The id." })</code></pre>
+    <pre class="prettyprint"><code>state.invokeAction('NOTIFICATIONS:MARK-AS-READ', { id: "The id." })</code></pre>
 
 
 
@@ -1320,7 +1320,7 @@ word like 'CREATE' concatenated by a ':'.</p></div>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>state.callAction('NOTIFICATIONS:SET', { notifications: [] })</code></pre>
+    <pre class="prettyprint"><code>state.invokeAction('NOTIFICATIONS:SET', { notifications: [] })</code></pre>
 
 
 
@@ -1462,7 +1462,7 @@ word like 'CREATE' concatenated by a ':'.</p></div>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>state.callAction('SCENE:TOGGLE', { scene: "The name of the scene.", active: "Wether the scene is on or not." })</code></pre>
+    <pre class="prettyprint"><code>state.invokeAction('SCENE:TOGGLE', { scene: "The name of the scene.", active: "Wether the scene is on or not." })</code></pre>
 
 
 
@@ -1627,7 +1627,7 @@ word like 'CREATE' concatenated by a ':'.</p></div>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>state.callAction('SPOTIFY:UPDATE-TOKEN', { 
+    <pre class="prettyprint"><code>state.invokeAction('SPOTIFY:UPDATE-TOKEN', {
     accessToken: "The access token to update.", 
     expiresAt: "The date the access token expires at.", 
     refreshToken: "The token to request a new access token with."
@@ -1812,7 +1812,7 @@ word like 'CREATE' concatenated by a ':'.</p></div>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>state.callAction('VIDEO-QUEUE:FINISHED', { videoUrl: "The video url to remove from the queue." })</code></pre>
+    <pre class="prettyprint"><code>state.invokeAction('VIDEO-QUEUE:FINISHED', { videoUrl: "The video url to remove from the queue." })</code></pre>
 
 
 
@@ -2048,7 +2048,7 @@ word like 'CREATE' concatenated by a ':'.</p></div>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>state.callAction('VIDEO-QUEUE:PROGRESS', {
+    <pre class="prettyprint"><code>state.invokeAction('VIDEO-QUEUE:PROGRESS', {
     videoUrl: 'https://..',
     progress: {
         downloaded: 30,
@@ -2245,7 +2245,7 @@ word like 'CREATE' concatenated by a ':'.</p></div>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>state.callAction('VIDEO-QUEUE:PUSH', { video: { url: 'https://...', format: 'mp4' || 'mp3' || 'm4a' } })</code></pre>
+    <pre class="prettyprint"><code>state.invokeAction('VIDEO-QUEUE:PUSH', { video: { url: 'https://...', format: 'mp4' || 'mp3' || 'm4a' } })</code></pre>
 
 
 

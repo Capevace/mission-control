@@ -8,9 +8,9 @@ module.exports = async function layoutInit(APP) {
 	 * @constant LAYOUT:UPDATE
 	 * @property {object} changes The data to be set
 	 * @example
-	 * state.run('LAYOUT:UPDATE', { layout: [] })
+	 * state.invoke('LAYOUT:UPDATE', { layout: [] })
 	 */
-	state.registerAction(
+	state.addAction(
 		'LAYOUT:UPDATE', 
 		(state, data) => ({
 			...state,
@@ -25,9 +25,9 @@ module.exports = async function layoutInit(APP) {
 	 *
 	 * @constant LAYOUT:RESET
 	 * @example
-	 * state.run('LAYOUT:RESET')
+	 * state.invoke('LAYOUT:RESET')
 	 */
-	state.registerAction(
+	state.addAction(
 		'LAYOUT:RESET', 
 		(state, data) => ({
 			...state,
@@ -46,7 +46,7 @@ module.exports = async function layoutInit(APP) {
 	];
 
 	const layout = database.get('layout', initialLayout);
-	state.run('LAYOUT:UPDATE', {
+	state.invoke('LAYOUT:UPDATE', {
 		layout
 	});
 
@@ -56,7 +56,7 @@ module.exports = async function layoutInit(APP) {
 
 	state.subscribe('action:LAYOUT:RESET', () => {
 		database.set('layout', initialLayout);
-		state.run('LAYOUT:UPDATE', {
+		state.invoke('LAYOUT:UPDATE', {
 			layout: initialLayout
 		});
 	});

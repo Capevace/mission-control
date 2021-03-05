@@ -107,6 +107,12 @@ if (!fs.existsSync(config.basePath + '/config')) {
 	);
 }
 
+// if (!fs.existsSync(config.basePath + '/storage')) {
+// 	logger.warn('Base path not found. Creating base directory ' + config.basePath);
+//
+// 	fs.mkdirSync(config.basePath, { recursive: true });
+// }
+
 if (argv.logLevel) {
 	config.logLevel = argv.logLevel;
 }
