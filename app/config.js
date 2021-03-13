@@ -87,12 +87,6 @@ if (!fs.existsSync(config.basePath + '/config')) {
 ;allowedDomains[]=url2.com
 ; Allowed Urls will also contain http.url
 
-[auth]
-;secret=applepie
-;url=/sso
-;port=3001
-;proxy=false
-
 ;[homebridge]
 ;pin=
 
@@ -142,7 +136,7 @@ if (argv.proxy) {
 }
 
 if (config.debug) {
-	config.logLevel = logging.LogLevel.debug;
+	config.logLevel = 'debug';
 }
 
 // Set debug mode

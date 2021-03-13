@@ -12,11 +12,13 @@ const cliProgress = require('cli-progress');
 let logBuffer = [];
 let progressBar = null;
 
+const console_log = console.log.bind(console);
+
 module.exports._log = function _log(...msgs) {
 	if (progressBar)
 		logBuffer.push(msgs);
 	else
-		console.log(...msgs); // eslint-disable-line
+		console_log(...msgs); // eslint-disable-line
 };
 
 const LogLevel = {
@@ -111,6 +113,7 @@ module.exports.warn = warn;
 module.exports.error = error;
 module.exports.fatal = fatal;
 
+
 /**
  * Create a logger with text label attached.
  * @param {string} label
@@ -171,8 +174,7 @@ ${`.  . .-. .-. .-. .-. .-. . .   .-. .-. . . .-. .-. .-. .
 |\\/|  |  \`-. \`-.  |  | | |\\|   |   | | |\\|  |  |(  | | |   
 '  ' '-' '-' '-' '-' '-' ' '   '-' '-' ' '  '  ' ' '-' '-' `}
 
-Dashboard available at ${chalk.cyan(url)}
-SSO available at ${chalk.cyan(authUrl)}
+Mission Control available at ${chalk.cyan(url)}
 
 ${qrCode}
 `;
@@ -214,9 +216,7 @@ Spotify Creds:		${spotifyCredentialsPresent ? 'Provided' : 'Not provided'}
 HTTP URL:		{cyan ${config.http.url}}
 HTTP Port:		${config.http.port}
 HTTP Domains:		${config.http.allowedDomains.map(domain => chalk`{cyan ${domain}}`).join(', ')}
-Auth URL:		{cyan ${config.auth.url}}
-Auth Port:		${config.auth.port}
-Auth Proxy:		${config.auth.proxy ? 'Enabled' : 'Disabled'}\n`
+\n`
 	);
 };
 
@@ -236,7 +236,7 @@ module.exports.progress = async function progress(callback) {
 		if (progressBar)
 			progressBar.stop();
 
-		logBuffer.forEach(msgs => console.log(...msgs));
+		logBuffer.forEach(msgs => console_log(...msgs));
 		logBuffer = [];
 
 		progressBar = null;
@@ -250,6 +250,10 @@ module.exports.progress = async function progress(callback) {
 		module.exports.error(e);
 	}
 };
+
+console.log = console.info = debug;
+console.warn = warn;
+console.error = error;
 
 process.on('uncaughtException', function (err) {
 	error(chalk.red.bold('Uncaught Exception'), err);

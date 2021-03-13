@@ -2,25 +2,24 @@
     MISSION_CONTROL.dashboard.component('covid', {
         template: `
             <section class="w-full">
-                <div class="dashboard-title mb-2">
-                    COVID-19 Data <span class="ml-1 text-main">(Last 7 days)</span>
+                <div class="dashboard-box-heading mb-3">
+                    COVID-19 Data <span class="ml-1 text-purple-500">(Last 7 days)</span>
                 </div>
                 <div class="flex w-full overflow-x-scroll">
-                    <div class="bg-main-dark mb-3 rounded-2xl px-3 py-2 min-w-sm mr-5" v-for="city of cities">
-                        <div class="text-sm text-main-lighter flex justify-between items-center">
-                            <div class="font-medium">{{city.label}}</div>
+                    <div class="dashboard-box mb-3 min-w-sm mr-5" v-for="city of cities">
+                        <div class="font-semibold text-purple-200 flex justify-between items-center">
+                            {{city.label}}
                         </div>
-                        <div class="flex mb-2 text-main-lightest">
+                        <div class="flex text-purple-50 font-semibold">
                             <div class="mr-2">
                                 <div class="font-bold text-2xl ">{{city.casesPerPopulation | round}}</div>
-                                <div class="text-sm text-main-lighter ">per 100.000</div>
+                                <div class="text-xs text-purple-500 ">per 100.000</div>
                             </div>
                             <div>
                                 <div class="font-bold text-2xl">{{city.casesLast7Days}}</div>
-                                <div class="text-sm text-main-lighter ">cases</div>
+                                <div class="text-xs text-purple-500 ">cases</div>
                             </div>
                         </div>
-                        <div class="text-xs text-main-light">Date: {{city.date | dateify}}</div>
                     </div>
                 </div>
             </section>

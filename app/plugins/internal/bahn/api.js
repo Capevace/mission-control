@@ -103,7 +103,10 @@ function parseJourney(journey) {
 	const leg = journey.legs[0];
 	const lastLeg = journey.legs[journey.legs.length - 1];
 
+	const lines = journey.legs.map(leg => leg.line.name).join(', ');
+
 	return {
+		lines,
 		departure: new Date(leg.departure),
 		arrival: new Date(lastLeg.arrival),
 		arrivalDelay: lastLeg.arrivalDelay, // delay is in seconds, acc. to docs

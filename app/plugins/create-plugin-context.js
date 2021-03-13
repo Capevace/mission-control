@@ -8,7 +8,7 @@ module.exports = function createPluginContext(name, { http, state, database, con
 		state: {
 			get: state.getState,
 			subscribe: state.subscribe,
-			run: state.invokeAction,
+			invoke: state.invokeAction,
 			addAction(name, reducer, validate = (data) => data) {
 				state.registerReducer(name, reducer, validate);
 			}

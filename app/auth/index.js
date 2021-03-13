@@ -25,12 +25,25 @@ function authenticateRequest(req, res, next) {
     }
 };
 
-module.exports = function initAuth(config, db, sessionSecret) {
-    function findUser(username) {
-        const users = db.get('users', { mat: { username: 'mat', password: 'mat' } });
 
-        return users[username];
+
+function initDB(db) {
+    return {
+        /**
+         * @param {User} username
+         */
+        async findUser(username) {
+            const defaultUser = { username: 'mat', password: 'mat', avatarUrl: 'https://media1.tenor.com/images/485b6e253f0074fd62aea7eff6a6427d/tenor.gif', displayName: 'Lukas' };
+
+            const users = db.get('users', { [defaultUser.username]: defaultUser });
+
+            return users[username];
+        }
     }
+}
+
+module.exports = function initAuth(config, db, sessionSecret) {
+    const { findUser } = initDB(db);
 
     passport.use(
         'local',
@@ -40,7 +53,7 @@ module.exports = function initAuth(config, db, sessionSecret) {
                 passwordField: 'password'
             },
             async (username, password, done) => {
-                const user = findUser(username);
+                const user = await findUser(username);
 
                 if (password === user.password || user && (await crypto.comparePassword(password, user.password))) {
                     return done(null, user);
@@ -55,8 +68,8 @@ module.exports = function initAuth(config, db, sessionSecret) {
         cb(null, user.username);
     });
 
-    passport.deserializeUser(function(username, cb) {
-        const user = findUser(username);
+    passport.deserializeUser(async function(username, cb) {
+        const user = await findUser(username);
 
         if (!user) return cb(null, false);
 
@@ -68,9 +81,8 @@ module.exports = function initAuth(config, db, sessionSecret) {
         authenticateRequest,
         authenticate: passport.authenticate('local', {
             failureRedirect: '/login',
-            failureFlash: true,
-            successRedirect: '/'
-            // failureFlash: 'Incorrect username or password.'
+            successRedirect: '/',
+            failureFlash: 'Incorrect username or password.'
         }),
         async getLoginPage(req, res) {
             const error = req.flash('error');

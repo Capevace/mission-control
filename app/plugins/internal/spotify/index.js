@@ -10,7 +10,7 @@ const makeAPI = require('./api');
 const routes = require('./routes');
 
 module.exports = function spotifyInit(APP) {
-	const { state, database, logger, config } = APP;
+	const { state, database, logger, config, http } = APP;
 	const API = makeAPI(APP);
 
 	const spotifyData = database.get('spotify', {});
@@ -73,6 +73,12 @@ module.exports = function spotifyInit(APP) {
 			);
 		}
 	}
+
+	// Register Page component
+	http.addComponentFile('spotify-page', __dirname + '/spotify-page.html');
+
+	// Register Page in Vue Router
+	http.addPage('/spotify', 'Spotify', 'spotify-page', { icon: 'spotify-icon', menu: 200 });
 
 	// Register HTTP routes
 	routes(APP);

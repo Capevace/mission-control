@@ -1,0 +1,30 @@
+<script>
+    MISSION_CONTROL.dashboard.component('spotify-page', {
+        name: 'spotify-page',
+        template: `
+            <main class="dashboard-page">
+                <iframe ref="iframe" class="w-full h-screen" :src="url"></iframe>
+
+                <top-bar-actions>
+                    <top-bar-button @click="clicked">Refresh</top-bar-button>
+                </top-bar-actions>
+            </main>
+        `,
+        computed: {
+            url() {
+                return this.$config.missionControlUrl + '/spotify/';
+            }
+        },
+        methods: {
+            clicked() {
+                // Reload iframe (hacky)
+                this.$refs.iframe.src = this.$refs.iframe.src;
+            }
+        },
+        components: {
+            topBarActions: MISSION_CONTROL.components.topBarActions,
+            topBarButton: MISSION_CONTROL.components.topBarButton
+        }
+    });
+
+</script>

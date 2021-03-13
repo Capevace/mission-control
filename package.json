@@ -101,7 +101,7 @@
         "doc": "docs"
     },
     "_moduleAliases": {
-        "@root": "app",
+        "@root": "./",
         "@config": "app/config",
         "@database": "app/database",
         "@state": "app/state",

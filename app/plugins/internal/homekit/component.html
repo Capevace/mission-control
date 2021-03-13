@@ -1,14 +1,14 @@
 <script>
     MISSION_CONTROL.dashboard.component('homekitSwitches', {
         template: `
-            <div class="flex">
-                <template
+            <section class="">
+                <div 
                     v-if="homekitState.initialized"
-                    >
-
-                     <virtual-switch
-                        v-for="(service) in homekitState.services"
-                        v-if="service.name !== 'Homebridge 4E81'"
+                    class="flex flex-wrap gap-5 mb-8"
+                    
+                >
+                    <virtual-switch
+                        v-for="(service) in services"
                         :key="service.uniqueId"
                         :active="isServiceActive(service)"
                         icon="home"
@@ -16,11 +16,11 @@
                     >
                         {{ service.name }}
                     </virtual-switch>
-                </template>
-                <p v-else class="text-main text-xs leading-normal ">
-                    You need to set a <a class="text-main" href="https://github.com/homebridge/homebridge">homebridge</a> pin in config (found in ~/.mission-control/config) or by specifying the <pre class="inline font-mono ">--homebridge-pin [pin]</pre> CLI option for devices to be listed here.
+                </div>
+                <p v-else class="text-purple-400 text-xs leading-normal ">
+                    You need to set a <a class="text-purple-300 underline" href="https://github.com/homebridge/homebridge">homebridge</a> pin in config (found in ~/.mission-control/config) or by specifying the <pre class="inline font-mono ">--homebridge-pin [pin]</pre> CLI option for devices to be listed here.
                 </p>
-            </div>
+            </section>
         `,
         components: {
             'virtual-switch': MISSION_CONTROL.components.switch
@@ -30,11 +30,18 @@
                 return this.$mcState('homekit', {
                     services: {}
                 });
+            },
+            services() {
+                return Object.values(this.homekitState.services)
+                    .filter(service => service.name !== 'Homebridge 4E81');
+            },
+            rows() {
+                return MISSION_CONTROL.utils.chunkArray(this.services, 4);
             }
         },
         methods: {
             toggle(uniqueId, changes) {
-                MISSION_CONTROL.dashboard.invokeAction('HOMEKIT:MODIFY-CHARACTERISTICS', {
+                window.invokeAction('HOMEKIT:MODIFY-CHARACTERISTICS', {
                     uniqueId,
                     changes
                 });

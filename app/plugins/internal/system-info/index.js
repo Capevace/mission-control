@@ -1,10 +1,11 @@
 const si = require('systeminformation');
 const publicIp = require('public-ip');
-const pkg = require('../../../package.json');
-
+const pkg = require('@root/package.json');
 
 module.exports = async function systemInfoInit(APP) {
-	const { state, database, config } = APP;
+	const { state, database, config, http } = APP;
+
+	http.addComponentFile('basic-header', __dirname + '/header.html');
 
 	/**
 	 * @ACTION

@@ -35,7 +35,7 @@ module.exports = function socketAuth(socketIO, verifyAPIToken, onAuthentication)
 
 				socket.emit('authenticated');
 			} else {
-				logger.debug('Client couldnt be authorized:', e.message);
+				logger.debug('Client couldnt be authorized');
 
 				// Send the unauthorized event and disconnect
 				socket.emit(

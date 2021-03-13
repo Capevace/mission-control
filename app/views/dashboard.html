@@ -17,13 +17,20 @@
 		window.MISSION_CONTROL_API_KEY = '{{SERVER_REPLACE_API_KEY}}';
 		window.MISSION_CONTROL_URL = `${window.location.protocol}//${window.location.hostname}${window.location.port ? ':' + window.location.port : ''}`
 			|| '{{SERVER_REPLACE_URL}}';
+		window.MISSION_CONTROL_USER = {{SERVER_REPLACE_USER_JSON}};
+		window.MISSION_CONTROL_PAGES = {{SERVER_REPLACE_PAGES_JSON}};
 	</script>
 	<script type="text/javascript" src="/assets/index.js"></script>
 
 	{{SERVER_REPLACE_DASHBOARD_DATA}}
+	
+	<script type="text/javascript">
+		// Call init components after all components have been registered
+		window.MISSION_CONTROL.dashboard.initComponents();
+	</script>
 
 	<link
-		href="https://fonts.googleapis.com/css?family=JetBrains+Mono:300,400,500,600|Fira+Sans:300,400,500,600"
+		href="https://fonts.googleapis.com/css?family=JetBrains+Mono:300,400,500,600|Open+Sans:300,400,500,600,700"
 		rel="stylesheet"
 	/>
 </html>

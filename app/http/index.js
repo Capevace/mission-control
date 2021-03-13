@@ -33,6 +33,8 @@ const authRoutes = require('./routes/auth');
 const stateRoutes = require('./routes/state');
 const dashboardRoutes = require('./routes/dashboard');
 
+const addPluginDashboardComponentsMiddleware = require('./middleware/plugin-dashboard-components');
+
 /**
  * Initialize the main HTTP server for the mission control sysyem.
  *
@@ -45,6 +47,7 @@ module.exports = function http(database, auth, sessionSecret) {
 	const server = createServer(app);
 
 	let components = {};
+	let pages = {};
 
 	app.use(logger.logMiddleware);
 	app.use(bodyParser.urlencoded({ extended: true }));
@@ -53,10 +56,11 @@ module.exports = function http(database, auth, sessionSecret) {
 			store: new FileStore({
 				path: config.basePath + '/session',
 				secret: sessionSecret,
+				logFn: logger.debug
 			}),
 			secret: sessionSecret,
-			resave: true,
-			saveUninitialized: true,
+			resave: false,
+			saveUninitialized: false,
 			name: 'mc.sid',
 			cookie: {
 				httpOnly: true,
@@ -78,54 +82,52 @@ module.exports = function http(database, auth, sessionSecret) {
 		next();
 	});
 
-	app.use((req, res, next) => {
-		// Attach dashboard components
-		req.componentsHtml = () => {
-			let html = Object.values(components)
-				.map((component) => `<!-- ${component.name} COMPONENT HTML -->
-					${component.contentFn ? component.contentFn() : component.content}
-				`)
-				.reduce((html, component) => html + component, '');
-
-			return html;
-
-			// return minify(html, {
-			// 	minifyJS: true,
-			// 	minifyCSS: true
-			// });
-		};
-
-		next();
-	});
-
 	app.use(authRoutes(new express.Router(), auth));
 	app.use(stateRoutes(new express.Router(), auth));
-	app.use(dashboardRoutes(new express.Router(), auth));
+
+	const dashboardRouter = new express.Router();
+
+	// Dashboard routes need component & page data attached
+	dashboardRouter.use(
+		addPluginDashboardComponentsMiddleware(() => ({ components, pages }))
+	);
+
+	app.use(dashboardRoutes(dashboardRouter, auth));
 
 	const context = {
 		server,
 		composeAPIContext(pluginName) {
 			const baseUrl = `/plugins/${pluginName}`;
 
-			const getComponents = {
-				get() {
-					return components;
+			const localContext = {
+				components: {
+					get() {
+						return components;
+					},
+					set(name, component) {
+						components[name] = component;
+					}
 				},
-				set(name, component) {
-					components[name] = component;
+				pages: {
+					get() {
+						return pages;
+					},
+					set(name, page) {
+						pages[name] = page;
+					}
 				}
 			};
 
-			const rawRouter = composeAPIContextFromRouter(getComponents, '');
-			const unsafeRouter = composeAPIContextFromRouter(getComponents, baseUrl);
+			const rawRouter = composeAPIContextFromRouter(localContext, '');
+			const unsafeRouter = composeAPIContextFromRouter(localContext, baseUrl);
 
-			const router = composeAPIContextFromRouter(getComponents, baseUrl);
+			const router = composeAPIContextFromRouter(localContext, baseUrl);
 			router.noAuth = unsafeRouter; // Router for routes that don't use auth
 			router.raw = rawRouter; // Router for routes that start at URL root. Useful for pretty URLs
 		
 			app.use(rawRouter);
 			app.use(baseUrl, unsafeRouter);
-			app.use(baseUrl, auth.authenticate, router);
+			app.use(baseUrl, auth.authenticateRequest, router);
 
 			return router;
 		}
@@ -134,7 +136,7 @@ module.exports = function http(database, auth, sessionSecret) {
 	return context;
 };
 
-function composeAPIContextFromRouter(components, baseUrl) {
+function composeAPIContextFromRouter({ components, pages }, baseUrl) {
 	const router = express.Router();
 	router.baseUrl = baseUrl;
 
@@ -161,19 +163,22 @@ function composeAPIContextFromRouter(components, baseUrl) {
 		);
 	};
 
-	router.addComponent = (name, htmlContent) => {
+	router.addComponent = (name, htmlContent, contentFn = null) => {
 		components.set(name, {
 			name,
+			contentFn,
 			content: htmlContent
 		});
 	};
 
 	router.addComponentFile = (name, filePath) => {
-		components.set(name, {
-			name,
-			contentFn: () => fs.readFileSync(filePath).toString(),
-			content: fs.readFileSync(filePath).toString()
-		});
+		const getFile = () => fs.readFileSync(filePath).toString();
+
+		router.addComponent(
+			name, 
+			getFile(),
+			getFile
+		);
 	};
 
 	router.addComponentScript = (name, scriptContent) => {
@@ -182,6 +187,17 @@ function composeAPIContextFromRouter(components, baseUrl) {
 				${scriptContent}
 			</script>
 		`, name);
+	};
+
+	router.addPage = (url, title, componentName, options = {}) => {
+		pages.set(url, {
+			url,
+			title,
+			componentName,
+			menuExact: options.exact,
+			menu: options.menu,
+			icon: options.icon
+		});
 	};
 
 	return router;

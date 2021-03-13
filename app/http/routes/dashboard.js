@@ -19,7 +19,9 @@ function renderDashboard(mobile = false, generateAPIToken) {
 	return (req, res) => {
 		const html = (mobile ? dashboardHtmlMobile : dashboardHtml)
 			.replace(/{{SERVER_REPLACE_API_KEY}}/gm, generateAPIToken(req.user))
-			.replace(/{{SERVER_REPLACE_DASHBOARD_DATA}}/, req.componentsHtml());
+			.replace(/{{SERVER_REPLACE_DASHBOARD_DATA}}/, req.componentsHtml())
+			.replace(/{{SERVER_REPLACE_USER_JSON}}/, JSON.stringify(req.user))
+			.replace(/{{SERVER_REPLACE_PAGES_JSON}}/, req.pagesJson());
 
 		res.set('Content-Type', 'text/html').send(html);
 	};
@@ -35,7 +37,9 @@ module.exports = function dashboardRoutes(app, auth) {
 	app.get('/dashboard/mobile', auth.authenticateRequest, (req, res) => res.redirect('/mobile'));
 
 	// JS & CSS Assets
-	app.use('/assets', (req, res, next) => {console.log(req.isAuthenticated()); next()}, express.static(config.dashboard.path));
+	app.use('/assets', express.static(config.dashboard.path));
+
+	app.use('/resources', express.static(path.resolve(__dirname, '../../../resources')));
 
 	app.get('/apple-touch-icon.png', (req, res) => {
 		res.sendFile(path.resolve(__dirname, '../../../resources/mission-control-icon.png'));
