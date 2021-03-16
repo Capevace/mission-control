@@ -3,7 +3,7 @@ const logger = require('@helpers/logger').createLogger('Socket Auth');
 const jwt = require('jsonwebtoken');
 
 module.exports = function socketAuth(socketIO, verifyAPIToken, onAuthentication) {
-	forbidNamespaceConnections(socketIO.nsps);
+	forbidNamespaceConnections(socketIO.parentNsps);
 
 	socketIO.on('connection', socket => {
 		// Set the timeout after which the socket will be disconnected
@@ -31,7 +31,7 @@ module.exports = function socketAuth(socketIO, verifyAPIToken, onAuthentication)
 				// restore any connections the socket tried to make to namespaces.
 				socket.authenticated = true;
 				onAuthentication(socket);
-				restoreNamespaceConnection(socketIO.nsps, socket);
+				restoreNamespaceConnection(socketIO.parentNsps, socket);
 
 				socket.emit('authenticated');
 			} else {
@@ -56,7 +56,7 @@ function forbidNamespaceConnections(namespaces) {
 			// If the socket isnt authenticated, we remove it from the connected list.
 			// Now it wont get any broadcasts.
 			if (!socket.authenticated) {
-				delete namespace.connected[socket.id];
+				namespace.sockets.delete(socket.id);
 			}
 		});
 	});
@@ -72,7 +72,7 @@ function restoreNamespaceConnection(namespaces, socket) {
 				false
 			)
 		) {
-			namespace.connected[socket.id] = socket;
+			namespace.sockets.set(socket.id, socket);
 		}
 	});
 }

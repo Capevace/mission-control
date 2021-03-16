@@ -58,3 +58,30 @@ module.exports.set = function set(key, value) {
 module.exports.get = function get(key, defaultValue) {
 	return database[key] || defaultValue;
 };
+
+const defaultUser = { 
+	username: 'mat', 
+	password: 'mat', 
+	avatarUrl: 'https://media1.tenor.com/images/485b6e253f0074fd62aea7eff6a6427d/tenor.gif', 
+	displayName: 'Lukas'
+};
+
+/**
+ * Database API for more common tasks
+ */
+const api = {
+	getUsers() {
+        return module.exports.get('users', { [defaultUser.username]: defaultUser });
+	},
+	updateUser(user) {
+		let users = api.getUsers();
+		users[user.username] = {
+			// TODO Users without passwords can be created here, possibly unsafe
+			...(users[user.username] || {}),
+			...user
+		};
+
+		module.exports.set('users', users);
+	}
+};
+module.exports.api = api;

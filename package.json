@@ -1,6 +1,6 @@
 {
     "name": "@capevace/mission-control",
-    "version": "2.0.0-2",
+    "version": "2.0.0-rc6",
     "description": "Beautiful smart home dashboard software built on Node.js",
     "main": "app/index.js",
     "scripts": {
@@ -53,7 +53,7 @@
         "querystring": "^0.2.0",
         "rc": "^1.2.8",
         "session-file-store": "^1.5.0",
-        "socket.io": "^2.2.0",
+        "socket.io": "^4.0.0",
         "socketio-auth": "^0.1.1",
         "superagent": "^5.0.2",
         "systeminformation": "^4.27.3",

@@ -20,7 +20,7 @@ function renderDashboard(mobile = false, generateAPIToken) {
 		const html = (mobile ? dashboardHtmlMobile : dashboardHtml)
 			.replace(/{{SERVER_REPLACE_API_KEY}}/gm, generateAPIToken(req.user))
 			.replace(/{{SERVER_REPLACE_DASHBOARD_DATA}}/, req.componentsHtml())
-			.replace(/{{SERVER_REPLACE_USER_JSON}}/, JSON.stringify(req.user))
+			.replace(/{{SERVER_REPLACE_USER_JSON}}/, JSON.stringify({ ...req.user, password: undefined }))
 			.replace(/{{SERVER_REPLACE_PAGES_JSON}}/, req.pagesJson());
 
 		res.set('Content-Type', 'text/html').send(html);

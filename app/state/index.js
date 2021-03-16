@@ -104,6 +104,7 @@ function subscribe(event, callback) {
  * @param {String} actionKey - The action to evoke.
  * @param {Object} data - The data object to pass along to the action reducer/handler.
  *
+ * @throws
  * @emits 'update'
  */
 function invokeAction(actionKey, data) {
@@ -165,6 +166,9 @@ function invokeAction(actionKey, data) {
 		actionData: data,
 		diff: Object.keys(stateDiff)
 	});
+	
+
+	
 
 	// const actionEvent = new ActionEvent(actionKey, data, diff);
 	// emitter.emit(`_action:${actionKey}`, actionEvent);
@@ -188,10 +192,19 @@ function getState() {
 	return state;
 }
 
+class ActionError extends Error {
+	constructor(message) {
+		super(message);
+
+		this.isActionError = true;
+	}
+}
+
 module.exports = {
 	registerReducer,
 	subscribe,
 	invokeAction,
 	emitEvent,
-	getState
+	getState,
+	ActionError
 };

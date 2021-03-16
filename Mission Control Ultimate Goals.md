@@ -10,6 +10,8 @@
 - Theme ability
 	- Move Tailwind stuff to local classes
 - Config Screen
+- Users
+	- Permissions
 
 
 ```js

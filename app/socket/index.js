@@ -13,7 +13,7 @@
  */
 
 const logger = require('@helpers/logger').createLogger('Socket', 'magenta');
-const socketIO = require('socket.io');
+const { Server } = require('socket.io');
 const socketAuth = require('./auth');
 
 /**
@@ -22,7 +22,12 @@ const socketAuth = require('./auth');
  * @param  {Object} auth The auth object.
  */
 module.exports = function socket(state, http, auth) {
-	const server = socketIO(http.server);
+	const server = new Server(http.server, {
+		// cookie: {
+		// 	name: 'io',
+		// 	httpOnly: false
+		// }
+	});
 
 	socketAuth(server, auth.verifyAPIToken, client => {
 		let subscriptions = {};
@@ -37,9 +42,32 @@ module.exports = function socket(state, http, auth) {
 
 		// The client can call actions by emitting the action event.
 		// It has to pass the action and associated data.
-		client.on('action', ({ action, data }) => {
+		client.on('action', ({ action, data }, callback) => {
 			logger.debug(`Client requested action ${action}`);
-			state.invokeAction(action, data);
+
+			try {
+				state.invokeAction(action, data);
+
+				callback({
+					error: {
+						message: e.isActionError
+							? e.message
+							: 'Unknown error occurred'
+					}
+				});
+			} catch (e) {
+				if (!e.isActionError) {
+					logger.error('Unknown error in action invocation', e);
+				}
+
+				callback({
+					error: {
+						message: e.isActionError
+							? e.message
+							: 'Unknown error occurred'
+					}
+				});
+			}
 		});
 
 		// The client can emit a 'subscribe' event to subscribe to the state machines events.
