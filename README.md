@@ -28,7 +28,7 @@ When you start setting up software for your home – be it home automation, a NA
 **Install mission-control and the single-sign-on auth server.** Unless reconfigured, mission control will launch a single-sign-on server as a node subprocess.
 
 ```sh
-$ npm install -g @capevace/mission-control @capevace/single-sign-on
+$ npm install -g @capevace/mission-control@next
 ```
 
 ## Usage
@@ -37,7 +37,7 @@ You can now start the server like you would any binary.
 
 ```sh
 $ mission-control --version
-v0.3.2
+v2.0.0-rc6
 ```
 
 ### Options
