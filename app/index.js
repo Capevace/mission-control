@@ -65,7 +65,7 @@ async function startMissionControl(updateProgressBar) {
 
 	updateProgressBar('Boot HTTP Server', 0.4);
 	// Initialize the main mission control http server
-	const http = initHttp(database, auth, sessionSecret);
+	const http = initHttp(state, database, auth, sessionSecret);
 
 	updateProgressBar('Boot Socket Server', 0.5);
 	// Initialize the socket server

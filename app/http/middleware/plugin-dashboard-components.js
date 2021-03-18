@@ -1,4 +1,4 @@
-module.exports = function addPluginDashboardComponentsMiddleware(getData) {
+module.exports = function addPluginDashboardComponentsMiddleware(getData, getState) {
 	return (req, res, next) => {
 		const { components, pages } = getData();
 
@@ -21,6 +21,8 @@ module.exports = function addPluginDashboardComponentsMiddleware(getData) {
 		req.pagesJson = () => {
 			return JSON.stringify(Object.values(pages));
 		};
+
+		req.state = getState();
 
 		next();
 	};

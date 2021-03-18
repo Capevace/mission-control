@@ -1,4 +1,4 @@
-const { newestCovidCSV, parseCityData } = require('./api');
+const { newestCovidCSV, parseCityData, filterHistoricalData } = require('./api');
 
 const cities = {
 	'de.ni.03355': 'Lüneburg',
@@ -7,7 +7,7 @@ const cities = {
 
 
 module.exports = function bahnInit(APP) {
-	const { state, logger, http } = APP;
+	const { state, logger, http, database } = APP;
 
 	/**
 	 * @ACTION
@@ -35,19 +35,30 @@ module.exports = function bahnInit(APP) {
 			const csvText = await newestCovidCSV();
 			let citiesData = { ...cities };
 
+			const historicalData = database.get('covid-data-historical', {});
+
 			for (const id in citiesData) {
-				citiesData[id] = parseCityData(csvText, id);
+				let historicalCityData = historicalData[id] || [];
+				const lastHistoricalDataRow = historicalCityData[historicalCityData.length - 1];
+
+				const newCityData = parseCityData(csvText, id);
+
+				if (!lastHistoricalDataRow || lastHistoricalDataRow.date < newCityData.date) {
+					historicalCityData.push(newCityData);
+				}
+
+				historicalData[id] = historicalCityData;
+				citiesData[id] = newCityData;
 			}
 
+			database.set('covid-data-historical', historicalData);
+
 			state.invoke('COVID:UPDATE', {
-				cities: citiesData
+				cities: citiesData,
+				historical: filterHistoricalData(historicalData)
 			});
 		} catch (e) {
 			logger.error('Error occurred during covid API check', e);
-
-			state.invoke('COVID:UPDATE', {
-				cities: {}
-			});
 		}
 	};
 

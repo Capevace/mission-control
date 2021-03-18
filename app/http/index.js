@@ -42,7 +42,7 @@ const addPluginDashboardComponentsMiddleware = require('./middleware/plugin-dash
  * might still create their own HTTP servers.
  * @return {module:express~Server} The express HTTP server.
  */
-module.exports = function http(database, auth, sessionSecret) {
+module.exports = function http(state, database, auth, sessionSecret) {
 	const app = express();
 	const server = createServer(app);
 
@@ -89,7 +89,10 @@ module.exports = function http(database, auth, sessionSecret) {
 
 	// Dashboard routes need component & page data attached
 	dashboardRouter.use(
-		addPluginDashboardComponentsMiddleware(() => ({ components, pages }))
+		addPluginDashboardComponentsMiddleware(
+			() => ({ components, pages }), 
+			state.getState
+		)
 	);
 
 	app.use(dashboardRoutes(dashboardRouter, auth));

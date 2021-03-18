@@ -21,7 +21,8 @@ function renderDashboard(mobile = false, generateAPIToken) {
 			.replace(/{{SERVER_REPLACE_API_KEY}}/gm, generateAPIToken(req.user))
 			.replace(/{{SERVER_REPLACE_DASHBOARD_DATA}}/, req.componentsHtml())
 			.replace(/{{SERVER_REPLACE_USER_JSON}}/, JSON.stringify({ ...req.user, password: undefined }))
-			.replace(/{{SERVER_REPLACE_PAGES_JSON}}/, req.pagesJson());
+			.replace(/{{SERVER_REPLACE_PAGES_JSON}}/, req.pagesJson())
+			.replace(/{{SERVER_REPLACE_STATE_JSON}}/, JSON.stringify(req.state));
 
 		res.set('Content-Type', 'text/html').send(html);
 	};

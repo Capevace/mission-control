@@ -2,8 +2,20 @@ const superagent = require('superagent');
 
 module.exports = {
 	newestCovidCSV,
-	parseCityData
+	parseCityData,
+	filterHistoricalData
 };
+
+function filterHistoricalData(cities) {
+	for (const city in cities) {
+		cities[city] = {
+			total: cities[city].casesLast7Days,
+			r: cities[city].casesPerPopulation
+		}
+	}
+
+	return cities;
+}
 
 // Return routes to Lübeck (includes buses)
 async function newestCovidCSV() {

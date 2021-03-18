@@ -27,11 +27,26 @@
         computed: {
             covidState() {
                 return this.$mcState('covid', {
-                    cities: {}
+                    cities: {},
+                    historical: {}
                 });
             },
             cities() {
                 return Object.values(this.covidState.cities);
+            },
+        },
+        methods: {
+            historicalGraphPoints(id) {
+                const rValues = this.covidState.historical[id]
+                    .map(row => row.r); // R-Wert
+                
+                const maxR = Math.max(...rValues);
+
+                return rValues.reduce(
+                        (points, r, index) => 
+                            `${points} ${index * 20},${0}`,
+                        ''
+                    )
             }
         },
         filters: {
@@ -41,6 +56,10 @@
 
             round(value) {
                 return value.toFixed(2);
+            },
+
+            graphPoints(values) {
+                
             }
         }
     });

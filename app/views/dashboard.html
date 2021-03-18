@@ -8,7 +8,7 @@
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 		<link rel="icon" href="/favicon.png">
 	</head>
-	<body class="bg-main-darker text-white antialiased font-sans">
+	<body class="app-background antialiased font-sans">
 		<div id="app" class="w-full">
 			<mission-control-ui></mission-control-ui>
 		</div>
@@ -19,6 +19,7 @@
 			|| '{{SERVER_REPLACE_URL}}';
 		window.MISSION_CONTROL_USER = {{SERVER_REPLACE_USER_JSON}};
 		window.MISSION_CONTROL_PAGES = {{SERVER_REPLACE_PAGES_JSON}};
+		window.MISSION_CONTROL_INITIAL_STATE = {{SERVER_REPLACE_STATE_JSON}};
 	</script>
 	<script type="text/javascript" src="/assets/index.js"></script>
 
@@ -33,4 +34,9 @@
 		href="https://fonts.googleapis.com/css?family=JetBrains+Mono:300,400,500,600|Open+Sans:300,400,500,600,700"
 		rel="stylesheet"
 	/>
+
+	<script type="text/javascript">
+		document.fonts.ready
+			.then(() => window.MISSION_CONTROL.dashboard.setReady(true));
+	</script>
 </html>
