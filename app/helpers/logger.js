@@ -21,6 +21,10 @@ module.exports._log = function _log(...msgs) {
 		console_log(...msgs); // eslint-disable-line
 };
 
+module.exports.newLine = function newLine() {
+	module.exports._log('');
+};
+
 const LogLevel = {
 	debug: 0,
 	http: 1,
@@ -122,6 +126,7 @@ module.exports.fatal = fatal;
 module.exports.createLogger = function createLogger(label, color = 'reset') {
 	if (!label)
 		return {
+			newLine: module.exports.newLine,
 			debug,
 			http,
 			info,
@@ -138,6 +143,7 @@ module.exports.createLogger = function createLogger(label, color = 'reset') {
 	label = colorFn(label);
 
 	return {
+		newLine: module.exports.newLine,
 		debug: (...msgs) => debug(label, ...msgs),
 		http: (...msgs) => http(label, ...msgs),
 		info: (...msgs) => info(label, ...msgs),
@@ -208,11 +214,12 @@ module.exports.logConfig = function logConfig(config) {
 	
 	module.exports._log(
 		chalk`=== {bold Mission Control Config} ===
+Version:		${config.version}
 Log Level:		${config.logLevel}
 DB Path:		{cyan ${config.databasePath}}
 Dashboard Path: 	{cyan ${config.dashboard.path}}
 Homebridge Pin:		${config.homebridge.pin || chalk.reset.gray('None')}
-Spotify Creds:		${spotifyCredentialsPresent ? 'Provided' : 'Not provided'}
+Spotify Creds:		${spotifyCredentialsPresent ? 'Provided' : chalk.reset.gray('Not provided')}
 HTTP URL:		{cyan ${config.http.url}}
 HTTP Port:		${config.http.port}
 HTTP Domains:		${config.http.allowedDomains.map(domain => chalk`{cyan ${domain}}`).join(', ')}
@@ -233,13 +240,13 @@ module.exports.progress = async function progress(callback) {
 	});
 
 	function cleanup() {
-		if (progressBar)
+		if (progressBar) {
 			progressBar.stop();
+			progressBar = null;
+		}
 
 		logBuffer.forEach(msgs => console_log(...msgs));
 		logBuffer = [];
-
-		progressBar = null;
 	}
 
 	try {
@@ -250,10 +257,6 @@ module.exports.progress = async function progress(callback) {
 		module.exports.error(e);
 	}
 };
-
-console.log = console.info = debug;
-console.warn = warn;
-console.error = error;
 
 process.on('uncaughtException', function (err) {
 	error(chalk.red.bold('Uncaught Exception'), err);

@@ -13,8 +13,6 @@ const config = require('@config');
 const argv = require('@helpers/argv');
 const logging = require('@helpers/logger');
 
-const startSSOProcess = require('@helpers/sso-process');
-
 module.exports = async function start() {
 	logging.logConfig(config);
 	logging.progress(startMissionControl);
@@ -33,22 +31,6 @@ async function startMissionControl(updateProgressBar) {
 	if (!sessionSecret) {
 		sessionSecret = uuid();
 		database.set('session-secret', sessionSecret);
-	}
-
-	// We spawn a node subprocess.
-	// This subprocess is the auth server.
-	// We do this, so the user doesn't have to do so manually,
-	// and the mission-control binary is self-contained to run everything needed.
-	if (argv.sso) {
-		updateProgressBar('Start SSO', 0.10);
-		const ssoProcess = startSSOProcess(config.auth.url, config.auth.port);
-
-		process.on('SIGINT', () => {
-			ssoProcess.kill();
-			process.exit();
-		});
-	} else {
-		logger.info('Skipping internal SSO server process');
 	}
 
 	// Start the state machine

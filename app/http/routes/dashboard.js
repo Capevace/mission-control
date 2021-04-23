@@ -30,12 +30,12 @@ function renderDashboard(mobile = false, generateAPIToken) {
 
 module.exports = function dashboardRoutes(app, auth) {
 	// Dashboard HTML routes
-	app.get('/', addTrailingSlashMiddleware, auth.authenticateRequest, renderDashboard(false, auth.generateAPIToken));
-	app.get('/mobile', addTrailingSlashMiddleware, auth.authenticateRequest, renderDashboard(true, auth.generateAPIToken));
+	app.get('/', addTrailingSlashMiddleware, auth.middleware.requireAuthentication, renderDashboard(false, auth.tokens.generate));
+	app.get('/mobile', addTrailingSlashMiddleware, auth.middleware.requireAuthentication, renderDashboard(true, auth.tokens.generate));
 
 	// Redirect old dashboard routes
-	app.get('/dashboard', auth.authenticateRequest, (req, res) => res.redirect('/'));
-	app.get('/dashboard/mobile', auth.authenticateRequest, (req, res) => res.redirect('/mobile'));
+	app.get('/dashboard', auth.middleware.requireAuthentication, (req, res) => res.redirect('/'));
+	app.get('/dashboard/mobile', auth.middleware.requireAuthentication, (req, res) => res.redirect('/mobile'));
 
 	// JS & CSS Assets
 	app.use('/assets', express.static(config.dashboard.path));

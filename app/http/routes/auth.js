@@ -1,4 +1,3 @@
-const config = require('@config');
 const logging = require('@helpers/logger');
 const logger = logging.createLogger('Auth');
 
@@ -9,6 +8,8 @@ const ExtractJwt = require('passport-jwt').ExtractJwt;
 const queryString = require('querystring');
 const proxy = require('http-proxy-middleware');
 
+const User = require('@database/models/User');
+const UserError = require('@http/UserError');
 
 /*
 	How the auth system works
@@ -32,8 +33,8 @@ const proxy = require('http-proxy-middleware');
 */
 
 module.exports = function authRoutes(app, auth) {
-	app.get('/login', auth.getLoginPage);
-    app.post('/login', auth.authenticate);
+	app.get('/login', auth.controller.serveLoginPage);
+    app.post('/login', auth.controller.performAuthentication);
 
 	app.get('/logout', (req, res) => {
 		req.logout();
@@ -42,35 +43,73 @@ module.exports = function authRoutes(app, auth) {
 		res.redirect('/login');
 	});
 
+	app.get('/users/:username', (req, res) => {
+		console.log(req.params);
+		const username = String(req.params.username);
+		const user = User.validate({});
+		console.log(user);
 
-	// app.get('/auth/v2/login')
+		// next(new Error('wat'));
+		
+		// try {
+		// 	await auth.controller.updateUser(user, username);
+		// 	res.json({});
+		// } catch (e) {
 
-	// if (config.auth.proxy) {
-	// 	app.use(
-	// 		'/sso',
-	// 		proxy(
-	// 			'/',
-	// 			{
-	// 				target: `http://localhost:${config.auth.port}`,
-	// 				logLevel: config.debug ? 'debug' : 'warn',
-	// 				// ws: true,
-	// 				pathRewrite: {
-	// 					'^/sso': '/',
-	// 					'^/sso/': '/'
-	// 				}
-	// 			}
-	// 		)
-	// 	);
-	// }
+		// }
+		// logger.info(`Updating User ${username}`, user);
 
-	/**
-		GET /login - Serve Login Page
+		// if (!auth.permissions.canEditUser(req.user, username)) {
+		// 	return res.status(401).json({
+		// 		error: {
+		// 			status: 401,
+		// 			message: 'Not allowed to edit user data'
+		// 		}
+		// 	});
+		// }
 
-		POST /v2/auth - Authenticate login credentials
+		// if (username !== user.username) {
+		// 	// Set username
+		// 	await database.api.users.updateUsername(username, user.username);
+		// }
 
-		POST /v2/auth/token
-		POST /v2/auth/logout - Logout the User
-	*/
+		// // TODO: Better permission-based password changes
+		// // Right now we only check if the current user is the same that's
+		// // trying to change the thing.
+
+		// // If the password is changed, update (and hash) the password
+		// if (user.password) {
+		// 	// Check if user is allowed to change this users password
+		// 	// User can only change password, if he is that user or an admin.
+		// 	if (
+		// 		req.user.role === 'guest' 
+		// 		|| (
+		// 			username !== req.user.username 
+		// 			&& req.user.role !== 'admin'
+		// 		)
+		// 	) {
+		// 		return res.status(401).json({
+		// 			error: {
+		// 				status: 401,
+		// 				message: 'Not allowed to change username'
+		// 			}
+		// 		});
+		// 	}
+
+		// 	// Update password
+		// 	database.api.users.updatePassword(username, user.password);
+		// }
+
+		// // TODO: DONT DO THIS, FIGURE OUT HOW TO DO THIS CLEANLY!
+		// // Events? Private user state?
+		// database.api.users.update(username, user);
+
+		// res.json({
+		// 	error: null
+		// });
+	});
+
+
 
 	return app;
 };

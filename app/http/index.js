@@ -14,7 +14,8 @@
  */
 
 const config = require('@config');
-const logger = require('@helpers/logger');
+const logging = require('@helpers/logger');
+const logger = logging.createLogger('HTTP');
 
 const express = require('express');
 const { createServer } = require('http');
@@ -49,14 +50,15 @@ module.exports = function http(state, database, auth, sessionSecret) {
 	let components = {};
 	let pages = {};
 
-	app.use(logger.logMiddleware);
+	app.use(logging.logMiddleware);
 	app.use(bodyParser.urlencoded({ extended: true }));
+	app.use(bodyParser.json());
 	app.use(
 		session({
 			store: new FileStore({
 				path: config.basePath + '/session',
 				secret: sessionSecret,
-				logFn: logger.debug
+				logFn: logging.debug,
 			}),
 			secret: sessionSecret,
 			resave: false,
@@ -64,8 +66,8 @@ module.exports = function http(state, database, auth, sessionSecret) {
 			name: 'mc.sid',
 			cookie: {
 				httpOnly: true,
-				maxAge: 1000 * 60 * 60 * 24 * 365 // sessions are active for a year
-			}
+				maxAge: 1000 * 60 * 60 * 24 * 365, // sessions are active for a year
+			},
 		})
 	);
 	app.use(flash());
@@ -74,7 +76,7 @@ module.exports = function http(state, database, auth, sessionSecret) {
 	app.use(passport.session());
 
 	// Parse host domain from headers
-	app.use((req, res, next) => {		
+	app.use((req, res, next) => {
 		req.hostUrl = config.http.allowedDomains.includes(req.headers['host'])
 			? req.protocol + '://' + req.headers['host']
 			: config.http.url;
@@ -90,12 +92,32 @@ module.exports = function http(state, database, auth, sessionSecret) {
 	// Dashboard routes need component & page data attached
 	dashboardRouter.use(
 		addPluginDashboardComponentsMiddleware(
-			() => ({ components, pages }), 
+			() => ({ components, pages }),
 			state.getState
 		)
 	);
 
 	app.use(dashboardRoutes(dashboardRouter, auth));
+
+	app.use(function (err, req, res, next) {
+		logging.error('Unknown Error', err);
+
+		if (err.isUserError) {
+			res.status(err.status).json({
+				error: {
+					message: err.message,
+					status: err.status
+				}
+			});
+		} else {
+			res.status(500).json({
+				error: {
+					message: 'An unknown error occurred',
+					status: 500
+				}
+			});
+		}
+	});
 
 	const context = {
 		server,
@@ -103,13 +125,14 @@ module.exports = function http(state, database, auth, sessionSecret) {
 			const baseUrl = `/plugins/${pluginName}`;
 
 			const localContext = {
+				baseUrl,
 				components: {
 					get() {
 						return components;
 					},
 					set(name, component) {
 						components[name] = component;
-					}
+					},
 				},
 				pages: {
 					get() {
@@ -117,29 +140,32 @@ module.exports = function http(state, database, auth, sessionSecret) {
 					},
 					set(name, page) {
 						pages[name] = page;
-					}
-				}
+					},
+				},
 			};
 
-			const rawRouter = composeAPIContextFromRouter(localContext, '');
-			const unsafeRouter = composeAPIContextFromRouter(localContext, baseUrl);
+			const rawRouter = composeAPIContextFromRouter({
+				...localContext,
+				baseUrl: '',
+			});
+			const unsafeRouter = composeAPIContextFromRouter(localContext);
 
-			const router = composeAPIContextFromRouter(localContext, baseUrl);
+			const router = composeAPIContextFromRouter(localContext);
 			router.noAuth = unsafeRouter; // Router for routes that don't use auth
 			router.raw = rawRouter; // Router for routes that start at URL root. Useful for pretty URLs
-		
+
 			app.use(rawRouter);
 			app.use(baseUrl, unsafeRouter);
-			app.use(baseUrl, auth.authenticateRequest, router);
+			app.use(baseUrl, auth.middleware.requireAuthentication, router);
 
 			return router;
-		}
+		},
 	};
 
 	return context;
 };
 
-function composeAPIContextFromRouter({ components, pages }, baseUrl) {
+function composeAPIContextFromRouter({ baseUrl, components, pages }) {
 	const router = express.Router();
 	router.baseUrl = baseUrl;
 
@@ -150,19 +176,16 @@ function composeAPIContextFromRouter({ components, pages }, baseUrl) {
 	router.proxy = function _proxy(route, target, options = {}) {
 		router.use(
 			route,
-			proxy(
-				'/',
-				{
-					target,
-					logLevel: config.debug ? 'debug' : 'warn',
-					ws: true,
-					pathRewrite: {
-						[`^${route}`]: '/',
-						[`^${route}/`]: '/'
-					},
-					...options
-				}
-			)
+			proxy('/', {
+				target,
+				logLevel: config.debug ? 'debug' : 'warn',
+				ws: true,
+				pathRewrite: {
+					[`^${route}`]: '/',
+					[`^${route}/`]: '/',
+				},
+				...options,
+			})
 		);
 	};
 
@@ -170,26 +193,25 @@ function composeAPIContextFromRouter({ components, pages }, baseUrl) {
 		components.set(name, {
 			name,
 			contentFn,
-			content: htmlContent
+			content: htmlContent,
 		});
 	};
 
 	router.addComponentFile = (name, filePath) => {
 		const getFile = () => fs.readFileSync(filePath).toString();
 
-		router.addComponent(
-			name, 
-			getFile(),
-			getFile
-		);
+		router.addComponent(name, getFile(), getFile);
 	};
 
 	router.addComponentScript = (name, scriptContent) => {
-		router.registerComponent(`
+		router.registerComponent(
+			`
 			<script>
 				${scriptContent}
 			</script>
-		`, name);
+		`,
+			name
+		);
 	};
 
 	router.addPage = (url, title, componentName, options = {}) => {
@@ -199,7 +221,7 @@ function composeAPIContextFromRouter({ components, pages }, baseUrl) {
 			componentName,
 			menuExact: options.exact,
 			menu: options.menu,
-			icon: options.icon
+			icon: options.icon,
 		});
 	};
 

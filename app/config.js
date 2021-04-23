@@ -19,7 +19,7 @@ const logger = logging.createLogger('Config', 'cyan');
 const argv = require('./helpers/argv');
 const pkg = require('../package.json');
 
-const basePath = process.env.NODE_ENV === 'production'
+const basePath = false // Todo: Linux detection here
 	? '/etc/mission-control'
 	: require('os').homedir() + '/.mission-control';
 

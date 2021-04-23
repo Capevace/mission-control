@@ -29,7 +29,7 @@ module.exports = function socket(state, http, auth) {
 		// }
 	});
 
-	socketAuth(server, auth.verifyAPIToken, client => {
+	socketAuth(server, auth.tokens.verify, client => {
 		let subscriptions = {};
 
 		logger.debug('A new client connected');
@@ -49,11 +49,7 @@ module.exports = function socket(state, http, auth) {
 				state.invokeAction(action, data);
 
 				callback({
-					error: {
-						message: e.isActionError
-							? e.message
-							: 'Unknown error occurred'
-					}
+					error: null
 				});
 			} catch (e) {
 				if (!e.isActionError) {

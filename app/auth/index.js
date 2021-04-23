@@ -7,43 +7,33 @@ const jwt = require('jsonwebtoken');
 const logger = require('@helpers/logger').createLogger('Auth');
 const crypto = require('@helpers/crypto');
 
+// const initRoutes = require('./database-api');
+
 /**
- * Middleware to redirect based on the auth state.
- *
- * If 'next' is passed for any of the arguments,
- * the middleware will call the next function instead
- * of redirecting.
- *
- * @param {string} loggedInUrl URL to redirect to if logged in
- * @param {string} loggedOutUrl URL to redirect to if logged out
+ * AUTH MODULE
+ * middleware
+ *     passport
+ *     requireAuthentication
+ *     logout
+ * controller
+ *     composeLoginPage
+ *     performAuthentication
+ * tokens
+ *     generateJWT
+ *     verifyJWT
+ * api
+ * 	   updateUserMeta
+ * 	   updateUsername
+ * 	   updateUserPassword
+ * 	   updateUserRole
+ * permissions
+ *     canEditUser
  */
-function authenticateRequest(req, res, next) {
-	if (req.isAuthenticated()) {
-        next();
-    } else {
-        res.redirect('/login');
-    }
-};
 
 
-
-function initDB(db) {
-    return {
-        /**
-         * @param {User} username
-         */
-        async findUser(username) {
-            const defaultUser = { username: 'mat', password: 'mat', avatarUrl: 'https://media1.tenor.com/images/485b6e253f0074fd62aea7eff6a6427d/tenor.gif', displayName: 'Lukas' };
-
-            const users = db.get('users', { [defaultUser.username]: defaultUser });
-
-            return users[username];
-        }
-    }
-}
 
 module.exports = function initAuth(config, db, sessionSecret) {
-    const { findUser } = initDB(db);
+    const api = db.api.users;
 
     passport.use(
         'local',
@@ -53,7 +43,7 @@ module.exports = function initAuth(config, db, sessionSecret) {
                 passwordField: 'password'
             },
             async (username, password, done) => {
-                const user = await findUser(username);
+                const user = await api.findUser(username);
 
                 if (password === user.password || user && (await crypto.comparePassword(password, user.password))) {
                     return done(null, user);
@@ -69,7 +59,7 @@ module.exports = function initAuth(config, db, sessionSecret) {
     });
 
     passport.deserializeUser(async function(username, cb) {
-        const user = await findUser(username);
+        const user = await api.findUser(username);
 
         if (!user) return cb(null, false);
 
@@ -78,45 +68,117 @@ module.exports = function initAuth(config, db, sessionSecret) {
 
     return {
         passport,
-        authenticateRequest,
-        authenticate: passport.authenticate('local', {
-            failureRedirect: '/login',
-            successRedirect: '/',
-            failureFlash: 'Incorrect username or password.'
-        }),
-        async getLoginPage(req, res) {
-            const error = req.flash('error');
+        
+        middleware: {
+        	/** 
+        	 * The initialized passport instance
+        	 */
+        	passport,
 
-            let content = await fs.readFile(path.resolve(__dirname,'../views/login.html'));
+            /**
+             * Middleware to redirect based on the auth state.
+             *
+             * If 'next' is passed for any of the arguments,
+             * the middleware will call the next function instead
+             * of redirecting.
+             *
+             * @param {string} loggedInUrl URL to redirect to if logged in
+             * @param {string} loggedOutUrl URL to redirect to if logged out
+             */
+            requireAuthentication(req, res, next) {
+                if (req.isAuthenticated()) {
+                    next();
+                } else {
+                    res.redirect('/login');
+                }
+            },
 
-            content = content.toString()
-                .replace(
-                    '{{ERROR_MSG}}',
-                    error.length > 0
-                        ? `<p class="error-msg">${error[0]}</p>`
-                        : ''
-                )
-                .replace(/\{\{URL\}\}/g, config.http.url);
+            /**
+             * Logout user
+             * @param  {Request} req
+             * @param  {Response} res
+             */
+            logout(req, res) {
+            	req.logout();
 
-            return res.send(content);
+            	res.redirect('/login');
+            }
         },
-        logout() {},
-        generateAPIToken(user) {
-            return jwt.sign({ user: { username: user.username } }, sessionSecret, {
-                expiresIn: 86400,
-				issuer: 'mission-control',
-				audience: 'mission-control:api'
-			});
+        controller: {
+        	/**
+        	 * Compose the login page HTML.
+        	 * @return {string} The login page HTML.
+        	 */
+        	async serveLoginPage(req, res) {
+        		const errors = req.flash('error');
+	            let content = await fs.readFile(path.resolve(__dirname,'../views/login.html'));
+
+	            content = content.toString()
+	                .replace(
+	                    '{{ERROR_MSG}}',
+	                    errors.length > 0
+	                        ? `<p class="error-msg">${errors[0]}</p>`
+	                        : ''
+	                )
+	                .replace(/\{\{URL\}\}/g, config.http.url);
+
+	            res.send(content);
+	        },
+
+	        /**
+	         * Perform authentication and log in the user.
+	         */
+	        performAuthentication: passport.authenticate('local', {
+	            failureRedirect: '/login',
+	            successRedirect: '/',
+	            failureFlash: 'Incorrect username or password.'
+	        }),
+
+	        updateUser(user, newUsername) {
+
+	        }
         },
-        verifyAPIToken(token) {
-            try {
-                return jwt.verify(token, sessionSecret, {
+
+        tokens: {
+            generate(user) {
+                return jwt.sign({ user: { username: user.username } }, sessionSecret, {
+                    expiresIn: 86400,
                     issuer: 'mission-control',
                     audience: 'mission-control:api'
                 });
-            } catch (e) {
-                logger.debug('Error verifying JWT', e);
-                return false;
+            },
+            verify(token) {
+                try {
+                    return jwt.verify(token, sessionSecret, {
+                    	expiresIn: 86400,
+                        issuer: 'mission-control',
+                        audience: 'mission-control:api'
+                    });
+                } catch (e) {
+                    logger.debug('Error verifying JWT', e);
+                    return false;
+                }
+            },
+        },
+
+        permissions: {
+            /**
+             * Can the user edit user data.
+             * 
+             * @param  {User} user The user that's making the edit.
+             * @param  {string} usernameToEdit The username of the user that's being edited.
+             * @return {boolean}
+             */
+            canEditUser(currentUser, usernameToEdit) {
+                // Guests are not allowed to change usernames
+                if (currentUser.role === 'guest')
+                    return false;
+
+                // Only allowed if username is the same, or the editing user is an admin
+                if (currentUser.username !== usernameToEdit && currentUser.role !== 'admin')
+                    return false;
+
+                return true;
             }
         }
     };

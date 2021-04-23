@@ -35,7 +35,7 @@ module.exports = function bahnInit(APP) {
 			const csvText = await newestCovidCSV();
 			let citiesData = { ...cities };
 
-			const historicalData = database.get('covid-data-historical', {});
+			let historicalData = database.get('covid-data-historical', {});
 
 			for (const id in citiesData) {
 				let historicalCityData = historicalData[id] || [];
@@ -44,14 +44,14 @@ module.exports = function bahnInit(APP) {
 				const newCityData = parseCityData(csvText, id);
 
 				if (!lastHistoricalDataRow || lastHistoricalDataRow.date < newCityData.date) {
-					historicalCityData.push(newCityData);
+					// historicalCityData.push(newCityData);
 				}
 
 				historicalData[id] = historicalCityData;
 				citiesData[id] = newCityData;
 			}
 
-			database.set('covid-data-historical', historicalData);
+			// database.set('covid-data-historical', historicalData);
 
 			state.invoke('COVID:UPDATE', {
 				cities: citiesData,

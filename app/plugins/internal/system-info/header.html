@@ -3,8 +3,10 @@
         template: `
             <header class="flex font-semibold text-purple-50 text-lg">
                 <section class="w-1/3 leading-tight">
-                    <span class="block">Filmregal</span>
-                    <span class="text-purple-400 text-xs">{{ info.deviceName }}</span>
+                    <span class="block">{{ info.deviceName || 'Mission Control' }}</span>
+                    <span class="text-purple-400 text-xs">
+                        {{ info.deviceName ? 'Mission Control' : 'Server'}}
+                    </span>
                 </section>
 
                 <section class="w-2/3 flex">
@@ -37,7 +39,7 @@
         computed: {
             info() {
                 return this.$mcState('systemInfo', {
-					deviceName: 'Mission Control',
+					deviceName: 'Datenregal',
                     system: {},
                     os: {},
                     cpu: {},

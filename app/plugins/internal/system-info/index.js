@@ -37,7 +37,7 @@ module.exports = async function systemInfoInit(APP) {
 			manufacturer: cpu.manufacturer,
 			brand: cpu.brand,
 			cores: cpu.cores,
-			speedMax: cpu.speedmax,
+			speedMax: cpu.speedMax,
 			mainTemperature: -1
 		},
 		os: {
