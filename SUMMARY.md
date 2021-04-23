@@ -1,6 +1,6 @@
 # Table of contents
 
-* [Welcome to Mission Control](README.md)
+* [Welcome](README.md)
 * [Installation](installation.md)
 
 ## Docs
