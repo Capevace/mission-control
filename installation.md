@@ -4,7 +4,7 @@ description: Installing Mission Control is super easy. Here's how.
 
 # Installation
 
-You can install Mission Control using NPM by running this command.
+You can install sMission Control using NPM by running this command.
 
 ```bash
 npm install -g @capevace/mission-control
