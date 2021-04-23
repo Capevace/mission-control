@@ -1,39 +1,48 @@
-# Welcome
+<div align="center">
+	<a href="https://mateffy.me/mission-control-project">
+		<img src="resources/icon-web.png">
+	</a>
+	<h1>Mission Control</h1>
+	<p>
+		Beautiful home dashboard software built on Node.js 
+	</p>
+	<p>
+		<a href="https://mateffy.me/mission-control-project">Project Homepage</a>
+		<span>&nbsp;|&nbsp;</span>
+		<a href="https://mateffy.me/mission-control">Docs</a>
+	</p>
+</div>
 
-## Mission Control
-
- Beautiful home dashboard software built on Node.js
-
- [Project Homepage](https://mateffy.me/mission-control-project)  \|  [Docs](https://mateffy.me/mission-control)
+<br>
 
 When you start setting up software for your home – be it home automation, a NAS system or something else – you’ll end up having a few different dashboards for control, that are all kind of ugly anyway. That’s where Mission Control comes in. It is a beatutiful and easy-to-configure dashboard system for your home!
 
-### Features
+## Features
 
-* Control your HomeKit devices on the dashboard
-* Embeddable file browser, youtube downloader and Spotify player
-* Sleek, customizable UI
+- Control your HomeKit devices on the dashboard
+- Embeddable file browser, youtube downloader and Spotify player
+- Sleek, customizable UI
 
-### Installation
+## Installation
 
 **Install mission-control and the single-sign-on auth server.** Unless reconfigured, mission control will launch a single-sign-on server as a node subprocess.
 
-```bash
+```sh
 $ npm install -g @capevace/mission-control@next
 ```
 
-### Usage
+## Usage
 
 You can now start the server like you would any binary.
 
-```bash
+```sh
 $ mission-control --version
 v2.0.0-rc6
 ```
 
-#### Options
+### Options
 
-```text
+```
 Usage: mission-control [options]
 
 Options:
@@ -46,81 +55,80 @@ Options:
   -h, --help          display help for command
 ```
 
-#### Config
+### Config
 
 A config file for mission-control will be created at `$HOME_DIR/.mission-control/config`. This can also be used to configure mission-control. However, options passed as command line arguments override settings in this file.
 
-### Screenshots
+## Screenshots
 
-![Demo of mission-control&apos;s UI](.gitbook/assets/screenshot.png)
+<img src="resources/screenshot.png">
 
-### Changelog
+## Changelog
 
-#### Version 2.0.0 \(pre-release\)
+### Version 2.0.0 (pre-release)
 
-* Completely redesigned dashboard UI
-* Introduction of a flexible plugin system
-* Authentication is now handled by Mission Control itself, [single-sign-on](https://github.com/capevace/single-sign-on) is no longer required
-* Users now have profiles, which will be integrated with a solid permission system
-* Tons of bug fixes
+- Completely redesigned dashboard UI
+- Introduction of a flexible plugin system
+- Authentication is now handled by Mission Control itself, [single-sign-on](https://github.com/capevace/single-sign-on) is no longer required
+- Users now have profiles, which will be integrated with a solid permission system
+- Tons of bug fixes
 
-#### Version 0.5.4
+### Version 0.5.4
 
-* Rewrote logging system
+- Rewrote logging system
 
-#### Version 0.5.3
+### Version 0.5.3
 
-* Added COVID widget to dashboard
+- Added COVID widget to dashboard
 
-#### Version 0.5.2
+### Version 0.5.2
 
-* Fixed bahn algorithm skipping not displaying trains with SEV present
+- Fixed bahn algorithm skipping not displaying trains with SEV present
 
-#### Version 0.5.1
+### Version 0.5.1
 
-* Fixed dashboard layout now being loaded from database correctly
+- Fixed dashboard layout now being loaded from database correctly
 
-#### Version 0.5.0
+### Version 0.5.0
 
-* New Dashboard is now customizeable
+- New Dashboard is now customizeable
 
-#### Version 0.4.2
+### Version 0.4.2
 
-* Fixes error preventing the auth proxy from returning properly
+- Fixes error preventing the auth proxy from returning properly
 
-#### Version 0.4.1
+### Version 0.4.1
 
-* Fixes some minor security issues with dependencies
+- Fixes some minor security issues with dependencies
 
-#### Version 0.4.0
+### Version 0.4.0
 
-* The SSO server is now being proxied by default. This can be disabled with the `--no-proxy` option or by disabling it in the config file.
-* Instead of localhost, the default url is now the local ip
+- The SSO server is now being proxied by default. This can be disabled with the `--no-proxy` option or by disabling it in the config file.
+- Instead of localhost, the default url is now the local ip
 
-### FAQ
+## FAQ
 
-#### Running Mission Control on port 80
+### Running Mission Control on port 80
 
 On Linux, running an http server on port 80 requires root priviliges. Generally this isn't a problem as you can simply `sudo mission-control -p 80` which works, but this approach falls apart when using systemd.
 
 I found this workaround which seems to be the safest option to use instead:
 
-```bash
+```sh
 sudo apt-get install libcap2-bin
 sudo setcap 'cap_net_bind_service=+ep' /usr/bin/node # Replace path to node binary
 ```
 
-### Authors
+## Authors
 
 Lukas Mateffy – [@Capevace](https://twitter.com/capevace) – [mateffy.me](https://mateffy.me)
 
 Distributed under the MIT license. See `LICENSE` for more information.
 
-### Contributing
+## Contributing
 
-1. Fork it \([https://github.com/capevace/mission-control/fork](https://github.com/capevace/mission-control/fork)\)
-2. Create your feature branch \(`git checkout -b feature/fooBar`\)
-3. Commit your changes \(`git commit -am 'Add some fooBar'`\)
-4. Push to the branch \(`git push origin feature/fooBar`\)
+1. Fork it (<https://github.com/capevace/mission-control/fork>)
+2. Create your feature branch (`git checkout -b feature/fooBar`)
+3. Commit your changes (`git commit -am 'Add some fooBar'`)
+4. Push to the branch (`git push origin feature/fooBar`)
 5. Create a new Pull Request
-
