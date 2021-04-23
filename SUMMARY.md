@@ -6,4 +6,5 @@
 ## Docs
 
 * [Untitled](docs/untitled.md)
+* [Test](docs/test.md)
 
