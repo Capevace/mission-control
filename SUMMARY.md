@@ -1,4 +1,5 @@
 # Table of contents
 
-* [Initial page](README.md)
+* [Welcome to Mission Control](README.md)
+* [Installation](installation.md)
 
