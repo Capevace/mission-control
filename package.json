@@ -7,7 +7,7 @@
         "start": "node scripts/start.js",
         "code:lint": "eslint app",
         "docs:serve": "docma serve new-docs -c ./.config/docma.config.json",
-        "docs:build": "docma build -c ./.config/docma.config.json",
+        "docs:build": "node scripts/docs.js",
         "dashboard:update": "cp -r ../mission-control-dashboard/dist/production/. resources/dashboard-ui/",
         "spotify-ui:update": "cp -r ../mission-control-spotify/dist/. resources/spotify-ui/",
         "mobile-ui:build": "babel resources/dashboard-ui/index.js --out-file resources/dashboard-ui/mobile.js",
