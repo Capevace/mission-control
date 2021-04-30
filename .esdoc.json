@@ -1,0 +1,29 @@
+{
+	"source": "./app",
+	"destination": "./docs",
+	"plugins": [
+		{
+			"name": "esdoc-standard-plugin",
+			"option": {
+				"brand": {
+					"logo": "./resources/favicon.png",
+					"title": "Mission Control",
+					"author": "https://mateffy.me"
+				},
+				"manual": {
+					"files": ["./tutorials/test.md"]
+				}
+			}
+		},
+		{
+			"name": "esdoc-ecmascript-proposal-plugin",
+			"option": { "all": true }
+		},
+		{
+			"name": "esdoc-publish-html-plugin",
+			"option": {
+				"template": "./node_modules/esdoc-custom-theme/template"
+			}
+		}
+	]
+}

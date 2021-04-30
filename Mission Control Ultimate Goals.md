@@ -1,5 +1,6 @@
-# Mission Control Ultimate Goals
+# Mission Control Goals
 
+## 2.0.0
 - Single-binary
 - Cross-platform
 - Plugin Support
@@ -9,9 +10,14 @@
 	- Register Dashboard Components
 - Theme ability
 	- Move Tailwind stuff to local classes
+	- Select Basic Color
 - Config Screen
 - Users
-	- Permissions
+	- Roles & Permissions
+
+## 2.1.0
+- Permissions
+	- Dynamic Roles (in DB)
 
 
 ```js

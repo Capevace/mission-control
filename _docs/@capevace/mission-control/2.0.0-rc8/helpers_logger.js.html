@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: helpers/logger.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: helpers/logger.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Logging Helpers
+ * @module @helpers/log
+ * @requires chalk, qrcode-terminal
+ */
+
+const chalk = require('chalk');
+const qrcode = require('qrcode-terminal');
+const onFinished = require('on-finished');
+const cliProgress = require('cli-progress');
+
+let logBuffer = [];
+let progressBar = null;
+
+const console_log = console.log.bind(console);
+
+module.exports._log = function _log(...msgs) {
+	if (progressBar)
+		logBuffer.push(msgs);
+	else
+		console_log(...msgs); // eslint-disable-line
+};
+
+module.exports.newLine = function newLine() {
+	module.exports._log('');
+};
+
+const LogLevel = {
+	debug: 0,
+	http: 1,
+	info: 2,
+	warn: 3,
+	error: 4,
+	fatal: 5,
+	silent: 6
+};
+module.exports.LogLevel = LogLevel;
+
+
+/**
+ * Return a LogLevel from string.
+ * @param {string} level 
+ * @returns LogLevel | null
+ */
+module.exports.logLevelFromString = function logLevelFromString(level) {
+	return LogLevel[level];
+};
+
+/**
+ * Convert a LogLevel to string.
+ * @param {LogLevel} logLevel 
+ * @returns string | null
+ */
+module.exports.logLevelToString = function logLevelToString(logLevel) {
+	let text = null;
+
+	switch (logLevel) {
+		case 0:
+			text = chalk.green('DEBUG');
+			break;
+		case 1:
+			text = chalk.magenta('HTTP');
+			break;
+		case 2:
+			text = chalk.cyan('INFO');
+			break;
+		case 3:
+			text = chalk.yellow('WARN');
+			break;
+		case 4:
+			text = chalk.red('ERROR');
+			break;
+		case 5:
+			text = chalk.red.bgBlack('FATAL');
+			break;
+		case 6:
+			text = chalk.white.bgBlack('SILENT');
+			break;
+	}
+
+	return text;
+};
+
+/**
+ * Create a log function with a LogLevel label attached.
+ * @param {LogLevel} levelOfLogger
+ * @returns Function
+ */
+function createLogFunction(levelOfLogger) {
+	const label = module.exports.logLevelToString(levelOfLogger);
+
+	return function log(...msgs) {
+		if (logLevel &lt;= levelOfLogger)
+			module.exports._log(/*formatISO(new Date()),*/ label, ...msgs);
+	};
+}
+
+/**
+ * The global log level.
+ */
+let logLevel = LogLevel.http;
+
+/*
+ * The respective log functions.
+ */
+const debug = createLogFunction(LogLevel.debug);
+const http = createLogFunction(LogLevel.http);
+const info = createLogFunction(LogLevel.info);
+const warn = createLogFunction(LogLevel.warn);
+const error = createLogFunction(LogLevel.error);
+const fatal = createLogFunction(LogLevel.fatal);
+
+module.exports.debug = debug;
+module.exports.http = http;
+module.exports.info = info;
+module.exports.warn = warn;
+module.exports.error = error;
+module.exports.fatal = fatal;
+
+
+/**
+ * Create a logger with text label attached.
+ * @param {string} label
+ * @param {string} color
+ */
+module.exports.createLogger = function createLogger(label, color = 'reset') {
+	if (!label)
+		return {
+			newLine: module.exports.newLine,
+			debug,
+			http,
+			info,
+			warn,
+			error,
+			fatal
+		};
+
+	const colorFn = chalk[color];
+
+	if (!colorFn)
+		throw new Error(`Log color unsupported: ${color}`);
+
+	label = colorFn(label);
+
+	return {
+		newLine: module.exports.newLine,
+		debug: (...msgs) => debug(label, ...msgs),
+		http: (...msgs) => http(label, ...msgs),
+		info: (...msgs) => info(label, ...msgs),
+		warn: (...msgs) => warn(label, ...msgs),
+		error: (...msgs) => error(label, ...msgs),
+		fatal: (...msgs) => fatal(label, ...msgs)
+	};
+};
+
+/**
+ * Set the global log level.
+ * @param {LogLevel} level 
+ */
+module.exports.setLogLevel = function setLogLevel(levelString = 'debug') {
+	if (!levelString)
+		return;
+
+	// If we can parse a log level from the logLevel config, then a string was passed and we can
+	// parse the log level value.
+	logLevel = this.logLevelFromString(levelString) || 0;
+};
+
+/**
+ * Ouput the styled ready message including a QR code that leads to the base url.
+ *
+ * @param  {String} url - The url to encode and log.
+ * @param  {String} authUrl - The auth url to display.
+ */
+module.exports.logReadyMessage = function logReadyMessage(url, authUrl) {
+	qrcode.generate(url, { small: true }, function (qrCode) {
+		const message =
+			`
+${`.  . .-. .-. .-. .-. .-. . .   .-. .-. . . .-. .-. .-. .   
+|\\/|  |  \`-. \`-.  |  | | |\\|   |   | | |\\|  |  |(  | | |   
+'  ' '-' '-' '-' '-' '-' ' '   '-' '-' ' '  '  ' ' '-' '-' `}
+
+Mission Control available at ${chalk.cyan(url)}
+
+${qrCode}
+`;
+
+		module.exports._log(message); // eslint-disable-line no-console
+	});
+};
+
+module.exports.logMiddleware = function logMiddleware(req, res, next) {
+	let startTime = process.hrtime();
+
+	onFinished(res, () => {
+		const colorFn = res.statusCode >= 500 ? chalk.red // red
+			: res.statusCode >= 400 ? chalk.yellow // yellow
+				: res.statusCode >= 300 ? chalk.cyan // cyan
+					: res.statusCode >= 200 ? chalk.green // green
+						: chalk.reset;
+
+		const now = process.hrtime();
+		const ms = (now[0] - startTime[0]) * 1e3 +
+			(now[1] - startTime[1]) * 1e-6;
+
+		http(req.method, req.url, colorFn(res.statusCode), `${ms.toFixed(3)}ms`);
+	});
+
+	next();
+};
+
+module.exports.logConfig = function logConfig(config) {
+	const spotifyCredentialsPresent = config.spotify.clientId &amp;&amp; config.spotify.secret;
+	
+	module.exports._log(
+		chalk`=== {bold Mission Control Config} ===
+Version:		${config.version}
+Log Level:		${config.logLevel}
+DB Path:		{cyan ${config.databasePath}}
+Dashboard Path: 	{cyan ${config.dashboard.path}}
+Homebridge Pin:		${config.homebridge.pin || chalk.reset.gray('None')}
+Spotify Creds:		${spotifyCredentialsPresent ? 'Provided' : chalk.reset.gray('Not provided')}
+HTTP URL:		{cyan ${config.http.url}}
+HTTP Port:		${config.http.port}
+HTTP Domains:		${config.http.allowedDomains.map(domain => chalk`{cyan ${domain}}`).join(', ')}
+\n`
+	);
+};
+
+module.exports.progress = async function progress(callback) {
+	progressBar = new cliProgress.SingleBar({
+	    format: `|${chalk.cyan('{bar}')}| {percentage}% {label}`,
+	    barCompleteChar: '\u2588',
+	    barIncompleteChar: '\u2591',
+	    hideCursor: true
+	}, cliProgress.Presets.rect);
+
+	progressBar.start(1, 0, {
+	    label: ''
+	});
+
+	function cleanup() {
+		if (progressBar) {
+			progressBar.stop();
+			progressBar = null;
+		}
+
+		logBuffer.forEach(msgs => console_log(...msgs));
+		logBuffer = [];
+	}
+
+	try {
+		await callback((label, percentage) => progressBar.update(percentage, { label }));
+		cleanup();
+	} catch (e) {
+		cleanup();
+		module.exports.error(e);
+	}
+};
+
+process.on('uncaughtException', function (err) {
+	error(chalk.red.bold('Uncaught Exception'), err);
+});</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-@config.html">@config</a></li><li><a href="module-@database.html">@database</a></li><li><a href="module-@helpers_log.html">@helpers/log</a></li><li><a href="module-@http.html">@http</a></li><li><a href="module-@socket.html">@socket</a></li><li><a href="module-@state.html">@state</a></li><li><a href="module-@state_actions.html">@state/actions</a></li><li><a href="module-@state_initial-state.html">@state/initial-state</a></li></ul><h3>Tutorials</h3><ul><li><a href="tutorial-test.html">test</a></li></ul><h3>Global</h3><ul><li><a href="global.html#BAHN:UPDATE">BAHN:UPDATE</a></li><li><a href="global.html#comparePassword">comparePassword</a></li><li><a href="global.html#COVID:UPDATE">COVID:UPDATE</a></li><li><a href="global.html#hashPassword">hashPassword</a></li><li><a href="global.html#hashPasswordSync">hashPasswordSync</a></li><li><a href="global.html#HOMEKIT:SET-INITIALIZED">HOMEKIT:SET-INITIALIZED</a></li><li><a href="global.html#HOMEKIT:SET-SERVICES">HOMEKIT:SET-SERVICES</a></li><li><a href="global.html#LAYOUT:RESET">LAYOUT:RESET</a></li><li><a href="global.html#LAYOUT:UPDATE">LAYOUT:UPDATE</a></li><li><a href="global.html#NOTIFICATIONS:CREATE">NOTIFICATIONS:CREATE</a></li><li><a href="global.html#NOTIFICATIONS:DELETE">NOTIFICATIONS:DELETE</a></li><li><a href="global.html#NOTIFICATIONS:MARK-AS-READ">NOTIFICATIONS:MARK-AS-READ</a></li><li><a href="global.html#NOTIFICATIONS:SET">NOTIFICATIONS:SET</a></li><li><a href="global.html#PLUGINS:ADD">PLUGINS:ADD</a></li><li><a href="global.html#SPOTIFY:UPDATE-TOKEN">SPOTIFY:UPDATE-TOKEN</a></li><li><a href="global.html#SYSTEM-INFO:UPDATE">SYSTEM-INFO:UPDATE</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Sat Apr 24 2021 01:53:25 GMT+0200 (Mitteleuropäische Sommerzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

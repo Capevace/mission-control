@@ -1,0 +1,114 @@
+{
+  "type": "File",
+  "start": 0,
+  "end": 265,
+  "loc": {
+    "start": {
+      "line": 1,
+      "column": 0
+    },
+    "end": {
+      "line": 9,
+      "column": 3
+    }
+  },
+  "program": {
+    "type": "Program",
+    "start": 0,
+    "end": 265,
+    "loc": {
+      "start": {
+        "line": 1,
+        "column": 0
+      },
+      "end": {
+        "line": 9,
+        "column": 3
+      }
+    },
+    "sourceType": "module",
+    "body": [],
+    "directives": [],
+    "leadingComments": null,
+    "innerComments": [
+      {
+        "type": "CommentBlock",
+        "value": "*\n * User object\n * @typedef {express.Router} User\n * @type {object}\n * @property {string} username Username\n * @property {string} password Password (hashed)\n * @property {string} avatarUrl URL to the avatar\n * @property {string} displayName The name but nice\n ",
+        "start": 0,
+        "end": 265,
+        "loc": {
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 9,
+            "column": 3
+          }
+        }
+      }
+    ]
+  },
+  "comments": [
+    {
+      "type": "CommentBlock",
+      "value": "*\n * User object\n * @typedef {express.Router} User\n * @type {object}\n * @property {string} username Username\n * @property {string} password Password (hashed)\n * @property {string} avatarUrl URL to the avatar\n * @property {string} displayName The name but nice\n ",
+      "start": 0,
+      "end": 265,
+      "loc": {
+        "start": {
+          "line": 1,
+          "column": 0
+        },
+        "end": {
+          "line": 9,
+          "column": 3
+        }
+      }
+    }
+  ],
+  "tokens": [
+    {
+      "type": "CommentBlock",
+      "value": "*\n * User object\n * @typedef {express.Router} User\n * @type {object}\n * @property {string} username Username\n * @property {string} password Password (hashed)\n * @property {string} avatarUrl URL to the avatar\n * @property {string} displayName The name but nice\n ",
+      "start": 0,
+      "end": 265,
+      "loc": {
+        "start": {
+          "line": 1,
+          "column": 0
+        },
+        "end": {
+          "line": 9,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "eof",
+        "beforeExpr": false,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 265,
+      "end": 265,
+      "loc": {
+        "start": {
+          "line": 9,
+          "column": 3
+        },
+        "end": {
+          "line": 9,
+          "column": 3
+        }
+      }
+    }
+  ]
+}

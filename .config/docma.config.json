@@ -1,0 +1,48 @@
+{
+	"src": [
+		"./app/**/*.js",
+		"./tutorials/**/*.md",
+		"./tutorials/**/*.html",
+		"./resources/screenshot-2.0.0-rc6.png",
+		"./resources/favicon.png",
+		"./README.md"
+	],
+	"dest": "./new-docs",
+	"app": {
+		"title": "Mission Control Documentation",
+		"favicon": "resources/favicon.png",
+		"entrance": "content:welcome"
+	},
+	"template": {
+		"path": "zebra",
+		"options": {
+			"title": {
+				"label": "Mission Control",
+				"href": "/"
+			},
+			"logo": {
+				"light": "img/favicon.png",
+				"dark": "img/favicon.png"
+			},
+			"sidebar": {
+				"itemsFolded": true
+			},
+			"navbar": {
+				"enabled": true,
+				"dark": true,
+				"menu": [
+					{
+						"label": "Docs",
+						"iconClass": "fas fa-book",
+						"href": "?content=welcome"
+					},
+					{
+						"label": "API Reference",
+						"iconClass": "fas fa-book",
+						"href": "?api"
+					}
+				]
+			}
+		}
+	}
+}

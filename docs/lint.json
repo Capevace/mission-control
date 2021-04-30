@@ -1,0 +1,87 @@
+[
+  {
+    "name": "get",
+    "filePath": "app/database/index.js",
+    "lines": [
+      {
+        "lineNumber": 57,
+        "line": "module.exports.get = function get(key, defaultValue) {"
+      }
+    ],
+    "codeParams": [
+      "key",
+      "defaultValue"
+    ],
+    "docParams": [
+      "key"
+    ]
+  },
+  {
+    "name": "setLogLevel",
+    "filePath": "app/helpers/logger.js",
+    "lines": [
+      {
+        "lineNumber": 159,
+        "line": "module.exports.setLogLevel = function setLogLevel(levelString = 'debug') {"
+      }
+    ],
+    "codeParams": [
+      "levelString"
+    ],
+    "docParams": [
+      "level"
+    ]
+  },
+  {
+    "name": "exports",
+    "filePath": "app/socket/index.js",
+    "lines": [
+      {
+        "lineNumber": 23,
+        "line": "module.exports = function socket(state, http, auth) {"
+      }
+    ],
+    "codeParams": [
+      "state",
+      "http",
+      "auth"
+    ],
+    "docParams": [
+      "http",
+      "auth"
+    ]
+  },
+  {
+    "name": "exports.fromJSON",
+    "filePath": "app/state/events/MissionControlEvent.js",
+    "lines": [
+      {
+        "lineNumber": 36,
+        "line": "\t/**"
+      },
+      {
+        "lineNumber": 37,
+        "line": "\t * @param  {String} json - The JSON data to unserialize."
+      },
+      {
+        "lineNumber": 38,
+        "line": "\t * @return {Class} The class that was unserialized from json."
+      },
+      {
+        "lineNumber": 39,
+        "line": "\t */"
+      },
+      {
+        "lineNumber": 40,
+        "line": "\tstatic fromJSON(eventClassType, json) {"
+      }
+    ],
+    "codeParams": [
+      "eventClassType",
+      "json"
+    ],
+    "docParams": [
+      "json"
+    ]
+  }
+]

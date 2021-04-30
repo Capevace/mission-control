@@ -19,7 +19,7 @@ async function routesToHL() {
 	for (const journey of journeys) {
 		const skipJourney = journey.legs
 			.reduce((skip, leg) =>
-				skip || leg.line.product !== 'regional',
+				skip || (leg.line && leg.line.product !== 'regional'),
 				false
 			);
 

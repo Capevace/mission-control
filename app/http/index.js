@@ -84,8 +84,8 @@ module.exports = function http(state, database, auth, sessionSecret) {
 		next();
 	});
 
-	app.use(authRoutes(new express.Router(), auth));
-	app.use(stateRoutes(new express.Router(), auth));
+	app.use(authRoutes(new express.Router(), { database, auth }));
+	app.use(stateRoutes(new express.Router(), { auth }));
 
 	const dashboardRouter = new express.Router();
 
@@ -100,9 +100,7 @@ module.exports = function http(state, database, auth, sessionSecret) {
 	app.use(dashboardRoutes(dashboardRouter, auth));
 
 	app.use(function (err, req, res, next) {
-		logging.error('Unknown Error', err);
-
-		if (err.isUserError) {
+		if (err.isUserError) {			
 			res.status(err.status).json({
 				error: {
 					message: err.message,
@@ -110,6 +108,8 @@ module.exports = function http(state, database, auth, sessionSecret) {
 				}
 			});
 		} else {
+			logging.error('Unknown HTTP Error', err);
+
 			res.status(500).json({
 				error: {
 					message: 'An unknown error occurred',

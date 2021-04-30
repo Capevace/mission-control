@@ -1,0 +1,258 @@
+{
+  "type": "File",
+  "start": 0,
+  "end": 787,
+  "loc": {
+    "start": {
+      "line": 1,
+      "column": 0
+    },
+    "end": {
+      "line": 40,
+      "column": 0
+    }
+  },
+  "program": {
+    "type": "Program",
+    "start": 0,
+    "end": 787,
+    "loc": {
+      "start": {
+        "line": 1,
+        "column": 0
+      },
+      "end": {
+        "line": 40,
+        "column": 0
+      }
+    },
+    "sourceType": "module",
+    "body": [],
+    "directives": [],
+    "leadingComments": null,
+    "innerComments": [
+      {
+        "type": "CommentBlock",
+        "value": "*\n * The HTTP context object\n * @typedef {express.Router} Router\n * @type {object}\n * @property {Object} state\n * @property {Object} logger\n * @property {Object} config\n * @property {Object} dashboard\n * @property {Object} http\n ",
+        "start": 1,
+        "end": 234,
+        "loc": {
+          "start": {
+            "line": 2,
+            "column": 0
+          },
+          "end": {
+            "line": 11,
+            "column": 3
+          }
+        }
+      },
+      {
+        "type": "CommentBlock",
+        "value": "*\n * The HTTP context object\n * @typedef {Object} HttpContext\n * @type {object}\n * @property {Object} noAuth\n * @property {Object} raw\n ",
+        "start": 236,
+        "end": 376,
+        "loc": {
+          "start": {
+            "line": 13,
+            "column": 0
+          },
+          "end": {
+            "line": 19,
+            "column": 3
+          }
+        }
+      },
+      {
+        "type": "CommentBlock",
+        "value": "*\n * The APP object\n * @typedef {Object} PluginContext\n * @type {object}\n * @property {Object} state\n * @property {Object} logger\n * @property {Object} config\n * @property {Object} dashboard\n * @property {HttpContext} http\n ",
+        "start": 378,
+        "end": 606,
+        "loc": {
+          "start": {
+            "line": 21,
+            "column": 0
+          },
+          "end": {
+            "line": 30,
+            "column": 3
+          }
+        }
+      },
+      {
+        "type": "CommentBlock",
+        "value": "*\n * The plugin object\n * @typedef {Object} Plugin\n * @property {string?} name\n * @property {string} version\n * @property {string} description\n * @property {string?} author\n ",
+        "start": 608,
+        "end": 786,
+        "loc": {
+          "start": {
+            "line": 32,
+            "column": 0
+          },
+          "end": {
+            "line": 39,
+            "column": 3
+          }
+        }
+      }
+    ]
+  },
+  "comments": [
+    {
+      "type": "CommentBlock",
+      "value": "*\n * The HTTP context object\n * @typedef {express.Router} Router\n * @type {object}\n * @property {Object} state\n * @property {Object} logger\n * @property {Object} config\n * @property {Object} dashboard\n * @property {Object} http\n ",
+      "start": 1,
+      "end": 234,
+      "loc": {
+        "start": {
+          "line": 2,
+          "column": 0
+        },
+        "end": {
+          "line": 11,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": "CommentBlock",
+      "value": "*\n * The HTTP context object\n * @typedef {Object} HttpContext\n * @type {object}\n * @property {Object} noAuth\n * @property {Object} raw\n ",
+      "start": 236,
+      "end": 376,
+      "loc": {
+        "start": {
+          "line": 13,
+          "column": 0
+        },
+        "end": {
+          "line": 19,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": "CommentBlock",
+      "value": "*\n * The APP object\n * @typedef {Object} PluginContext\n * @type {object}\n * @property {Object} state\n * @property {Object} logger\n * @property {Object} config\n * @property {Object} dashboard\n * @property {HttpContext} http\n ",
+      "start": 378,
+      "end": 606,
+      "loc": {
+        "start": {
+          "line": 21,
+          "column": 0
+        },
+        "end": {
+          "line": 30,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": "CommentBlock",
+      "value": "*\n * The plugin object\n * @typedef {Object} Plugin\n * @property {string?} name\n * @property {string} version\n * @property {string} description\n * @property {string?} author\n ",
+      "start": 608,
+      "end": 786,
+      "loc": {
+        "start": {
+          "line": 32,
+          "column": 0
+        },
+        "end": {
+          "line": 39,
+          "column": 3
+        }
+      }
+    }
+  ],
+  "tokens": [
+    {
+      "type": "CommentBlock",
+      "value": "*\n * The HTTP context object\n * @typedef {express.Router} Router\n * @type {object}\n * @property {Object} state\n * @property {Object} logger\n * @property {Object} config\n * @property {Object} dashboard\n * @property {Object} http\n ",
+      "start": 1,
+      "end": 234,
+      "loc": {
+        "start": {
+          "line": 2,
+          "column": 0
+        },
+        "end": {
+          "line": 11,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": "CommentBlock",
+      "value": "*\n * The HTTP context object\n * @typedef {Object} HttpContext\n * @type {object}\n * @property {Object} noAuth\n * @property {Object} raw\n ",
+      "start": 236,
+      "end": 376,
+      "loc": {
+        "start": {
+          "line": 13,
+          "column": 0
+        },
+        "end": {
+          "line": 19,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": "CommentBlock",
+      "value": "*\n * The APP object\n * @typedef {Object} PluginContext\n * @type {object}\n * @property {Object} state\n * @property {Object} logger\n * @property {Object} config\n * @property {Object} dashboard\n * @property {HttpContext} http\n ",
+      "start": 378,
+      "end": 606,
+      "loc": {
+        "start": {
+          "line": 21,
+          "column": 0
+        },
+        "end": {
+          "line": 30,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": "CommentBlock",
+      "value": "*\n * The plugin object\n * @typedef {Object} Plugin\n * @property {string?} name\n * @property {string} version\n * @property {string} description\n * @property {string?} author\n ",
+      "start": 608,
+      "end": 786,
+      "loc": {
+        "start": {
+          "line": 32,
+          "column": 0
+        },
+        "end": {
+          "line": 39,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "eof",
+        "beforeExpr": false,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 787,
+      "end": 787,
+      "loc": {
+        "start": {
+          "line": 40,
+          "column": 0
+        },
+        "end": {
+          "line": 40,
+          "column": 0
+        }
+      }
+    }
+  ]
+}

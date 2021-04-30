@@ -44,19 +44,6 @@
  * 		}
  * });
  * ```
- *
- * @example
- * state.subscribe('update:lights.desk')
- * state.subscribe('action:ACTION_NAME')
- * @example
- * function ACTION(oldState, actionData) {
- *     return Object.extend({}, oldState, { lampOn: actionData.isOn });
- * }
- * @module @state
- * @since 1.0.0
- * @requires eventemitter2
- * @requires object-diff
- * @requires @state/initial-state
  */
 
 const EventEmitter = require('eventemitter2');
@@ -76,5 +63,3 @@ module.exports = {
 };
 
 const eventBus = require('eventemitter2');
-
-function 

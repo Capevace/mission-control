@@ -1,6 +1,6 @@
 <div align="center">
 	<a href="https://mateffy.me/mission-control-project">
-		<img src="resources/icon-web.png">
+		<img src="resources/favicon.png">
 	</a>
 	<h1>Mission Control</h1>
 	<p>
@@ -25,7 +25,7 @@ When you start setting up software for your home – be it home automation, a NA
 
 ## Installation
 
-**Install mission-control and the single-sign-on auth server.** Unless reconfigured, mission control will launch a single-sign-on server as a node subprocess.
+Note: 2.0.0 is currently in pre-release but more stable than 0.x.x versions.
 
 ```sh
 $ npm install -g @capevace/mission-control@next
@@ -37,7 +37,7 @@ You can now start the server like you would any binary.
 
 ```sh
 $ mission-control --version
-v2.0.0-rc6
+v2.0.0-rc8
 ```
 
 ### Options
@@ -61,7 +61,7 @@ A config file for mission-control will be created at `$HOME_DIR/.mission-control
 
 ## Screenshots
 
-<img src="resources/screenshot.png">
+![Mission Control Screenshot](resources/screenshot-2.0.0-rc6.png "Mission Control Screenshot")
 
 ## Changelog
 

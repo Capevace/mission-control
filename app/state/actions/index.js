@@ -6,7 +6,6 @@
  * Actions always have a namespace like 'NOTIFICATIONS' and a quick action
  * word like 'CREATE' concatenated by a ':'.
  *
- * @module @state/actions
  */
 
 const actionIdToPath = actionId =>

@@ -3,13 +3,15 @@ const logger = logging.createLogger('Auth');
 
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
+const Joi = require('joi');
 const JWTStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 const queryString = require('querystring');
 const proxy = require('http-proxy-middleware');
 
-const User = require('@database/models/User');
+const User = require('@models/User');
 const UserError = require('@http/UserError');
+const validator = require('@http/middleware/validator');
 
 /*
 	How the auth system works
@@ -32,84 +34,172 @@ const UserError = require('@http/UserError');
 	it lets the request pass.
 */
 
-module.exports = function authRoutes(app, auth) {
-	app.get('/login', auth.controller.serveLoginPage);
-    app.post('/login', auth.controller.performAuthentication);
+module.exports = function authRoutes(app, { auth, database: db }) {
+	
+	app.get('/login', auth.controllers.login.serveLoginPage);
+    app.post('/login', auth.controllers.login.performAuthentication);
+	app.get('/logout', auth.controllers.login.logout);
 
-	app.get('/logout', (req, res) => {
-		req.logout();
-		// req.session.destroy();
+	/** Get current User as JSON */
+	app.get(
+		'/users/me', 
+		auth.middleware.requireAuthentication,
+		auth.middleware.requirePermission('read', 'own', 'user'), 
+		(req, res) => {
+			return res.json({
+				user: req.permission.filter(req.user)
+			});
+		}
+	);
 
-		res.redirect('/login');
-	});
+	/** Get User */
+	app.get(
+		'/users/:username',
+		auth.middleware.requireAuthentication,
+		auth.middleware.requirePermission('read', 'any', 'user'),
+		validator.params(Joi.object({
+			username: Joi.string().required()
+		})),
+		async (req, res) => {
+			const username = req.params.username;
+			const user = await db.api.users.findUser(username);
 
-	app.get('/users/:username', (req, res) => {
-		console.log(req.params);
-		const username = String(req.params.username);
-		const user = User.validate({});
-		console.log(user);
+			if (!user) {
+				throw new UserError(`User ${username} not found`, 404);
+			}
 
-		// next(new Error('wat'));
-		
-		// try {
-		// 	await auth.controller.updateUser(user, username);
-		// 	res.json({});
-		// } catch (e) {
+			return res.json({
+				user: req.permission.filter(user)
+			});
+		}
+	);
 
-		// }
-		// logger.info(`Updating User ${username}`, user);
+	/** Create User */
+	app.get(
+		'/users',
+		auth.middleware.requireAuthentication, 
+		auth.middleware.requirePermission('read', 'any', 'user'),
+		async (req, res) => {
+			console.log('wat')
+			const usersMap = await db.api.users.all() || {};
+			const users = Object.values(usersMap)
+				.map(user => req.permission.filter(user));
 
-		// if (!auth.permissions.canEditUser(req.user, username)) {
-		// 	return res.status(401).json({
-		// 		error: {
-		// 			status: 401,
-		// 			message: 'Not allowed to edit user data'
-		// 		}
-		// 	});
-		// }
+			res.json(users);
+		}
+	);
 
-		// if (username !== user.username) {
-		// 	// Set username
-		// 	await database.api.users.updateUsername(username, user.username);
-		// }
+	/** Create User */
+	app.post(
+		'/users',
+		auth.middleware.requireAuthentication, 
+		auth.middleware.requirePermission('create', 'any', 'user'),
+		validator.body(Joi.object({
+			user: User.schema
+		})),
+		async (req, res) => {
+			const user = req.permission.filter(req.body.user);
+			const username = user.username;
 
-		// // TODO: Better permission-based password changes
-		// // Right now we only check if the current user is the same that's
-		// // trying to change the thing.
-
-		// // If the password is changed, update (and hash) the password
-		// if (user.password) {
-		// 	// Check if user is allowed to change this users password
-		// 	// User can only change password, if he is that user or an admin.
-		// 	if (
-		// 		req.user.role === 'guest' 
-		// 		|| (
-		// 			username !== req.user.username 
-		// 			&& req.user.role !== 'admin'
-		// 		)
-		// 	) {
-		// 		return res.status(401).json({
-		// 			error: {
-		// 				status: 401,
-		// 				message: 'Not allowed to change username'
-		// 			}
-		// 		});
-		// 	}
-
-		// 	// Update password
-		// 	database.api.users.updatePassword(username, user.password);
-		// }
-
-		// // TODO: DONT DO THIS, FIGURE OUT HOW TO DO THIS CLEANLY!
-		// // Events? Private user state?
-		// database.api.users.update(username, user);
-
-		// res.json({
-		// 	error: null
-		// });
-	});
+			await db.api.users.create(username, user);
 
 
+			res.json({ user: await db.api.users.findSafeUser(username) });
+		}
+	);
+
+	/** Update current User */
+	app.patch(
+		'/users/me',
+		auth.middleware.requireAuthentication,
+		auth.middleware.requirePermission('update', 'own', 'user'),
+		validator.body(Joi.object({
+			user: User.schema
+		})),
+		async (req, res) => {
+			const username = req.user.username;
+			const user = req.permission.filter(req.body.user);
+			
+			await db.api.users.update(username, user);
+
+			res.json({ user: await db.api.users.findSafeUser(username) });
+		}
+	);
+
+	/** Update User */
+	app.patch(
+		'/users/:username',
+		auth.middleware.requireAuthentication, 
+		auth.middleware.requirePermission('update', 'any', 'user'),
+		validator.params(Joi.object({
+			username: Joi.string().required()
+		})),
+		validator.body(Joi.object({
+			user: User.schema
+		})),
+		async (req, res) => {
+			const username = req.params.username;
+			const user = req.permission.filter(req.body.user);
+
+			await db.api.users.update(username, user);
+
+			res.json({ user: await db.api.users.findSafeUser(username) });
+		}
+	);
+
+	/** Update User */
+	app.delete(
+		'/users/:username',
+		auth.middleware.requireAuthentication, 
+		auth.middleware.requirePermission('delete', 'any', 'user'),
+		validator.params(Joi.object({
+			username: Joi.string().required()
+		})),
+		async (req, res) => {
+			await db.api.users.delete(req.params.username);
+
+			res.status(200).end();
+		}
+	);
+
+	/** Update current password */
+	app.post(
+		'/users/me/change-password',
+		auth.middleware.requireAuthentication,
+		auth.middleware.requirePermission('update', 'own', 'user:password'),
+		validator.body(Joi.object({
+			password: Joi.string().required()
+		})),
+		async (req, res) => {
+			const username = req.user.username;
+			const newPassword = req.body.password;
+
+			await db.api.users.updatePassword(username, newPassword);
+
+			res.status(200).end();
+		}
+	);
+
+	/** Update User Password */
+	app.post(
+		'/users/:username/change-password',
+		auth.middleware.requireAuthentication, 
+		auth.middleware.requirePermission('update', 'any', 'user:password'),
+		validator.params(Joi.object({
+			username: Joi.string().required()
+		})),
+		validator.body(Joi.object({
+			user: User.schema
+		})),
+		async (req, res) => {
+			const username = req.params.username;
+			const newPassword = req.body.password;
+
+			await db.api.users.updatePassword(username, newPassword);
+
+			res.status(200).end();
+		}
+	);
 
 	return app;
 };

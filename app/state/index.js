@@ -20,19 +20,6 @@
  * Action names are always all caps to reduce errors when calling them.
  * An action cannot have side effects. HTTP requests and similar async tasks
  * are handled outside the state machine, to reduce complexity.
- *
- * @example
- * state.subscribe('update:lights.desk')
- * state.subscribe('action:ACTION_NAME')
- * @example
- * function ACTION(oldState, actionData) {
- *     return Object.extend({}, oldState, { lampOn: actionData.isOn });
- * }
- * @module @state
- * @since 1.0.0
- * @requires eventemitter2
- * @requires object-diff
- * @requires @state/initial-state
  */
 
 // const config = require('@config');
@@ -104,7 +91,6 @@ function subscribe(event, callback) {
  * @param {String} actionKey - The action to evoke.
  * @param {Object} data - The data object to pass along to the action reducer/handler.
  *
- * @throws
  * @emits 'update'
  */
 function invokeAction(actionKey, data) {
