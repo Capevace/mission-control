@@ -6,7 +6,7 @@
     "scripts": {
         "start": "node scripts/start.js",
         "code:lint": "eslint app",
-        "docs:serve": "docma serve new-docs -c ./.config/docma.config.json",
+        "docs:serve": "docma serve docs -c ./.config/docma.config.json",
         "docs:build": "node scripts/docs.js",
         "dashboard:update": "cp -r ../mission-control-dashboard/dist/production/. resources/dashboard-ui/",
         "spotify-ui:update": "cp -r ../mission-control-spotify/dist/. resources/spotify-ui/",
@@ -25,9 +25,9 @@
     "author": "Lukas Mateffy (@Capevace)",
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/capevace/hal-6900-mission-control/issues"
+        "url": "https://github.com/capevace/mission-control/issues"
     },
-    "homepage": "https://github.com/capevace/hal-6900-mission-control#readme",
+    "homepage": "https://mission-control.js.org",
     "dependencies": {
         "@oznu/hap-client": "^1.6.0",
         "accesscontrol": "^2.2.1",

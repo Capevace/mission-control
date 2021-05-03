@@ -1,213 +1,352 @@
-<div class="container container-boxed">
-	<div align="center">
-		<a href="https://mateffy.me/mission-control-project"><img src=
-		"img/favicon.png"></a>
-		<h1>
-			Mission Control
-		</h1>
+<style type="text/css">
+	#docma-content {
+		margin-top: 0;
+	}
+</style>
 
-		<p>
-			Beautiful home dashboard software built on Node.js
-		</p>
 
-		<p>
-			<a href="https://mateffy.me/mission-control-project">Project Homepage</a>
-			<span>&nbsp;|&nbsp;</span> <a href=
-			"https://mateffy.me/mission-control">Docs</a>
-		</p>
-	</div>
-	<br>
+<main class="antialiased bg-violet-50 overflow-x-hidden">
+	<!-- Header -->
+	<header class="w-full bg-purple-900 mb-10 relative">
+		<div class="absolute inset-0 bg-violet-900">
+			<div class="w-full h-full inset-0"></div>
+			<svg 
+				class="w-full absolute left-0 right-0 top-full z-0 text-violet-900" 
+				style="transform: translateY(-50px);" 
+				fill="currentColor" 
+				xmlns="http://www.w3.org/2000/svg"
+				width="1152" height="100" viewBox="0 0 1152 100" 
+			>
+				<path d="M0 50C57.5 50 114.396 49.3947 174.678 50.757C280.457 53.1474 346.236 63.0359 453.602 73.0728L453.604 73.073C483.153 75.8353 552.823 84.6089 582.645 87.2405C717.538 97.9097 768.43 105.531 903.323 94.8614C1008.5 82 1067 50 1152 50V0H0V50Z"/>
+			</svg>
+		</div>
+		<div 
+			class="absolute inset-0 bg-purple-900 bg-screenshot bg-top transition duration-2500 opacity-0"
+			style="filter: blur(30px);" 
+		></div>
+		<script type="module">
+			/* Fade in background image when loading is complete */
+			const img = new Image();
+			img.onload = () => Array.from(document.querySelectorAll('.bg-screenshot'))
+				.map(bg => { 
+					bg.classList.remove('opacity-0');
+				});
 
-	<p>
-		When you start setting up software for your home – be it home automation, a
-		NAS system or something else – you’ll end up having a few different dashboards
-		for control, that are all kind of ugly anyway. That’s where Mission Control
-		comes in. It is a beatutiful and easy-to-configure dashboard system for your
-		home!
-	</p>
+			img.onerror = () => Array.from(document.querySelectorAll('.bg-screenshot'))
+				.map(bg => { 
+					bg.classList.remove('opacity-0');
+					bg.classList.add('bg-gradient');
+					bg.style = null;
+				});
 
-	<h2 id="features">
-		Features
-	</h2>
+			img.src = '/img/header-bg.jpg';
 
-	<ul>
-		<li>Control your HomeKit devices on the dashboard
-		</li>
+			/* Fade in screenshot when loading is complete */
+			const img = new Image();
+			img.onload = () => Array.from(document.querySelectorAll('.bg-screenshot'))
+				.map(bg => { 
+					bg.classList.remove('opacity-0');
+				});
 
-		<li>Embeddable file browser, youtube downloader and Spotify player
-		</li>
+			img.src = '/img/header-bg.jpg';
+		</script>
 
-		<li>Sleek, customizable UI
-		</li>
-	</ul>
+		<section class="max-w-6xl mx-auto px-5 sm:px-10 md:px-10 lg:px-10 relative flex pt-20 ">
+			<div class="py-10 pt-0 flex-1">
+				<h1 class="text-3xl font-semibold text-white mb-1">Mission Control</h1>
+				<p class="block text-2xl text-violet-300 max-w-sm mb-10">
+					Opinionated JavaScript framework for building <span class="font-semibold">real-time dashboards</span>
+				</p>
 
-	<h2 id="installation">
-		Installation
-	</h2>
+				<h2 class="font-semibold text-violet-400 mb-1">Focus on</h2>
+				<p class="text-2xl text-violet-100 mb-10 max-w-sm">
+					<span class="font-semibold">building widgets</span> and connecting your <span class="font-semibold">APIs and services</span>
+				</p>
 
-	<p>
-		Note: 2.0.0 is currently in pre-release but more stable than 0.x.x versions.
-	</p>
+				<h2 class="font-semibold text-violet-400 mb-3">and let Mission Control handle</h2>
+				<div class="flex flex-wrap w-full mb-5 max-w-lg">
+					<a href="#" class="feature-bubble">
+						Real-time Sync
+					</a>
+					<a href="#" class="feature-bubble">
+						User Management
+					</a>
+					<a href="#" class="feature-bubble">
+						Role-based permissions
+					</a>
+					<a href="#" class="feature-bubble">
+						HTTP & WebSocket transports
+					</a>
+					<a href="#" class="feature-bubble text-violet-400">
+						And more...
+					</a>
+				</div>
+			</div>
+			<div class="w-1/3 overflow-visible hidden sm:block">
+				<img class="absolute" style="width: 700px;" src="img/header-screenshot.png">
+			</div>
+		</section>
+	</header>
 
-	<div class="sourceCode" id="cb1">
-		<pre class="sourceCode sh"><code class="sourceCode bash"><span id=
-		"cb1-1"><a aria-hidden="true" href="#cb1-1" tabindex="-1"></a><span class=
-		"ex">npm</span> install <span class=
-		"at">-g</span> @capevace/mission-control@next</span></code></pre>
-	</div>
+	<!-- Introduction -->
+	<section class="mc-container flex flex-wrap-reverse md:flex-nowrap items-start mb-20">
+		<article class="w-full md:w-1/2 flex flex-wrap text-violet-900 mt-3 sm:mt-5">
+			<div class="flex flex-wrap md:flex-nowrap mb-10 w-full items-start">
+				<button class="w-full mb-3 md:mb-0 md:w-1/2 text-base lg:text-lg button bg-violet-700 bg-gradient hover:bg-none hover:bg-violet-600 hover:text-white text-white px-2 py-3">Get started</button>
+				<div class="w-4"></div>
+				<button class="w-full md:w-1/2 button text-base lg:text-lg px-2 py-3">Documentation</button>
+			</div>
+			<div class="text-sm w-full leading-relaxed">
+				<p class="mb-3">
+					Beginning a real-time web project, like building your own home dashboard, can be a tedious and time-consuming process.
+				</p>
+				<p class="mb-3">
+					Coding lots of boilerplate for authentication, authorization and data communication isn’t fun at all. By the time you get to building the thing you wanted you got bored and moved on to the next.
+				</p>
+				<p class="font-semibold">
+					Mission Control aims to provide all those features out-of-the-box so you can get to creating what matters right away.
+				</p>
+			</div>
+		</article>
+		
 
-	<h2 id="usage">
-		Usage
-	</h2>
+		<div class="hidden md:block w-5 md:w-10 lg:w-20"></div>
 
-	<p>
-		You can now start the server like you would any binary.
-	</p>
+		
+		<aside 
+			class="hidden md:block flex-1 bg-violet-100 text-violet-600 rounded-3xl shadow-lg px-6 py-4 text-sm transform -translate-y-14 lg:-translate-y-24"
+		>
+			<h2 class="text-lg text-violet-700 font-semibold mb-3">Quick Start</h2>
+			<p class="mb-1">Install Mission Control from NPM.</p>
+			<code class="block bg-violet-200 text-violet-700 px-5 py-2 whitespace-nowrap overflow-x-scroll rounded-lg mb-5 font-mono">
+				<span class="text-violet-400 select-none">$&nbsp;</span><span class="inline-block">npm i -g @capevace/mission-control</span>
+			</code>
 
-	<div class="sourceCode" id="cb2">
-		<pre class="sourceCode sh"><code class="sourceCode bash"><span id=
-		"cb2-1"><a aria-hidden="true" href="#cb2-1" tabindex="-1"></a><span class=
-		"ex">mission-control</span> <span class="at">--version</span></span>
-	<span id="cb2-2"><a aria-hidden="true" href="#cb2-2" tabindex=
-	"-1"></a><span class="ex">v2.0.0-rc8</span></span></code></pre>
-	</div>
+			<p class="mb-1">Start it up as a standalone server</p>
+			<code class="block bg-violet-200 text-violet-700 px-5 py-2 whitespace-nowrap overflow-x-scroll rounded-lg mb-5">
+				<span class="text-violet-400 select-none">$&nbsp;</span><span class="inline-block">mission-control start</span>
+			</code>
 
-	<h3 id="options">
-		Options
-	</h3>
+			<!-- <div class="flex items-center justify-center mb-4">
+				<div class="w-8 h-1 bg-purple-200 rounded-full"></div>
+				<div class="mx-5 text-purple-300 ">or</div>
+				<div class="w-8 h-1 bg-purple-200 rounded-full"></div>
+			</div> -->
 
-	<pre><code>Usage: mission-control [options]
+			<p class="mb-1">Import it as a JS framework</p>
+			<code class="block text-2xs leading-4 bg-violet-200 text-violet-600 px-5 py-3 whitespace-nowrap overflow-x-scroll rounded-lg mb-5">
+				<span class="text-pink-600">const</span> { <span class="font-semibold">init</span> } = require(<span class="text-pink-600">'@capevace/mission-control'</span>);<br>
+				<span class="text-pink-600">const</span> missionControl = <span class="font-semibold"><span class="text-pink-600">await</span> init({ <br>
+					<span class="text-violet-400 font-normal">&nbsp;&nbsp;&nbsp;&nbsp;/* Options... */</span><br>
+				})</span>;
+			</code>
+		</aside>
+	</section>
+	
+	<!-- Features -->
+	<section class="mc-container w-full">
 
-	Options:
-	  -V, --version       output the version number
-	  -u, --url &lt;url&gt;     the url mission control is reachable at
-	  -p, --port &lt;port&gt;   the port to use for mission control
-	  -n, --no-sso        disable internal auth server process (to use own)
-	  --auth-url &lt;url&gt;    the url to use for the single-sign-on server
-	  --auth-port &lt;port&gt;  the port to use for the single-sign-on server
-	  -h, --help          display help for command</code></pre>
-	<h3 id="config">
-		Config
-	</h3>
+		<article class="flex flex-wrap-reverse sm:flex-nowrap mb-40 items-center">
+			<div class="w-full sm:w-1/2 flex justify-center">
+				<code class="block text-2xs bg-gray-800 shadow-xl rounded-xl p-0 overflow-hidden">
+					<div class="bg-gray-900 h-7 w-full font-mono text-center text-gray-300 font-semibold pt-2 text-2xs relative select-none">
+						<div class="absolute left-0 top-0 flex mt-2 ml-3">
+							<div class="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
+							<div class="w-3 h-3 rounded-full bg-yellow-500 mr-2"></div>
+							<div class="w-3 h-3 rounded-full bg-green-500"></div>
+						</div>
+						plugin-example.js
+					</div>
+					<pre class="text-gray-200 px-5 py-3">
+<span></span><span style="color: #546E7A; font-style: italic">/* Plugins are super easy to create */</span>
+<span style="color: #BB80B3">export</span> <span style="color: #BB80B3">default</span> <span style="color: #BB80B3">function</span> <span style="color: #EEFFFF">initPlugin</span><span style="color: #89DDFF">({</span> <span style="color: #EEFFFF">logger</span><span style="color: #89DDFF">,</span> <span style="color: #EEFFFF">sync</span><span style="color: #89DDFF">,</span> <span style="color: #EEFFFF">dashboard </span><span style="color: #89DDFF">})</span> <span style="color: #89DDFF">{</span>
+<span style="color: #EEFFFF">logger</span><span style="color: #89DDFF">.</span><span style="color: #EEFFFF">info</span><span style="color: #89DDFF">(</span><span style="color: #C3E88D">'Hello World!'</span><span style="color: #89DDFF">);</span>
 
-	<p>
-		A config file for mission-control will be created at
-		<code>$HOME_DIR/.mission-control/config</code>. This can also be used to
-		configure mission-control. However, options passed as command line arguments
-		override settings in this file.
-	</p>
+<span style="color: #546E7A; font-style: italic">/* Create a service to sync data to dashboards */</span>
+<span style="color: #BB80B3">const</span> <span style="color: #EEFFFF">service</span> <span style="color: #89DDFF">=</span> <span style="color: #EEFFFF">sync</span><span style="color: #89DDFF">.</span><span style="color: #EEFFFF">createService</span><span style="color: #89DDFF">(</span><span style="color: #C3E88D">'todo'</span><span style="color: #89DDFF">)</span>
+<span style="color: #89DDFF">.</span><span style="color: #EEFFFF">state</span><span style="color: #89DDFF">({</span>
+	<span style="color: #EEFFFF">todos</span><span style="color: #89DDFF">:</span> <span style="color: #89DDFF">[]</span>
+<span style="color: #89DDFF">});</span>
 
-	<h2 id="screenshots">
-		Screenshots
-	</h2>
-	<div>
-		<img style="max-width: 100%;" src="img/screenshot-2.0.0-rc6.png">
-	</div>
-	<h2 id="changelog">
-		Changelog
-	</h2>
+<span style="color: #BB80B3">return</span> <span style="color: #89DDFF">{</span>
+<span style="color: #EEFFFF">description</span><span style="color: #89DDFF">:</span> <span style="color: #C3E88D">'My custom plugin'</span><span style="color: #89DDFF">,</span>
+<span style="color: #EEFFFF">version</span><span style="color: #89DDFF">:</span> <span style="color: #C3E88D">'0.0.1'</span>
+<span style="color: #89DDFF">};</span>
+<span style="color: #89DDFF">}</span>					
+</pre>
+				</code>
+			</div>
+			
+			<div class="w-20"></div>
 
-	<h3 id="version-200-pre-release">
-		Version 2.0.0 (pre-release)
-	</h3>
+			<div class="w-full sm:w-1/2 mb-14 sm:mb-0">
+				<h3 class="text-violet-600 font-semibold mb-1">Easy to use Plugin API</h3>
+				<h2 class="text-2xl text-violet-900 mb-2">
+					<span class="font-semibold">Extend</span> Mission Control and connect your <span class="font-semibold">APIs and services</span>
+				</h2>
+				<p class="text-sm leading-relaxed text-violet-900 opacity-80">
+					Mission Control provides an intuitive and easy to use plugin API
+that you can use to build your own features or connect to
+external services to fetch data.
+				</p>
+			</div>
+		</article>
 
-	<ul>
-		<li>Completely redesigned dashboard UI
-		</li>
+		<article class="flex flex-wrap sm:flex-nowrap mb-40">
+			<div class="w-full sm:w-1/2 mb-14 sm:mb-0">
+				<h3 class="text-violet-600 font-semibold mb-1">Common features provided out-of-the-box</h3>
+				<h2 class="text-2xl text-violet-900 mb-2">
+					<span class="font-semibold">Build that thing you want</span> and let Mission Control handle the rest
+				</h2>
+				<p class="text-sm leading-relaxed text-violet-900 opacity-80">
+					Mission Control has common features already built-in so you don’t have do. Get straight to building those things that are important for your dashboard, like monitoring Dogecoin prices ($0.376, btw).
+				</p>
+			</div>
+			
+			<div class="w-20"></div>
 
-		<li>Introduction of a flexible plugin system
-		</li>
+			<div class="w-full sm:w-1/2 flex items-center justify-center">
+				<img src="/img/system-components.svg">
+			</div>
+		</article>
 
-		<li>Authentication is now handled by Mission Control itself, <a href=
-		"https://github.com/capevace/single-sign-on">single-sign-on</a> is no longer
-		required
-		</li>
+		<article class="flex flex-wrap-reverse sm:flex-nowrap mb-40 items-center">
+			<div class="w-full sm:w-1/2 flex items-center justify-center">
+				<img src="/img/user-management.svg">
+			</div>
+			
+			<div class="w-20"></div>
 
-		<li>Users now have profiles, which will be integrated with a solid permission
-		system
-		</li>
+			<div class="w-full sm:w-1/2 mb-14 sm:mb-0">
+				<h3 class="text-violet-600 font-semibold mb-1">React-like state updates</h3>
+				<h2 class="text-2xl text-violet-900 mb-2">
+					<span class="font-semibold">Real-time</span> state synchronization 
+				</h2>
+				<p class="text-sm leading-relaxed text-violet-900 opacity-80 mb-2">
+					Create data services that automatically synchronize data changes to connected clients (opened dashboards). 
+				</p>
+				<p class="text-sm leading-relaxed text-violet-900 opacity-80 mb-2">
+					Bandwidth usage is kept low by only transmitting the data that actually changed. This makes using dashboards on-the-go a breeze!
+				</p>
+				<p class="text-sm leading-relaxed text-violet-900 opacity-80">
+					Data endpoints are automatically available via HTTP and WebSocket, with the latter supporting push updates.
+				</p>
+			</div>
+		</article>
 
-		<li>Tons of bug fixes
-		</li>
-	</ul>
+		<article class="flex flex-wrap sm:flex-nowrap mb-40">
+			<div class="w-full sm:w-1/2 mb-14 sm:mb-0">
+				<h3 class="text-violet-600 font-semibold mb-1">Authentication & Authorization</h3>
+				<h2 class="text-2xl text-violet-900 mb-2">
+					<span class="font-semibold">User management</span> &<br> role-based permissions
+				</h2>
+				<p class="text-sm leading-relaxed text-violet-900 opacity-80">
+					Don’t worry about managing user passwords or admin accounts. Secure your dashboard with <a href="#" class="link">built-in permissions & user management</a>.
+				</p>
+			</div>
+			
+			<div class="w-20"></div>
 
-	<h3 id="version-054">
-		Version 0.5.4
-	</h3>
+			<div class="w-full sm:w-1/2 flex items-center justify-center ">
+				<img src="/img/user-management.svg">
+			</div>
+		</article>
 
-	<ul>
-		<li>Rewrote logging system
-		</li>
-	</ul>
+		<article class="flex flex-wrap-reverse sm:flex-nowrap mb-40 items-center">
+			<div class="w-full sm:w-1/2 flex items-center justify-center">
+				<img src="/img/database-api.svg">
+			</div>
+			
+			<div class="w-20"></div>
 
-	<h3 id="version-053">
-		Version 0.5.3
-	</h3>
+			<div class="w-full sm:w-1/2 mb-14 sm:mb-0">
+				<h3 class="text-violet-600 font-semibold mb-1">Database & Validation API</h3>
+				<h2 class="text-2xl text-violet-900 mb-2">
+					<span class="font-semibold">Validate with Joi</span> and <span class="font-semibold">persist data</span> using SQLite 
+				</h2>
+				<p class="text-sm leading-relaxed text-violet-900 opacity-80 mb-2">
+					Data can be saved and preserved between launches by using the Database API. <a href="https://sqlite.org" class="link">SQLite</a> is used to store data permanently, including files.
+				</p>
+				<p class="text-sm leading-relaxed text-violet-900 opacity-80">
+					Mission Control also integrates with <a href="https://joi.dev" class="link">Joi</a> to properly validate and sanitize input data.
+				</p>
+			</div>
+		</article>
 
-	<ul>
-		<li>Added COVID widget to dashboard
-		</li>
-	</ul>
+		<article class="flex flex-wrap sm:flex-nowrap mb-40">
+			<div class="w-full sm:w-1/2 mb-14 sm:mb-0">
+				<h3 class="text-violet-600 font-semibold mb-1">Command-Line Interface</h3>
+				<h2 class="text-2xl text-violet-900 mb-2">
+					<span class="font-semibold">Intuitive CLI</span> for use as standalone server
+				</h2>
+				<p class="text-sm leading-relaxed text-violet-900 opacity-80 mb-2">
+					The recommended way to use Mission Control is to use it as a standalone server and extend it using its <a href="#" class="link">Plugin API</a>.
+				</p>
+				<p class="text-sm leading-relaxed text-violet-900 opacity-80">
+					However it can also be imported like any JS framework for more heavily customized projects.
+				</p>
+			</div>
+			
+			<div class="w-20"></div>
 
-	<h3 id="version-052">
-		Version 0.5.2
-	</h3>
+			<div class="w-full sm:w-1/2 flex items-center justify-center">
+				<img src="/img/cli-usage.svg">
+			</div>
+		</article>
+	</section>
 
-	<ul>
-		<li>Fixed bahn algorithm skipping not displaying trains with SEV present
-		</li>
-	</ul>
+	<!-- Help -->
+	<section class="mc-container mb-32">
+		<article class="relative bg-gradient rounded-3xl px-7 py-5 mb-20">
+			<div class="mb-14">
+				<h2 class="text-2xl font-bold text-violet-100">Need help getting started?</h2>
+				<p class="text-lg font-semibold text-violet-300">Here are some guides to help you get up to speed</p>
+			</div>
+			<div class="flex">
+				<a 
+					href="#" 
+					class="inline-block px-3 py-2 text-sm font-semibold rounded-xl bg-violet-500 text-violet-50 hover:bg-violet-400 hover:text-violet-800 hover:no-underline text-sm transition duration-100"
+				>
+					First steps
+				</a>
+				<div class="w-4"></div>
+				<a 
+					href="#" 
+					class="inline-block px-3 py-2 text-sm font-semibold rounded-xl bg-violet-500 text-violet-50 hover:bg-violet-400 hover:text-violet-800 hover:no-underline text-sm transition duration-100"
+				>
+					Concepts
+				</a>
+				<div class="w-4"></div>
+				<a 
+					href="#" 
+					class="inline-block px-3 py-2 text-sm font-semibold rounded-xl bg-violet-500 text-violet-50 hover:bg-violet-400 hover:text-violet-800 hover:no-underline text-sm transition duration-100"
+				>
+					API Reference
+				</a>
+				<div class="w-4"></div>
+				<a 
+					href="#" 
+					class="inline-block px-3 py-2 text-sm font-semibold rounded-xl bg-violet-500 text-violet-50 hover:bg-violet-400 hover:text-violet-800 hover:no-underline text-sm transition duration-100"
+				>
+					Voyage Theme
+				</a>
+				<div class="w-4"></div>
+				<a 
+					href="https://github.com/capevace/mission-control" 
+					class="inline-block px-3 py-2 text-sm font-semibold rounded-xl bg-violet-500 text-violet-50 hover:bg-violet-400 hover:text-violet-800 hover:no-underline text-sm transition duration-100"
+				>
+					GitHub
+				</a>
+			</div>
+			<div class="absolute right-0 top-0 transform -translate-y-5 -translate-x-7 hidden md:block">
+				<img src="img/question-mark.svg">
+			</div>
+		</article>
+	</section>
 
-	<h3 id="version-051">
-		Version 0.5.1
-	</h3>
-
-	<ul>
-		<li>Fixed dashboard layout now being loaded from database correctly
-		</li>
-	</ul>
-
-	<h3 id="version-050">
-		Version 0.5.0
-	</h3>
-
-	<ul>
-		<li>New Dashboard is now customizeable
-		</li>
-	</ul>
-
-	<h3 id="version-042">
-		Version 0.4.2
-	</h3>
-
-	<ul>
-		<li>Fixes error preventing the auth proxy from returning properly
-		</li>
-	</ul>
-
-	<h3 id="version-041">
-		Version 0.4.1
-	</h3>
-
-	<ul>
-		<li>Fixes some minor security issues with dependencies
-		</li>
-	</ul>
-
-	<h3 id="version-040">
-		Version 0.4.0
-	</h3>
-
-	<ul>
-		<li>The SSO server is now being proxied by default. This can be disabled with
-		the <code>--no-proxy</code> option or by disabling it in the config file.
-		</li>
-
-		<li>Instead of localhost, the default url is now the local ip
-		</li>
-	</ul>
-
-	<h2 id="faq">
-		FAQ
-	</h2>
-</div>
+	<footer>
+		<div class="mc-container text-center font-semibold text-violet-300 text-sm mb-24">
+			Mission Control is MIT licensed | © Copyright 2021 Lukas Mateffy
+		</div>
+	</footer>
+</main>

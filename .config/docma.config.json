@@ -14,7 +14,7 @@
 		"entrance": "content:welcome"
 	},
 	"template": {
-		"path": "zebra",
+		"path": "mission-control",
 		"options": {
 			"title": {
 				"label": "Mission Control",
