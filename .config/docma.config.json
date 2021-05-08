@@ -9,12 +9,13 @@
 	],
 	"dest": "./docs",
 	"app": {
+		"routing": "path",
 		"title": "Mission Control Documentation",
 		"favicon": "resources/favicon.png",
 		"entrance": "content:welcome"
 	},
 	"template": {
-		"path": "mission-control",
+		"path": "docma-template-mission-control",
 		"options": {
 			"title": {
 				"label": "Mission Control",
@@ -34,12 +35,12 @@
 					{
 						"label": "Docs",
 						"iconClass": "fas fa-book",
-						"href": "?content=welcome"
+						"href": "/"
 					},
 					{
 						"label": "API Reference",
 						"iconClass": "fas fa-book",
-						"href": "?api"
+						"href": "/api"
 					}
 				]
 			}

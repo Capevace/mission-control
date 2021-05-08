@@ -21,37 +21,11 @@
 			</svg>
 		</div>
 		<div 
-			class="absolute inset-0 bg-purple-900 bg-screenshot bg-top transition duration-2500 opacity-0"
+			class="absolute inset-0 bg-purple-900 bg-top transform transition duration-2500 ease-out bg-screenshot js-hidden"
 			style="filter: blur(30px);" 
 		></div>
-		<script type="module">
-			/* Fade in background image when loading is complete */
-			const img = new Image();
-			img.onload = () => Array.from(document.querySelectorAll('.bg-screenshot'))
-				.map(bg => { 
-					bg.classList.remove('opacity-0');
-				});
 
-			img.onerror = () => Array.from(document.querySelectorAll('.bg-screenshot'))
-				.map(bg => { 
-					bg.classList.remove('opacity-0');
-					bg.classList.add('bg-gradient');
-					bg.style = null;
-				});
-
-			img.src = '/img/header-bg.jpg';
-
-			/* Fade in screenshot when loading is complete */
-			const img = new Image();
-			img.onload = () => Array.from(document.querySelectorAll('.bg-screenshot'))
-				.map(bg => { 
-					bg.classList.remove('opacity-0');
-				});
-
-			img.src = '/img/header-bg.jpg';
-		</script>
-
-		<section class="max-w-6xl mx-auto px-5 sm:px-10 md:px-10 lg:px-10 relative flex pt-20 ">
+		<section class="max-w-6xl mx-auto px-5 sm:px-10 md:px-10 lg:px-10 relative flex pt-10 sm:pt-20">
 			<div class="py-10 pt-0 flex-1">
 				<h1 class="text-3xl font-semibold text-white mb-1">Mission Control</h1>
 				<p class="block text-2xl text-violet-300 max-w-sm mb-10">
@@ -83,7 +57,7 @@
 				</div>
 			</div>
 			<div class="w-1/3 overflow-visible hidden sm:block">
-				<img class="absolute" style="width: 700px;" src="img/header-screenshot.png">
+				<img class="absolute transition duration-2500 ease-out md:-translate-x-20 lg:-translate-x-1/4 screenshot-fade js-hidden" style="width: 700px;" src="img/header-screenshot.png">
 			</div>
 		</section>
 	</header>
@@ -302,38 +276,38 @@ external services to fetch data.
 				<h2 class="text-2xl font-bold text-violet-100">Need help getting started?</h2>
 				<p class="text-lg font-semibold text-violet-300">Here are some guides to help you get up to speed</p>
 			</div>
-			<div class="flex">
+			<div class="flex flex-wrap sm:flex-nowrap">
 				<a 
 					href="#" 
-					class="inline-block px-3 py-2 text-sm font-semibold rounded-xl bg-violet-500 text-violet-50 hover:bg-violet-400 hover:text-violet-800 hover:no-underline text-sm transition duration-100"
+					class="inline-block px-3 py-2 text-sm font-semibold rounded-xl bg-violet-500 text-violet-50 hover:bg-violet-400 hover:text-violet-800 hover:no-underline text-sm transition duration-100 mb-4 sm:mb-0"
 				>
 					First steps
 				</a>
 				<div class="w-4"></div>
 				<a 
 					href="#" 
-					class="inline-block px-3 py-2 text-sm font-semibold rounded-xl bg-violet-500 text-violet-50 hover:bg-violet-400 hover:text-violet-800 hover:no-underline text-sm transition duration-100"
+					class="inline-block px-3 py-2 text-sm font-semibold rounded-xl bg-violet-500 text-violet-50 hover:bg-violet-400 hover:text-violet-800 hover:no-underline text-sm transition duration-100 mb-4 sm:mb-0"
 				>
 					Concepts
 				</a>
 				<div class="w-4"></div>
 				<a 
 					href="#" 
-					class="inline-block px-3 py-2 text-sm font-semibold rounded-xl bg-violet-500 text-violet-50 hover:bg-violet-400 hover:text-violet-800 hover:no-underline text-sm transition duration-100"
+					class="inline-block px-3 py-2 text-sm font-semibold rounded-xl bg-violet-500 text-violet-50 hover:bg-violet-400 hover:text-violet-800 hover:no-underline text-sm transition duration-100 mb-4 sm:mb-0"
 				>
 					API Reference
 				</a>
 				<div class="w-4"></div>
 				<a 
 					href="#" 
-					class="inline-block px-3 py-2 text-sm font-semibold rounded-xl bg-violet-500 text-violet-50 hover:bg-violet-400 hover:text-violet-800 hover:no-underline text-sm transition duration-100"
+					class="inline-block px-3 py-2 text-sm font-semibold rounded-xl bg-violet-500 text-violet-50 hover:bg-violet-400 hover:text-violet-800 hover:no-underline text-sm transition duration-100 mb-4 sm:mb-0"
 				>
 					Voyage Theme
 				</a>
 				<div class="w-4"></div>
 				<a 
 					href="https://github.com/capevace/mission-control" 
-					class="inline-block px-3 py-2 text-sm font-semibold rounded-xl bg-violet-500 text-violet-50 hover:bg-violet-400 hover:text-violet-800 hover:no-underline text-sm transition duration-100"
+					class="inline-block px-3 py-2 text-sm font-semibold rounded-xl bg-violet-500 text-violet-50 hover:bg-violet-400 hover:text-violet-800 hover:no-underline text-sm transition duration-100 mb-4 sm:mb-0"
 				>
 					GitHub
 				</a>
@@ -346,7 +320,7 @@ external services to fetch data.
 
 	<footer>
 		<div class="mc-container text-center font-semibold text-violet-300 text-sm mb-24">
-			Mission Control is MIT licensed | © Copyright 2021 Lukas Mateffy
+			Mission Control is MIT licensed | © Copyright 2021 <a href="https://mateffy.me" class="link text-violet-400 hover:text-violet-500">Lukas Mateffy</a>
 		</div>
 	</footer>
 </main>

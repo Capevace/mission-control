@@ -147,8 +147,8 @@ class Sync {
 		const service = this.services[name];
 
 		return {
-			dispatch: () => service.dispatch(,
-			action: () => {}
+			dispatch: (...args) => service.dispatch(...args),
+			subscribe: (...args) => service.subscribe(...args)
 		};
 	}
 }
