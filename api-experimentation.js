@@ -116,6 +116,9 @@ class CoreService extends {
 
 const RESERVED_SERVICES = ['core'];
 
+/**
+ * Sync is the main thing
+ */
 class Sync {
 	constructor() {
 		/**

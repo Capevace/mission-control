@@ -1,0 +1,13 @@
+{
+    "/js/index.js": "/js/index.js",
+    "/js/page-floorplan.js": "/js/page-floorplan.js",
+    "/js/page-kodi.js": "/js/page-kodi.js",
+    "/js/page-files.js": "/js/page-files.js",
+    "/js/page-youtube-downloader.js": "/js/page-youtube-downloader.js",
+    "/js/page-telemetry.js": "/js/page-telemetry.js",
+    "/js/page-telemetry-sync.js": "/js/page-telemetry-sync.js",
+    "/js/page-notifications.js": "/js/page-notifications.js",
+    "/js/page-settings.js": "/js/page-settings.js",
+    "/js/page-users.js": "/js/page-users.js",
+    "/css/index.css": "/css/index.css"
+}
