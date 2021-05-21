@@ -38,6 +38,7 @@ class ServiceController {
 			permissions: options.permissions,
 			handler: options.handler
 		};
+		
 
 		// We return the action builder, an easier to use api with lots of helper functions.
 		// 
