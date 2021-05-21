@@ -81,6 +81,8 @@ class Service {
 				}
 
 				this.handlers[this.name].validate = schema;
+
+				return builder;
 			},
 			requirePermission(crud, resource, scope = 'any') {
 				if (scope !== 'any' || scope !== 'own') {
@@ -105,11 +107,27 @@ class Service {
 		return builder;
 	}
 
-	handleAction(name, data) {
+	async handleAction(name, data, userRole) {
 		if (name in this.handlers) {
+			const action = this.handlers[name];
+
 			// Validate permissions
+			let filter = (obj) => obj;
+			for (const permission of action.permissions) {
+				const { filter, granted } = this.permissions.evaluate(userRole, ...permission);
+
+				if (!granted) {
+					throw new UserError(`${userRole} is not forbidden to ${permission[0]} ${permission[2]} ${permission[1]}`, 403);
+				}
+			}
+
+
 			
 			
+
+			await action.handler(data, {
+				filter()
+			});
 		}
 	}
 }
