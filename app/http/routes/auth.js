@@ -10,7 +10,7 @@ const queryString = require('querystring');
 const proxy = require('http-proxy-middleware');
 
 const User = require('@models/User');
-const UserError = require('@http/UserError');
+const UserError = require('@helpers/UserError');
 const validator = require('@http/middleware/validator');
 
 /*
