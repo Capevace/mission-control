@@ -1,6 +1,6 @@
 <div align="center">
 	<a href="https://mateffy.me/mission-control-project">
-		<img src="resources/favicon.png">
+		<img src="resources/screenshot-2.0.0-rc6.png">
 	</a>
 	<h1>Mission Control</h1>
 	<p>
