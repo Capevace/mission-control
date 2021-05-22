@@ -1,8 +1,52 @@
 const chalk = require('chalk');
 const uuid = require('uuid/v4');
 
-module.exports = function bahnInit(APP) {
-	const { state, logger } = APP;
+module.exports = function bahnInit({ sync, auth, state, logger, database }) {
+	const service = sync.createService('notifications', {
+		/* notifications for user */
+		// 'username': []
+	});
+
+	service.action('create')
+		.requirePermission('create', 'notification', 'any')
+		.validate(Joi => 
+			Joi.object({
+				type: Joi.string()
+					.token(),
+				title: Joi.string()
+					.required()
+					.max(255),
+				body: Joi.string(),
+				role: Joi.string()
+					.max(128),
+				user: Joi.uuid()
+			}).xor('role', 'user').unknown(false)
+		)
+		.handler(async (notification, context) => {
+			let newState = {};
+
+			if (notification.role) {
+				const users = await database.api.users.findUser();
+
+				for (const user of users) {
+					newState[user.username] = [
+						...(context.state[user] || {}),
+						notification
+					];
+				}
+			} else {
+				const user = await database.api.users.findUser(notification.user);
+
+				newState = {
+					[user]: [
+						...(context.state[user] || {}),
+						notification
+					]
+				};
+			}
+
+			context.setState(newState);
+		});
 
 	/**
 	 * @ACTION
