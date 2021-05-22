@@ -6,8 +6,8 @@ module.exports = class Permissions {
 		this.access = new AccessControl(grants);
 
 		// Lock AccessControl so permissions can't be changed
-		// TODO: Dynamic Permissions
-		this.access.lock();
+		// TODO: Lock dynamic permissions
+		// this.access.lock();
 
 		autoBind(this);
 	}
@@ -48,3 +48,42 @@ module.exports = class Permissions {
 		};
 	}
 }
+
+/**
+ * Crud actions for permissions
+ * @readonly
+ * @enum {string}
+ */
+Permissions.CRUD = {
+	/** User allowed to create a resource */
+	create: 'create',
+
+	/** User allowed to read a resource */
+	read: 'read',
+
+	/** User allowed to update a resource */
+	update: 'update',
+
+	/** User allowed to delete a resource */
+	delete: 'delete'
+};
+
+/**
+ * Permission scopes
+ * @readonly
+ * @enum {string}
+ */
+Permissions.Scope = {
+	/** User allowed to access any resource */
+	any: 'any',
+
+	/** User allowed to access their own resources */
+	own: 'own'
+};
+
+/**
+ * Array data structure for permissions
+ * @typedef {Array<Permissions.CRUD | String | Permissions.Scope>} PermissionTriple
+ */
+
+module.exports = Permissions;

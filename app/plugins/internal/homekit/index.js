@@ -1,118 +1,53 @@
 const { HapClient } = require('@oznu/hap-client');
 
+/**
+ * Homebridge Service
+ * @typedef {HomebridgeDevice}
+ * @property {string} uniqueId
+ * @property {number} iid
+ * @property {string} name
+ * @property {string} type
+ * @property {Array.<object>} characteristics
+ * @property {Array.<object>} values
+ */
+
+/**
+ * Connection States
+ * @enum {string}
+ */
+const ConnectionStatus = {
+	connected: 'connected',
+	disconnected: 'disconnected',
+	connecting: 'connecting'
+};
+
 module.exports = function homekitInit(APP) {
 	const { state, logger, config, http } = APP;
 
-	/**
-	 * @ACTION
-	 * @TODO Turn this into an EVENT
+	const service = sync.createService('homebridge', {
+		status: ConnectionStatus.disconnected,
 
-	 * This is supposed to be a no op action because 
-	 * we still have to register it with the state system.
-	 */
-	state.addAction(
-		'HOMEKIT:MODIFY-CHARACTERISTICS', 
-		(state) => {
-			return {
-				...state
-			};
-		},
-		(data) => data
-	);
-
-	/**
-	 * @ACTION
-	 * Set homebridge config initialization state to indicate wether the pin is configured.
-	 *
-	 * @constant HOMEKIT:SET-INITIALIZED
-	 * @property {Boolean} initialized 
-	 * @example
-	 * state.invoke('HOMEKIT:SET-INITIALIZED', { initialized: false })
-	 */
-	state.addAction(
-		'HOMEKIT:SET-INITIALIZED', 
-		(state, { initialized = false }) => {
-			return {
-				...state,
-				homekit: {
-					initialized: !!initialized
-				}
-			};
-		},
-		(data) => data
-	);
-
-	/**
-	 * @ACTION
-	 * Set the devices homebridge sees
-	 *
-	 * @constant HOMEKIT:SET-SERVICES
-	 * @property {Object} service The video object to push onto the queue.
-	 * @property {string} service.uniqueId A unique ID for the service.
-	 * @property {number} service.iid A unique ID for the service (used for identification internally).
-	 * @property {string} service.name Name of the service
-	 * @property {string} service.type Type of the service
-	 * @property {Array} service.characteristics Array of characteristics
-	 * @property {Array} service.values Array of values for the characteristics
-	 * @example
-	 * state.invoke('HOMEKIT:SET-SERVICES', { services: { 'serviceID': { ...service }}})
-	 */
-	state.addAction(
-		'HOMEKIT:SET-SERVICES', 
-		(state, { services = {}, reset = false }) => {
-			/*
-				Service: {
-					uniqueId: string,
-					iid: string,
-					name: string,
-					type: 'Switch',
-					characteristics: [{}],
-					values: []
-				}
-			*/
-
-			const value = reset ? services : { ...state.homekit.services, ...services };
-
-			return {
-				...state,
-				homekit: {
-					...state.homekit,
-					services: value
-				}
-			};
-		},
-		(data) => {
-			const allItemsComplete = Object.values(data.services)
-				.filter(
-					service =>
-						service.uniqueId
-						&& service.iid
-						&& service.name
-						&& service.type
-						&& Array.isArray(service.characteristics)
-						&& Array.isArray(service.values)
-				).length > 0;
-
-			if (data.services && !allItemsComplete) {
-				return data;
-			}
-
-			return false;
-		}
-	);
-
-	http.addComponentFile('homekitSwitches', __dirname + '/component.html');
-
+		/**
+		 * @type {Array<HomebridgeDevice>}
+		 */
+		services: []
+	});
 
 	if (!config.homebridge.pin) {
 		logger.warn(
 			'Won\'t be able to connect to Homebridge, as the secret pin is not defined in config file.'
 		);
-		state.invoke('HOMEKIT:SET-INITIALIZED', { initialized: false });
+
 		return;
 	}
 
-	const hap = new HapClient({
+	service.setState({
+		status: ConnectionStatus.connecting
+	});
+
+	http.addComponentFile('homekitSwitches', __dirname + '/component.html');
+
+	const homebridge = new HapClient({
 		pin: config.homebridge.pin,
 		logger: {
 			log: logger.debug,
@@ -123,35 +58,20 @@ module.exports = function homekitInit(APP) {
 		},
 		config: {
 			debug: true
-		},
+		}
 	});
-
-	// TODO: Error detection for homebridge connection or something. I do
-	// think that HapClient does error logging on its own but ¯\_(ツ)_/¯
-	state.invoke('HOMEKIT:SET-INITIALIZED', { initialized: true });
 
 	let monitor = null;
 
-	hap.on('instance-discovered', async () => {
-		logger.debug('Discovered new HAP instance');
-		const servicesList = await hap.getAllServices();
+	homebridge.on('instance-discovered', async () => {
+		logger.debug('discovered homebridge instance');
 
-		let servicesData = {};
-		for (const service of servicesList) {
-			// servicesActions[service.uniqueId] = {
-			// 	getCharacteristic: service.getCharacteristic
-			// };
+		/**
+		 * @type {Array.<HomebridgeDevice>}
+		 */
+		const devices = await homebridge.getAllServices();
 
-			servicesData[service.uniqueId] = simplifyService(service);
-		}
-
-		state.invoke(
-			'HOMEKIT:SET-SERVICES',
-			{
-				services: servicesData,
-				reset: true
-			}
-		);
+		updateHomebridgeDevices(devices);
 
 		if (monitor) {
 			monitor.finish();
@@ -159,59 +79,73 @@ module.exports = function homekitInit(APP) {
 		}
 
 		// Setup monitoring of characteristics to detect changes
-		monitor = await hap.monitorCharacteristics();
-		const updateHandler = (data) => {
-			logger.debug('Received characteristics update', data);
+		monitor = await homebridge.monitorCharacteristics();
+		monitor.on('service-update', devices => {
+			logger.debug('received homebridge device update');
+			
+			updateHomebridgeDevices(devices);
+		});
+	});
 
-			let servicesData = {};
-			for (const service of data) {
-				servicesData[service.uniqueId] = simplifyService(service);
+	service.action('interact')
+		.requirePermission('update', 'homebridge', 'any')
+		.validate(Joi => Joi.object({
+			uniqueId: Joi.string()
+				.trim()
+				.required(),
+			changes: Joi.object()
+				.required()
+		}))
+		.handler((data, { UserError }) => {
+			const { uniqueId, changes = {} } = data;
+
+			logger.debug(`interact device: ${uniqueId} changes:`, changes);
+
+			const devices = await homebridge.getAllServices();
+			const device = devices.find(device => device.uniqueId === uniqueId);
+
+			if (!device) {
+				throw new UserError(`Homebridge device ${uniqueId} doesn't exist`, 404);
 			}
 
-			state.invoke(
-				'HOMEKIT:SET-SERVICES',
-				{
-					services: servicesData
+			for (const characteristicName in changes) {
+				const newValue = changes[characteristicName];
+
+				const characteristic = device.getCharacteristic(characteristicName);
+
+				if (!characteristic || !characteristic.setValue) {
+					logger.debug(`device: ${uniqueId}, doesn't have characteristic ${characteristicName}`);
+					continue;
 				}
-			);
-		};
-		monitor.on('service-update', updateHandler);
-	});
 
-	state.subscribe('action:HOMEKIT:MODIFY-CHARACTERISTICS', async (context) => {
-		const { uniqueId, changes = {} } = context.actionData;
-
-		logger.debug(`Modifying characteristics in service ${uniqueId} with changes ${JSON.stringify(changes, null, 2)}`);
-
-		const services = await hap.getAllServices();
-		const service = services.find(service => service.uniqueId === uniqueId);
-		if (!service) {
-			logger.error(`Could not find service with id: ${uniqueId}`);
-			return;
-		}
-
-		for (const characteristicName in changes) {
-			const newValue = changes[characteristicName];
-
-			const characteristic = service.getCharacteristic(characteristicName);
-
-			if (!characteristic || !characteristic.setValue) {
-				logger.error(`Could not find characteristic with name: ${characteristicName}`);
-				continue;
+				characteristic.setValue(newValue);
 			}
+		});
 
-			characteristic.setValue(newValue);
+	/**
+	 * Set devices and update status to connected
+	 * @param  {Array.<HomebridgeDevice>} devices 
+	 */
+	function updateHomebridgeDevices(devices) {
+		let devices = {};
+		for (const device of devices) {
+			devices[device.uniqueId] = simplifyDevice(device);
 		}
-	});
+
+		service.setState({
+			devices,
+			status: ConnectionStatus.connected
+		});
+	}
 
 	return {
 		author: 'Lukas Mateffy (@capevace)',
 		version: '0.0.1',
-		description: 'HomeKit switch bridge'
+		description: 'Homebridge connection'
 	};
 };
 
-function simplifyService(inputService) {
+function simplifyDevice(inputService) {
 	return {
 		uniqueId: inputService.uniqueId,
 		iid: inputService.iid,

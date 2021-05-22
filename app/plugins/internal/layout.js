@@ -1,42 +1,4 @@
-module.exports = async function layoutInit(APP) {
-	const { state, database } = APP;
-
-	/**
-	 * @ACTION
-	 * Update dashboard layout
-	 *
-	 * @constant LAYOUT:UPDATE
-	 * @property {object} changes The data to be set
-	 * @example
-	 * state.invoke('LAYOUT:UPDATE', { layout: [] })
-	 */
-	state.addAction(
-		'LAYOUT:UPDATE', 
-		(state, data) => ({
-			...state,
-			layout: data.layout
-		}),
-		(data) => (Array.isArray(data.layout)) ? data : false
-	);
-
-	/**
-	 * @ACTION
-	 * Reset the dashboard layout to defaults
-	 *
-	 * @constant LAYOUT:RESET
-	 * @example
-	 * state.invoke('LAYOUT:RESET')
-	 */
-	state.addAction(
-		'LAYOUT:RESET', 
-		(state, data) => ({
-			...state,
-			layout: []
-		}),
-		(data) => true
-	);
-
-
+module.exports = async function layoutPlugin({ sync, database }) {
 	const initialLayout = [
 		{ x: 0, y: 0, w: 12, h: 2, i: '0', component: 'basic-header', moved: false },
 		{ x: 0, y: 8, w: 4, h: 3, i: '1', component: 'links', moved: false },
@@ -44,25 +6,32 @@ module.exports = async function layoutInit(APP) {
 		{ x: 0, y: 2, w: 12, h: 4, i: '3', component: 'homekitSwitches', moved: false },
 		{ x: 0, y: 8, w: 2, h: 7, i: '4', component: 'covid', moved: false }
 	];
-
 	const layout = database.get('layout', initialLayout);
-	state.invoke('LAYOUT:UPDATE', {
-		layout
-	});
 
-	state.subscribe('action:LAYOUT:UPDATE', (data) => {
-		database.set('layout', data.actionData.layout);
-	});
+	const service = sync.createService('dashboards', { layout });
 
-	state.subscribe('action:LAYOUT:RESET', () => {
-		database.set('layout', initialLayout);
-		state.invoke('LAYOUT:UPDATE', {
-			layout: initialLayout
+	service.action('update')
+		.requirePermission('update', 'dashboard', 'any')
+		.validate(Joi => Joi.object())
+		.handler(({ layout }, { setState }) => {
+			setState({
+				layout
+			});
+
+			database.set('layout', data.actionData.layout);
 		});
-	});
+
+	service.action('reset')
+		.requirePermission('update', 'dashboard', 'any')
+		.handler(({ layout }, { setState }) => {
+			setState({
+				layout: initialLayout
+			});
+
+			database.set('layout', initialLayout);
+		});
 
 	return {
-		internal: true,
 		version: '0.0.1',
 		description: 'Dashboard Layout Engine'
 	};

@@ -15,6 +15,9 @@ module.exports = function spotifyInit(APP) {
 
 	const spotifyData = database.get('spotify', {});
 	
+	const service = sync.createService('spotify', {
+
+	});
 
 	/**
 	 * @ACTION
