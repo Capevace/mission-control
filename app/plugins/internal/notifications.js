@@ -48,25 +48,36 @@ module.exports = function bahnInit({ sync, auth, state, logger, database }) {
 			context.setState(newState);
 		});
 
-	/**
-	 * @ACTION
-	 * Create a notification
-	 * @constant NOTIFICATIONS:CREATE
-	 * @property {string} title The title of the notification.
-	 * @property {string} message The message of the notification.
-	 * @example demo-action-call
-	 */
-	state.addAction(
-		'NOTIFICATIONS:CREATE', 
-		(state, { title, message }) => ({
-			...state,
-			notifications: [
-				...state.notifications,
-				{ title, message, unread: true, id: uuid(), date: new Date() }
-			]
-		}),
-		(data) => ('title' in data) ? data : false
-	);
+	service.action('delete')
+		.requirePermission('delete', 'notification', 'any')
+		.validate(Joi => Joi.uuid().required())
+		.handler(async (notification, context) => {
+			let newState = {};
+
+			context.permissions.evaluate(context.user.role)
+
+			if (notification.role) {
+				const users = await database.api.users.findUser();
+
+				for (const user of users) {
+					newState[user.username] = [
+						...(context.state[user] || {}),
+						notification
+					];
+				}
+			} else {
+				const user = await database.api.users.findUser(notification.user);
+
+				newState = {
+					[user]: [
+						...(context.state[user] || {}),
+						notification
+					]
+				};
+			}
+
+			context.setState(newState);
+		});
 
 	/**
 	 * @ACTION
