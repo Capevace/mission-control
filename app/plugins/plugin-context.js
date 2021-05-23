@@ -1,25 +1,19 @@
 const loggers = require('@helpers/logger');
 const UserError = require('@helpers/UserError');
 
+const { v4: uuid } = require('uuid');
 const Joi = require('joi');
 
 class PluginContext {
-	constructor(name, { auth, http, state, database, config }) {
+	constructor(name, { auth, http, sync, database, config }) {
 		this.permissions = auth.permissions;
 		this.logger = loggers.createLogger(`${name}`);
 		this.http = http.composeAPIContext(name);
-		this.state = {
-			get: state.getState,
-			subscribe: state.subscribe,
-			invoke: state.invokeAction,
-			addAction(name, reducer, validate = (data) => data) {
-				state.registerReducer(name, reducer, validate);
-			}
-		};
 		this.database = database;
 		this.config = config;
-		this.sync = {
-			createService: (...args) => new ServiceContext(...args)
+		this.sync = sync;
+		this.helpers = {
+			uuid
 		};
 	}
 
@@ -38,4 +32,4 @@ class PluginContext {
 // 		return context.filter({ test: 1 });
 // 	})
 
-module.exports.PluginContext = PluginContext;
+module.exports = PluginContext;

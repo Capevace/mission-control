@@ -2,7 +2,7 @@ const config = require('@config');
 const logger = require('@helpers/logger').createLogger('Socket Auth');
 const jwt = require('jsonwebtoken');
 
-module.exports = function socketAuth(socketIO, verifyAPIToken, onAuthentication) {
+module.exports = function socketAuth(socketIO, tokens, usersApi, onAuthentication) {
 	forbidNamespaceConnections(socketIO.parentNsps);
 
 	socketIO.on('connection', socket => {
@@ -25,11 +25,16 @@ module.exports = function socketAuth(socketIO, verifyAPIToken, onAuthentication)
 			clearTimeout(authTimeoutId);
 
 			// Verify JWT received with the secret
-			if (verifyAPIToken(token)) {
+			const jwt = tokens.verify(token);
+			if (jwt) {
+				const jwt = tokens.verify(jwt);
+				
 				// AUTH SUCCESSFUL
 				// We set the authenticated var in the socket instance to true and
 				// restore any connections the socket tried to make to namespaces.
 				socket.authenticated = true;
+				socket.getUser = async () => await usersApi.findSafeUser(jwt.user.username);
+
 				onAuthentication(socket);
 				restoreNamespaceConnection(socketIO.parentNsps, socket);
 

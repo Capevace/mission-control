@@ -35,8 +35,6 @@ async function startMissionControl(progress) {
 
 	// Start the state machine
 	progress('Boot State Machine', 0.1);
-
-	const state = require('@state');
 	
 	const Sync = require('@sync/Sync');
 	const sync = new Sync();
@@ -57,21 +55,22 @@ async function startMissionControl(progress) {
 	progress('Boot HTTP Server', 0.4);
 
 	// Initialize the main mission control http server
-	const http = initHttp(state, database, auth, sessionSecret);
+	const http = initHttp(sync, database, auth, sessionSecret);
 
 	
 	progress('Boot Socket Server', 0.5);
 
 	// Initialize the socket server
-	const io = socket(state, http, auth); // eslint-disable-line no-unused-vars
+	const io = socket(sync, http, auth); // eslint-disable-line no-unused-vars
 
 	
 	progress('Init Plugins', 0.75);
 
 	const plugins = require('./plugins');
 	await plugins.initPlugins({
+		auth,
 		http,
-		state,
+		sync,
 		database,
 		config
 	}, progress);

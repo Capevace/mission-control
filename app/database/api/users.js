@@ -1,5 +1,5 @@
 const User = require('@models/User');
-const UserError = require('@http/UserError');
+const UserError = require('@helpers/UserError');
 const crypto = require('@helpers/crypto');
 
 const logger = require('@helpers/logger').createLogger('Database', 'magenta');

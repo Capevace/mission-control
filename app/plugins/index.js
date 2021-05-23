@@ -4,7 +4,7 @@ const fs = require('fs/promises');
 const config = require('@config');
 const logger = require('@helpers/logger').createLogger('Plugins');
 
-const createPluginContext = require('./create-plugin-context');
+const PluginContext = require('./plugin-context');
 
 const filterOutDisabledPlugins = filename => !filename.startsWith('_');
 
@@ -45,42 +45,37 @@ async function getPluginPaths() {
 	return paths;
 }
 
-// PLUGIN
-// name
-//
-
 let plugins = {};
 
-module.exports = {
-	async initPlugins(globalContext, updateProgress) {
-		/**
-		 * @ACTION
-		 * Register a plugin
-		 * @constant PLUGINS:ADD
-		 * @property {{ name, version, description }} plugin The plugin.
-		 * @example demo-action-call
-		 */
-		globalContext.state.registerReducer(
-			'PLUGINS:ADD', 
-			(state, plugin) => ({
-				...state,
-				plugins: {
-					...state.plugins,
-					[plugin.name]: plugin
-				}
-			}), 
-			data => data
-		);
+function setupPluginDataService(sync) {
+	const service = sync.createService('plugins', {
+		plugins: {}
+	});
 
-		logger.debug('Initializing plugins');
+	service.action('add')
+		.requirePermission('create', 'plugin', 'any')
+		.handler(({ plugin }, context) => {
+			context.state.plugins[plugin.name] = plugin;
+		});
+
+	return service;
+}
+
+module.exports = {
+	async initPlugins(modules, updateProgress) {
+		const { auth, http, sync, database, config } = modules;
+
+		logger.debug('initializing plugins');
+
+		const pluginDataService = setupPluginDataService(sync);
 
 		const pluginPaths = await getPluginPaths();
-		logger.debug('Plugin paths:', pluginPaths);
+		logger.debug('plugin paths:', pluginPaths);
 
 		let finished = 0;
 		function progressUpdate() {
 			finished++;
-			updateProgress('Finished plugin', 0.75 + ((finished / pluginPaths.length) * 0.15));
+			updateProgress('finished plugin', 0.75 + ((finished / pluginPaths.length) * 0.15));
 		}
 
 		//for (const pluginPath of pluginPaths) {
@@ -92,40 +87,43 @@ module.exports = {
 
 						const { name } = path.parse(pluginPath);
 
-						logger.debug('Init plugin', name);
+						logger.debug('init plugin', name);
 
 						// The context is the object, the plugin can use to access system internals
-						const context = createPluginContext(name, globalContext);
+						const context = new PluginContext(name, modules);
 
 						// Register in internal plugins
 						plugins[name] = {
-							version: '0.0.0',
+							version: '0.0.0', // Version here so we have a default
 							...await pluginFactory(context), // Init the plugin
-							name
+							name // Name afterwards so it can't be overriden
 						};
 
-						// Call Action to reflect new plugin state
-						globalContext.state.invokeAction('PLUGINS:ADD', {
-							name: plugins[name].name, 
-							version: plugins[name].version, 
-							description: plugins[name].description
+						// Call Action to reflect new plugins state
+						sync.invokeAction('plugins', 'add', {
+							plugin: {
+								name: plugins[name].name, 
+								version: plugins[name].version, 
+								description: plugins[name].description
+							}
 						});
 
 						progressUpdate();
-						logger.debug(`Successfully loaded ${name} version ${plugins[name].version || 'unknown'}`);
+						logger.debug(`loaded plugin: ${name}, version: ${plugins[name].version || 'unknown'}`);
 					} catch (e) {
-						logger.error('Could not init plugin at path', pluginPath, e);
+						logger.error('could not load plugin at path:', pluginPath, e);
 						throw e;
 					}
 				})();
 			});
 
 		try {
+			// Wait til all plugins are initialized and loaded
 			await Promise.allSettled(initPromises);
 
-			logger.debug('Finished initializing plugins');
+			logger.debug('all plugins initialized');
 		} catch (e) {
-			logger.error('Unknown error during plugin initialization', e);
+			logger.error('error during plugin initialization', e);
 		}
 	},
 

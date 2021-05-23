@@ -48,6 +48,7 @@
 
 const autoBind = require('auto-bind');
 
+const User = require('@models/User');
 const Logger = require('@helpers/logger');
 const UserError = require('@helpers/UserError');
 const Service = require('./Service');
@@ -122,22 +123,24 @@ class Sync {
 	}
 
 	/**
-	 * Invoke an action
-	 * @param  {string}               fullActionName        Full action name containing service and action ('service:action')
-	 * @param  {object}               data                  Action data
-	 * @param  {Permissions.UserRole} [userRole = 'system'] The user role
-	 * @returns {object}                                    The data returned by the action
+	 * Invoke an action on a given service
+	 *
+	 * @param   {string} serviceName                  - The service name / identifier
+	 * @param   {string} action                   - The action name / identifier
+	 * @param   {object} data                     - Action data
+	 * @param   {User}   [user = User.systemUser] - The user role
+	 * @returns {object}                          - The data returned by the action
 	 */
-	async invokeAction(fullActionName, data, userRole = 'system') {
-		const parts = fullActionName.split(':');
-		const serviceName = parts[0];
+	async invokeAction(serviceName, action, data, user = User.systemUser) {
+		// const parts = fullActionName.split(':');
+		// const serviceName = parts[0];
 		
-		const actionNamePart = parts.slice(1, parts.length);
-		const name = actionName.join(':');
+		// const actionNamePart = parts.slice(1, parts.length);
+		// const name = actionName.join(':');
 
-		if (!serviceName || actionNamePart.length === 0) {
-			throw new UserError(`Invalid action ${fullActionName}`, 400);
-		}
+		// if (!serviceName || actionNamePart.length === 0) {
+		// 	throw new UserError(`Invalid action ${fullActionName}`, 400);
+		// }
 
 		logger.debug(`service: ${serviceName} action: ${name}`, data);
 
@@ -148,17 +151,17 @@ class Sync {
 	/**
 	 * Get the state of all services
 	 * 
-	 * @example const notificationsState = sync.getState().notifications || sync.getState('notifications');
+	 * @example sync.state.notifications === sync.service('notifications').state;
 	 * 
-	 * @param  {string}  [serviceName]  Optional service name. If passed, only that service's state gets retured
 	 * @return {object}                 State object with service names as keys or state for service with service name.
 	 */
-	getState() {
-		if (serviceName) {
-			const service = this.service(serviceName);
-		} else {
-
+	get state() {
+		let state = {};
+		for (const serviceName in this.services) {
+			state[serviceName] = this.service.state;
 		}
+
+		return state;
 	}
 }
 

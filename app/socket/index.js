@@ -14,6 +14,7 @@
 
 const logger = require('@helpers/logger').createLogger('Socket', 'magenta');
 const { Server } = require('socket.io');
+const AuthError = require('@helpers/AuthError');
 const socketAuth = require('./auth');
 
 /**
@@ -37,30 +38,43 @@ module.exports = function socket(state, http, auth) {
 		// On connection, we emit a initial-state event.
 		// The client can use this to populate its state.
 		client.emit('initial-state', {
-			state: state.getState()
+			state: sync.state
 		});
 
 		// The client can call actions by emitting the action event.
 		// It has to pass the action and associated data.
-		client.on('action', ({ action, data }, callback) => {
-			logger.debug(`Client requested action ${action}`);
+		client.on('action', async ({ service, action, data }, callback) => {
+			logger.debug(`action request - service: ${service}, action: ${action}`);
 
 			try {
-				state.invokeAction(action, data);
+				const user = await socket.getUser();
+
+				if (!user) {
+					throw new AuthError('Unable to find user', 401);
+				}
+
+				const response = await sync.invokeAction(service, action, data, user);
 
 				callback({
-					error: null
+					error: null,
+					response
 				});
 			} catch (e) {
-				if (!e.isActionError) {
-					logger.error('Unknown error in action invocation', e);
+				if (!e.isUserError) {
+					logger.error('unknown error in action request', e);
 				}
 
 				callback({
 					error: {
-						message: e.isActionError
+						status: e.status || 500,
+
+						// Admins receive internal error messages too
+						// Their accounts are considered secure
+						// 
+						// User error messages are considered safe to send to users, as it's their error
+						message: e.isUserError || user.role === 'admin'
 							? e.message
-							: 'Unknown error occurred'
+							: 'I have no idea what just happened... An admin should probably get to work'
 					}
 				});
 			}
@@ -68,34 +82,56 @@ module.exports = function socket(state, http, auth) {
 
 		// The client can emit a 'subscribe' event to subscribe to the state machines events.
 		// These will then get relayed to the socket client.
-		client.on('subscribe', ({ event }) => {
+		client.on('subscribe', ({ service }, callback) => {
 			if (event in subscriptions) return;
 
-			logger.debug(`Client subscribed to ${event}.`);
+			logger.debug(`client subscribed to ${event}.`);
 
-			const relayAllEvents = (actualEvent, data) => {
-				client.emit('all-events', {
-					event: actualEvent,
-					data
+			const relayStateUpdates = (state) => {
+				client.emit(`sync:state`, {
+					service,
+					state
 				});
 			};
 
-			const relaySingleEvent = data => {
-				client.emit(event, data);
-				// log(`Emitting ${event} to client.`);
-			};
+			try {
+				const service = sync.service(service);
 
-			// If a wildcard is passed we also pass the events name in the payload.
-			const relayEvent =
-				event === '*' ? relayAllEvents : relaySingleEvent;
+				subscriptions[service] = service.subscribe(relayStateUpdates);
+			} catch (e) {
+				if (!e.isUserError) {
+					logger.error('unknown error in action request', e);
+				}
+
+				callback({
+					error: {
+						status: e.status || 500,
+
+						// Admins receive internal error messages too
+						// Their accounts are considered secure
+						// 
+						// User error messages are considered safe to send to users, as it's their error
+						message: e.isUserError || user.role === 'admin'
+							? e.message
+							: 'I have no idea what just happened... An admin should probably get to work'
+					}
+				});
+			}
 
 			// We save the returned method from the subscribe function to later unsubscribe.
-			subscriptions[event] = state.subscribe(event, relayEvent);
+			sync.subscribe(event, relayEvent);
 		});
 
 		// When the client wants to unsubscribe remove the event
-		client.on('unsubscribe', ({ event }) => {
-			if (!(event in subscriptions)) return;
+		client.on('unsubscribe', ({ service }, callback) => {
+			if (!(service in subscriptions)) {
+				return callback({
+					error: {
+						status: 202,
+						message: `No subscription for service ${service} found`
+					}
+				});
+			}
 
 			logger.debug(`Unsubscribing client from event ${event}.`);
 

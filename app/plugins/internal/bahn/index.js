@@ -1,7 +1,7 @@
 const { routesToHL } = require('./api');
 
 module.exports = function bahnInit(APP) {
-	const { state, logger, http } = APP;
+	const { sync, logger, http } = APP;
 
 	const service = sync.createService('trains', { lines: [] });
 

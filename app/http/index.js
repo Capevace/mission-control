@@ -31,7 +31,6 @@ const fs = require('fs');
 // const minify = require('html-minifier').minify;
 
 const authRoutes = require('./routes/auth');
-const stateRoutes = require('./routes/state');
 const dashboardRoutes = require('./routes/dashboard');
 
 const addPluginDashboardComponentsMiddleware = require('./middleware/plugin-dashboard-components');
@@ -43,7 +42,7 @@ const addPluginDashboardComponentsMiddleware = require('./middleware/plugin-dash
  * might still create their own HTTP servers.
  * @return {module:express~Server} The express HTTP server.
  */
-module.exports = function http(state, database, auth, sessionSecret) {
+module.exports = function http(sync, database, auth, sessionSecret) {
 	const app = express();
 	const server = createServer(app);
 
@@ -85,7 +84,6 @@ module.exports = function http(state, database, auth, sessionSecret) {
 	});
 
 	app.use(authRoutes(new express.Router(), { database, auth }));
-	app.use(stateRoutes(new express.Router(), { auth }));
 
 	const dashboardRouter = new express.Router();
 
@@ -93,7 +91,7 @@ module.exports = function http(state, database, auth, sessionSecret) {
 	dashboardRouter.use(
 		addPluginDashboardComponentsMiddleware(
 			() => ({ components, pages }),
-			state.getState
+			() => sync.state
 		)
 	);
 

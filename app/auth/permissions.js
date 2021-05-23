@@ -1,7 +1,7 @@
 const AccessControl = require('accesscontrol');
 const autoBind = require('auto-bind');
 
-module.exports = class Permissions {
+class Permissions {
 	constructor(grants) {
 		this.access = new AccessControl(grants);
 

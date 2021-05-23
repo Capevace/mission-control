@@ -96,7 +96,7 @@ module.exports = function homekitInit(APP) {
 			changes: Joi.object()
 				.required()
 		}))
-		.handler((data, { UserError }) => {
+		.handler(async (data, { UserError }) => {
 			const { uniqueId, changes = {} } = data;
 
 			logger.debug(`interact device: ${uniqueId} changes:`, changes);
@@ -127,13 +127,13 @@ module.exports = function homekitInit(APP) {
 	 * @param  {Array.<HomebridgeDevice>} devices 
 	 */
 	function updateHomebridgeDevices(devices) {
-		let devices = {};
+		let simplifiedDevices = {};
 		for (const device of devices) {
-			devices[device.uniqueId] = simplifyDevice(device);
+			simplifiedDevices[device.uniqueId] = simplifyDevice(device);
 		}
 
 		service.setState({
-			devices,
+			devices: simplifiedDevices,
 			status: ConnectionStatus.connected
 		});
 	}
