@@ -1,5 +1,7 @@
 module.exports = function api(APP) {
 	const { state, database, logger, config } = APP;
+
+	let tokenData = database.get('spotify', {});
 	
 	// Request an access token from the Spotify API using an auth code.
 	async function requestAccessToken(code) {
@@ -77,7 +79,7 @@ module.exports = function api(APP) {
 
 		// Save to database so its persistent and then update state so clients are notified.
 		database.set('spotify', data);
-		state.invoke('SPOTIFY:UPDATE-TOKEN', data);
+		service.invoke('SPOTIFY:UPDATE-TOKEN', data);
 	}
 
 	function scheduleTokenRefresh(expiresAt, refreshToken) {

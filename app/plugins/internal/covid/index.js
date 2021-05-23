@@ -7,25 +7,12 @@ const cities = {
 
 
 module.exports = function bahnInit(APP) {
-	const { state, logger, http, database } = APP;
+	const { sync, permissions, logger, http, database } = APP;
 
-	/**
-	 * @ACTION
-	 * Update COVID data
-	 *
-	 * @constant COVID:UPDATE
-	 * @property {object} changes The data to be set
-	 * @example
-	 * state.invoke('COVID:UPDATE', { cities: { 'city-id': { } } })
-	 */
-	state.addAction(
-		'COVID:UPDATE', 
-		(state, data) => ({
-			...state,
-			covid: data
-		}),
-		(data) => (typeof data === 'object') ? data : false
-	);
+	// permissions
+	// 	.allow('admin', 'create', 'covid-data', 'any');
+
+	const service = sync.createService('covid', { cities: {} });
 
 	http.addComponentFile('covid', __dirname + '/component.html');
 
@@ -53,9 +40,9 @@ module.exports = function bahnInit(APP) {
 
 			// database.set('covid-data-historical', historicalData);
 
-			state.invoke('COVID:UPDATE', {
+			service.setState({
 				cities: citiesData,
-				historical: filterHistoricalData(historicalData)
+				// historical: filterHistoricalData(historicalData)
 			});
 		} catch (e) {
 			logger.error('Error occurred during covid API check', e);
