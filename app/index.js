@@ -33,38 +33,37 @@ async function startMissionControl(progress) {
 		database.set('session-secret', sessionSecret);
 	}
 
-	// Start the state machine
-	progress('Boot State Machine', 0.1);
-	
-	const Sync = require('@sync/Sync');
-	const sync = new Sync();
-
-	
-	progress('Boot Auth', 0.2);
+	progress('load auth', 0.1);
 
 	const initAuth = require('./auth');
 	const auth = initAuth(config, database, sessionSecret);
 
+	// Start the state machine
+	progress('load sync', 0.2);
 	
-	progress('Load HTTP Server', 0.3);
+	const Sync = require('@sync/Sync');
+	const sync = new Sync({ permissions: auth.permissions });
+
+	
+	progress('load http & socket', 0.3);
 
 	const initHttp = require('./http');
 	const socket = require('./socket');
 
 	
-	progress('Boot HTTP Server', 0.4);
+	progress('start http', 0.4);
 
 	// Initialize the main mission control http server
 	const http = initHttp(sync, database, auth, sessionSecret);
 
 	
-	progress('Boot Socket Server', 0.5);
+	progress('start socket', 0.5);
 
 	// Initialize the socket server
 	const io = socket(sync, http, auth); // eslint-disable-line no-unused-vars
 
 	
-	progress('Init Plugins', 0.75);
+	progress('load plugins', 0.75);
 
 	const plugins = require('./plugins');
 	await plugins.initPlugins({
@@ -76,10 +75,10 @@ async function startMissionControl(progress) {
 	}, progress);
 
 	
-	progress('HTTP Listen', 0.95);
+	progress('http listen', 0.95);
 	
 	http.server.listen(config.http.port, () => {
-		logging.http(`Server listening on port`, config.http.port);
+		logging.http(`server listening on port:`, config.http.port);
 		logging.logReadyMessage(config.http.url, config.auth.url);
 	});
 

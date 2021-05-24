@@ -22,7 +22,7 @@ const ConnectionStatus = {
 };
 
 module.exports = function homekitInit(APP) {
-	const { state, logger, config, http } = APP;
+	const { sync, logger, config, http } = APP;
 
 	const service = sync.createService('homebridge', {
 		status: ConnectionStatus.disconnected,

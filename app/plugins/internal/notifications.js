@@ -59,7 +59,7 @@ module.exports = function initNotificationsPlugin({ sync, auth, state, logger, d
 
 	service.action('delete')
 		.validate(Joi => Joi.object({
-			id: Joi.uuid().required(),
+			id: Joi.string().uuid().required(),
 			username: Joi.string()
 				.trim()
 		}))

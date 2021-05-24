@@ -1,6 +1,7 @@
 const autoBind = require('auto-bind');
 const EventEmitter = require('events');
 const onChange = require('on-change');
+const Joi = require('joi');
 
 const User = require('@models/User');
 
@@ -46,11 +47,11 @@ const AuthError = require('@helpers/AuthError');
 class Service {
 	/**
 	 * A Sync engine service
-	 * @param  {string} name         Service name / identifier
-	 * @param  {object} initialState Initial service state
-	 * @return {Service}
+	 * @param  {string}                     name         - Service name / identifier
+	 * @param  {object}                     initialState - Initial service state
+	 * @param  {DependencyInjectionModules} dependencies - Dependency Injection
 	 */
-	constructor(name, initialState = {}) {
+	constructor(name, initialState = {}, dependencies) {
 		/**
 		 * The service name
 		 * @type {string}
@@ -76,7 +77,13 @@ class Service {
 		 * Internal event emitter
 		 * @type {EventEmitter}
 		 */
-		this.events = new EventEmitter();
+		this.emitter = new EventEmitter();
+		
+		/**
+		 * Permissions module
+		 * @type {Permissions}
+		 */
+		this.permissions = dependencies.permissions;
 
 		autoBind(this);
 	}

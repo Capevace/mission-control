@@ -49,17 +49,25 @@
 const autoBind = require('auto-bind');
 
 const User = require('@models/User');
-const Logger = require('@helpers/logger');
+const logger = require('@helpers/logger').createLogger('Sync', 'blueBright');
 const UserError = require('@helpers/UserError');
 const Service = require('./Service');
 
-
+/**
+ * For dependency injection with internal modules like permissions
+ * @typedef {DependencyInjectionModules}
+ * @property {Permissions} permissions
+ */
 
 /**
  * Sync is the main thing
  */
 class Sync {
-	constructor() {
+	/**
+	 * Create a new sync engine
+	 * @param {DependencyInjectionModules} dependencies - Dependency injection with internal modules (like permissions)                    
+	 */
+	constructor(dependencies) {
 		/**
 		 * The services that sync manages
 		 * @type {Object.<string, Service>}
@@ -67,10 +75,17 @@ class Sync {
 		this.services = {
 			'core': new Service('core')
 		};
+		
+		/**
+		 * Dependency injection with internal modules like permissions
+		 * @type {DependencyInjectionModules}
+		 */
+		this.dependencies = dependencies;
 
-		this.logger = Logger.createLogger('Sync', 'blueBright');
 
-		autoBind(this);
+		console.log('deps', this.dependencies);
+
+		// autoBind(this);
 	}
 
 	/**
@@ -79,14 +94,15 @@ class Sync {
 	 * @param  {string} name Service name / identifier
 	 * @return {Service}     The service
 	 */
-	createService(name) {
+	createService(name, initialState = {}) {
+		throw new Error('wat');
 		if (name in this.services) {
 			throw new Error(`Service ${name} already exists`);
 		}
 
-		this.services[name] = new Service(name);
+		// this.services[name] = new Service(name, initialState, this.dependencies);
 
-		return this.services[name];
+		// return this.services[name];
 	}
 
 	/**
@@ -142,10 +158,10 @@ class Sync {
 		// 	throw new UserError(`Invalid action ${fullActionName}`, 400);
 		// }
 
-		logger.debug(`service: ${serviceName} action: ${name}`, data);
+		logger.debug(`service: ${serviceName} action: ${action}`, data);
 
 		const service = this.service(serviceName);
-		return await service.invoke(name, data, userRole);
+		return await service.invoke(action, data, user);
 	}
 
 	/**
