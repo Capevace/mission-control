@@ -18,12 +18,12 @@ module.exports = async function start() {
 	logging.progress(startMissionControl);
 };
 
-async function startMissionControl(updateProgressBar) {
+async function startMissionControl(progress) {
 	const logger = logging.createLogger('Main', 'cyan');
 	const eventLogger = logging.createLogger('Event', 'green');
 
 	logger.info(`Starting Mission Control...`);
-	updateProgressBar('Boot Database', 0.01);
+	progress('Boot Database', 0.01);
 
 	const database = require('@database'); // eslint-disable-line no-unused-vars
 
@@ -33,46 +33,60 @@ async function startMissionControl(updateProgressBar) {
 		database.set('session-secret', sessionSecret);
 	}
 
-	// Start the state machine
-	updateProgressBar('Boot State Machine', 0.1);
-	const state = require('@state');
+	progress('load auth', 0.1);
 
-	updateProgressBar('Boot Auth', 0.2);
 	const initAuth = require('./auth');
 	const auth = initAuth(config, database, sessionSecret);
 
-	updateProgressBar('Load HTTP Server', 0.3);
+	// Start the state machine
+	progress('load sync', 0.2);
+	
+	const Sync = require('@sync/Sync');
+	const sync = new Sync({ permissions: auth.permissions });
+
+	
+	progress('load http & socket', 0.3);
+
 	const initHttp = require('./http');
 	const socket = require('./socket');
 
-	updateProgressBar('Boot HTTP Server', 0.4);
+	
+	progress('start http', 0.4);
+
 	// Initialize the main mission control http server
-	const http = initHttp(state, database, auth, sessionSecret);
+	const http = initHttp(sync, database, auth, sessionSecret);
 
-	updateProgressBar('Boot Socket Server', 0.5);
+	
+	progress('start socket', 0.5);
+
 	// Initialize the socket server
-	const io = socket(state, http, auth); // eslint-disable-line no-unused-vars
+	const io = socket({ sync, database, http, auth }); // eslint-disable-line no-unused-vars
 
-	updateProgressBar('Init Plugins', 0.75);
+	
+	progress('load plugins', 0.75);
+
 	const plugins = require('./plugins');
 	await plugins.initPlugins({
+		auth,
 		http,
-		state,
+		sync,
 		database,
 		config
-	}, updateProgressBar);
+	}, progress);
 
-	updateProgressBar('HTTP Listen', 0.95);
+	
+	progress('http listen', 0.95);
+	
 	http.server.listen(config.http.port, () => {
-		logging.http(`Server listening on port`, config.http.port);
+		logging.http(`server listening on port:`, config.http.port);
 		logging.logReadyMessage(config.http.url, config.auth.url);
 	});
 
-	if (config.debug) {
-		state.subscribe('*', (event, data) =>
-			eventLogger.debug(event, data.actionData || data)
-		);
-	}
+	// if (config.debug) {
+	// 	state.subscribe('*', (event, data) =>
+	// 		eventLogger.debug(event, data.actionData || data)
+	// 	);
+	// }
 };
 
 

@@ -5,7 +5,7 @@ const LocalStrategy = require('passport-local').Strategy;
 
 const logger = require('@helpers/logger').createLogger('Auth');
 const crypto = require('@helpers/crypto');
-const UserError = require('@http/UserError');
+const UserError = require('@helpers/UserError');
 
 
 const Permissions = require('./permissions');

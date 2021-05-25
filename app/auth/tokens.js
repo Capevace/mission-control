@@ -1,9 +1,11 @@
 const autoBind = require('auto-bind');
 const jwt = require('jsonwebtoken');
+const Joi = require('joi');
 
+const AuthError = require('@helpers/AuthError');
 const logger = require('@helpers/logger').createLogger('Auth');
 
-module.exports = class Tokens {
+class Tokens {
 	constructor(sessionSecret) {
 		this.sessionSecret = sessionSecret;
 
@@ -20,14 +22,42 @@ module.exports = class Tokens {
 
 	verify(token) {
 		try {
-			return jwt.verify(token, this.sessionSecret, {
+			const { user } = jwt.verify(token, this.sessionSecret, {
 				expiresIn: 86400,
 				issuer: 'mission-control',
 				audience: 'mission-control:api'
 			});
+			
+
+
+			const { value, error } = Tokens.tokenSchema.validate({ user });
+			if (error) {
+				throw new AuthError('Token data invalid', 401);
+			}
+
+			return value;
 		} catch (e) {
-			logger.debug('Error verifying JWT', e);
-			return false;
+			logger.error('Error verifying JWT', e);
+			
+			throw new AuthError(e.message, 401);
 		}
 	}
 }
+
+/**
+ * The schema of JWT tokens to validate content against
+ * @type {Joi~Schema}
+ */
+Tokens.tokenSchema = Object.freeze(Joi.object({
+	user: Joi.object({
+		username: Joi.string()
+			.min(1)
+			.max(64)
+			.alphanum()
+			.trim()
+			.required()
+	}).required()
+}));
+
+
+module.exports = Tokens;

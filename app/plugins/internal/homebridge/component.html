@@ -1,21 +1,29 @@
-<script>
-    MISSION_CONTROL.dashboard.component('homekitSwitches', {
+<script type="module">
+    const { dashboard } = MISSION_CONTROL;
+
+    const homebridgeComponent = dashboard.consumeService('homebridge', {
         template: `
             <section class="">
                 <div 
-                    v-if="homekitState.initialized"
+                    v-if="homekitState.status === 'connected'"
                     class="flex flex-wrap gap-5 mb-8"
                     
                 >
                     <virtual-switch
-                        v-for="(service) in services"
-                        :key="service.uniqueId"
-                        :active="isServiceActive(service)"
+                        v-for="(device) in devices"
+                        :key="device.uniqueId"
+                        :active="isDeviceActive(device)"
                         icon="home"
-                        @click="toggle(service.uniqueId, { On: !isServiceActive(service) })"
+                        @click="toggle(device.uniqueId, { On: !isDeviceActive(device) })"
                     >
-                        {{ service.name }}
+                        {{ device.name }}
                     </virtual-switch>
+                </div>
+                <div 
+                    v-else-if="status === 'connecting'"
+                    class="flex items-center justify-center text-3xl font-semibold text-purple-500"
+                >
+                    Loading
                 </div>
                 <p v-else class="text-purple-400 text-xs leading-normal max-w-prose">
                     You need to set a <a class="text-purple-300 underline" href="https://github.com/homebridge/homebridge">homebridge</a> pin in config (found in ~/.mission-control/config) or by specifying the <pre class="inline font-mono ">--homebridge-pin [pin]</pre> CLI option for devices to be listed here.
@@ -27,16 +35,16 @@
         },
         computed: {
             homekitState() {
-                return this.$mcState('homekit', {
-                    services: {}
+                return this.$stateWithDefault({
+                    status: 'connected',
+                    devices: {}
                 });
             },
-            services() {
-                return Object.values(this.homekitState.services)
-                    .filter(service => service.name !== 'Homebridge 4E81 4231');
+            devices() {
+                return Object.values(this.homekitState.devices);
             },
             rows() {
-                return MISSION_CONTROL.utils.chunkArray(this.services, 4);
+                return MISSION_CONTROL.utils.chunkArray(this.devices, 4);
             }
         },
         methods: {
@@ -47,10 +55,12 @@
                 });
             },
 
-            isServiceActive(service) {
-                return !!service.values.On;
+            isDeviceActive(device) {
+                return !!device.values.On;
             }
         }
     });
+
+    dashboard.component('homekitSwitches', homebridgeComponent);
 
 </script>

@@ -12,16 +12,25 @@
  * @requires jsonwebtoken
  */
 
-const logger = require('@helpers/logger').createLogger('Socket', 'magenta');
+const Logger = require('@helpers/logger');
 const { Server } = require('socket.io');
-const socketAuth = require('./auth');
+
+const buildErrorResponseComposer = require('@helpers/error-response-factory');
+const createSocketHandlerFactory = require('./socket-request-handler');
+
+const handleAuth = require('./auth');
+const handleSync = require('./sync');
 
 /**
  * Initialize the socket module.
- * @param  {Object} http A http server object.
- * @param  {Object} auth The auth object.
+ * @param  {object}   dependencies
+ * @param  {Sync}     dependencies.sync     - Sync module
+ * @param  {Database} dependencies.database - Database module
+ * @param  {HTTP}     dependencies.http     - HTTP module
+ * @param  {Auth}     dependencies.auth     - Auth module
  */
-module.exports = function socket(state, http, auth) {
+module.exports = function socket({ sync, database, http, auth }) {
+	const logger = Logger.createLogger('Socket', 'magenta');
 	const server = new Server(http.server, {
 		// cookie: {
 		// 	name: 'io',
@@ -29,87 +38,68 @@ module.exports = function socket(state, http, auth) {
 		// }
 	});
 
-	socketAuth(server, auth.tokens.verify, client => {
-		let subscriptions = {};
+	server.on('connection', socket => {
+		logger.debug('client connected');
 
-		logger.debug('A new client connected');
+		const composeErrorResponse = buildErrorResponseComposer(auth.permissions);
 
-		// On connection, we emit a initial-state event.
-		// The client can use this to populate its state.
-		client.emit('initial-state', {
-			state: state.getState()
-		});
+		/**
+		 * Context object with helpers for socket handlers
+		 * @typedef {SocketContext}
+		 */
+		const socketContext = {
+			/**
+			 * Listen for socket events safely, with error handling already built around it.
+			 *
+			 * This allows us to be able to simply throw errors and have them be handled gracefully.
+			 *
+			 * @example on('test-event', data => ({ success: data.test > 30 }));
+			 * @type {SocketHandlerFactory}
+			 */
+			on: createSocketHandlerFactory(socket, logger, composeErrorResponse, true),
 
-		// The client can call actions by emitting the action event.
-		// It has to pass the action and associated data.
-		client.on('action', ({ action, data }, callback) => {
-			logger.debug(`Client requested action ${action}`);
+			/**
+			 * Listen for socket events with just error handling. Authentication is disabled!
+			 *
+			 * Use with caution, socket.user is not guaranteed in your request handler.
+			 *
+			 * @type {SocketHandlerFactory}
+			 */
+			unsafeOn: createSocketHandlerFactory(socket, logger, composeErrorResponse, false),
 
-			try {
-				state.invokeAction(action, data);
+			/**
+			 * Compose an error response out of an error
+			 * @type {ErrorResponse~compose}
+			 */
+			composeErrorResponse,
 
-				callback({
-					error: null
-				});
-			} catch (e) {
-				if (!e.isActionError) {
-					logger.error('Unknown error in action invocation', e);
-				}
+			/**
+			 * Permissions
+			 * @type {Permissions}
+			 */
+			tokens: auth.tokens,
 
-				callback({
-					error: {
-						message: e.isActionError
-							? e.message
-							: 'Unknown error occurred'
-					}
-				});
-			}
-		});
+			/**
+			 * Users database API
+			 * @type {Database~UsersAPI}
+			 */
+			users: database.api.users,
 
-		// The client can emit a 'subscribe' event to subscribe to the state machines events.
-		// These will then get relayed to the socket client.
-		client.on('subscribe', ({ event }) => {
-			if (event in subscriptions) return;
+			/**
+			 * Sync module
+			 * @type {Sync}
+			 */
+			sync,
 
-			logger.debug(`Client subscribed to ${event}.`);
+			/**
+			 * Logger module
+			 * @type {Logger}
+			 */
+			logger
+		};
 
-			const relayAllEvents = (actualEvent, data) => {
-				client.emit('all-events', {
-					event: actualEvent,
-					data
-				});
-			};
-
-			const relaySingleEvent = data => {
-				client.emit(event, data);
-				// log(`Emitting ${event} to client.`);
-			};
-
-			// If a wildcard is passed we also pass the events name in the payload.
-			const relayEvent =
-				event === '*' ? relayAllEvents : relaySingleEvent;
-
-			// We save the returned method from the subscribe function to later unsubscribe.
-			subscriptions[event] = state.subscribe(event, relayEvent);
-		});
-
-		// When the client wants to unsubscribe remove the event
-		client.on('unsubscribe', ({ event }) => {
-			if (!(event in subscriptions)) return;
-
-			logger.debug(`Unsubscribing client from event ${event}.`);
-
-			subscriptions[event]();
-			delete subscriptions[event];
-		});
-
-		// When the client disconnects unsubscribe all subscriptions
-		client.on('disconnect', () => {
-			logger.debug('A client disconnected.');
-
-			Object.values(subscriptions).forEach(unsubscribe => unsubscribe());
-			subscriptions = null;
-		});
+		handleAuth(socket, socketContext);
+		handleSync(socket, socketContext);
 	});
 
 	// server.use((socket, next) => {

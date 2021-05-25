@@ -1,25 +1,9 @@
 const { routesToHL } = require('./api');
 
 module.exports = function bahnInit(APP) {
-	const { state, logger, http } = APP;
+	const { sync, logger, http } = APP;
 
-	/**
-	 * @ACTION
-	 * Update Deutsche Bahn route data
-	 *
-	 * @constant BAHN:UPDATE
-	 * @property {object} changes The data to be set
-	 * @example
-	 * state.invoke('BAHN:UPDATE', { })
-	 */
-	state.addAction(
-		'BAHN:UPDATE', 
-		(state, data) => ({
-			...state,
-			bahn: data
-		}),
-		(data) => (typeof data === 'object') ? data : false
-	);
+	const service = sync.createService('trains', { lines: [] });
 
 	http.addComponentFile('bahn', __dirname + '/component.html');
 
@@ -27,13 +11,13 @@ module.exports = function bahnInit(APP) {
 		try {
 			const hlRoutes = await routesToHL();
 			
-			state.invoke('BAHN:UPDATE', {
+			service.setState({
 				routes: hlRoutes
 			});
 		} catch (e) {
 			logger.error('Error occurred during route check', e);
 
-			state.invoke('BAHN:UPDATE', {
+			service.setState({
 				routes: []
 			});
 		}
