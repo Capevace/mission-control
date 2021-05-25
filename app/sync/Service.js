@@ -5,6 +5,7 @@ const Joi = require('joi');
 
 const User = require('@models/User');
 
+const Logger = require('@helpers/logger');
 const UserError = require('@helpers/UserError');
 const AuthError = require('@helpers/AuthError');
 
@@ -51,7 +52,7 @@ class Service {
 	 * @param  {object}                     initialState - Initial service state
 	 * @param  {DependencyInjectionModules} dependencies - Dependency Injection
 	 */
-	constructor(name, initialState = {}, dependencies) {
+	constructor(name, initialState, dependencies) {
 		/**
 		 * The service name
 		 * @type {string}
@@ -78,6 +79,12 @@ class Service {
 		 * @type {EventEmitter}
 		 */
 		this.emitter = new EventEmitter();
+
+		/**
+		 * Service logger
+		 * @type {Logger}
+		 */
+		this.logger = Logger.createLogger(`service:${name}`);
 		
 		/**
 		 * Permissions module
@@ -252,6 +259,8 @@ class Service {
 	 * @example await notificationsService.handleAction('create', { /* ... *\/ }, 'user');
 	 */
 	async invokeAction(name, data, user = User.systemUser) {
+		this.logger.debug(`invoke action: ${name}, user: ${JSON.stringify(user)}, data: ${JSON.stringify(data)}`);
+
 		if (name in this.handlers) {
 			const action = this.handlers[name];
 
@@ -365,10 +374,10 @@ class Service {
 					// Permission 
 					permission(data, actionContext);
 				} else {
-					const { filter, granted } = this.permissions.evaluate(userRole, ...permission);
+					const { filter, granted } = this.permissions.evaluate(user.role, ...permission);
 
 					if (!granted) {
-						throw new UserError(`${userRole} is not forbidden to ${permission[0]} ${permission[2]} ${permission[1]}`, 403);
+						throw new UserError(`${user.role} is not allowed to ${permission[0]} ${permission[2]} ${permission[1]}`, 403);
 					}
 
 					filters.push(filter);
@@ -392,7 +401,7 @@ class Service {
 			}
 
 			// Emit successful action run event
-			this.emitter.emit(`action:${actionName}`);
+			this.emitter.emit(`action:${name}`);
 
 			return result;
 		}

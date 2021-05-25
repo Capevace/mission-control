@@ -1,5 +1,7 @@
-<script>
-    MISSION_CONTROL.dashboard.component('basic-header', {
+<script type="module">
+    const { dashboard } = MISSION_CONTROL;
+
+    const header = dashboard.consumeService('telemetry', {
         template: `
             <header class="flex font-semibold text-purple-50 text-lg">
                 <section class="w-1/3 leading-tight">
@@ -38,19 +40,20 @@
         },
         computed: {
             info() {
-                return this.$mcState('systemInfo', {
-					deviceName: 'Datenregal',
-                    system: {},
-                    os: {},
-                    cpu: {},
-                    memory: {},
-                    network: {
-                        publicIPv4: '-',
-                        internalIPv4: '-'
+                return this.$stateWithDefault({
+                    stats: {
+                        deviceName: 'Mission Control',
+                        system: {},
+                        os: {},
+                        cpu: {},
+                        memory: {},
+                        network: {}
                     }
-                });
+                }).stats;
             }
         }
     });
+
+    dashboard.component('basic-header', header);
 
 </script>

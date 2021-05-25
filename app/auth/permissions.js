@@ -1,6 +1,9 @@
 const AccessControl = require('accesscontrol');
 const autoBind = require('auto-bind');
 
+/**
+ * Class responsible for evaluation role-based permissions
+ */
 class Permissions {
 	constructor(grants) {
 		this.access = new AccessControl(grants);
@@ -36,7 +39,7 @@ class Permissions {
 		 */
 		const composeCrudHandler = (type) => {
 			return (resource, scope = 'any') => {
-				return permissions.evaluate(role, type, resource, scope);
+				return this.evaluate(role, type, resource, scope);
 			};
 		};
 

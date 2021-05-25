@@ -1,6 +1,7 @@
+<script type="module">
+    const { dashboard, utils } = MISSION_CONTROL;
 
-<script>
-    const leftPad = MISSION_CONTROL.utils.leftPad;
+    const leftPad = utils.leftPad;
 
     function dateToTime(date, onlyMinutes = false) {
         const hours = leftPad(date.getHours(), 2, '0');
@@ -106,30 +107,32 @@
         }
     }
 
-    MISSION_CONTROL.dashboard.component('bahn', {
+    const trainsComponent = dashboard.consumeService('trains', {
         template: `
             <section class="w-full h-full">
                 <div class="dashboard-box-heading mb-3 ">Trains to Lübeck Hbf</div>
                 <div class="dashboard-box w-full flex flex-col justify-start pr-3">
                     <div class="list-none p-0 w-full text-main-lightest inline-block overflow-y-scroll h-full">
                         <bahn-row
-                            v-for="(route, index) in bahnState.routes"
+                            v-for="(route, index) in routes"
                             :route="route"
-                            :class="{ 'mb-4': index !== bahnState.routes.length - 1 }"
+                            :class="{ 'mb-4': index !== routes.length - 1 }"
                         />
                     </div>
                 </div>
             </section>
         `,
         computed: {
-            bahnState() {
-                return this.$mcState('bahn', {
+            routes() {
+                return this.$stateWithDefault({
                     routes: []
-                });
+                }).routes;
             }
         },
         components: {
             bahnRow
         }
-    })
+    });
+
+    dashboard.component('bahn', trainsComponent);
 </script>

@@ -12,17 +12,25 @@
  * @requires jsonwebtoken
  */
 
-const logger = require('@helpers/logger').createLogger('Socket', 'magenta');
+const Logger = require('@helpers/logger');
 const { Server } = require('socket.io');
-const AuthError = require('@helpers/AuthError');
-const socketAuth = require('./auth');
+
+const buildErrorResponseComposer = require('@helpers/error-response-factory');
+const createSocketHandlerFactory = require('./socket-request-handler');
+
+const handleAuth = require('./auth');
+const handleSync = require('./sync');
 
 /**
  * Initialize the socket module.
- * @param  {Object} http A http server object.
- * @param  {Object} auth The auth object.
+ * @param  {object}   dependencies
+ * @param  {Sync}     dependencies.sync     - Sync module
+ * @param  {Database} dependencies.database - Database module
+ * @param  {HTTP}     dependencies.http     - HTTP module
+ * @param  {Auth}     dependencies.auth     - Auth module
  */
-module.exports = function socket(state, http, auth) {
+module.exports = function socket({ sync, database, http, auth }) {
+	const logger = Logger.createLogger('Socket', 'magenta');
 	const server = new Server(http.server, {
 		// cookie: {
 		// 	name: 'io',
@@ -30,122 +38,68 @@ module.exports = function socket(state, http, auth) {
 		// }
 	});
 
-	socketAuth(server, auth.tokens.verify, client => {
-		let subscriptions = {};
+	server.on('connection', socket => {
+		logger.debug('client connected');
 
-		logger.debug('A new client connected');
+		const composeErrorResponse = buildErrorResponseComposer(auth.permissions);
 
-		// On connection, we emit a initial-state event.
-		// The client can use this to populate its state.
-		client.emit('initial-state', {
-			state: sync.state
-		});
+		/**
+		 * Context object with helpers for socket handlers
+		 * @typedef {SocketContext}
+		 */
+		const socketContext = {
+			/**
+			 * Listen for socket events safely, with error handling already built around it.
+			 *
+			 * This allows us to be able to simply throw errors and have them be handled gracefully.
+			 *
+			 * @example on('test-event', data => ({ success: data.test > 30 }));
+			 * @type {SocketHandlerFactory}
+			 */
+			on: createSocketHandlerFactory(socket, logger, composeErrorResponse, true),
 
-		// The client can call actions by emitting the action event.
-		// It has to pass the action and associated data.
-		client.on('action', async ({ service, action, data }, callback) => {
-			logger.debug(`action request - service: ${service}, action: ${action}`);
+			/**
+			 * Listen for socket events with just error handling. Authentication is disabled!
+			 *
+			 * Use with caution, socket.user is not guaranteed in your request handler.
+			 *
+			 * @type {SocketHandlerFactory}
+			 */
+			unsafeOn: createSocketHandlerFactory(socket, logger, composeErrorResponse, false),
 
-			try {
-				const user = await socket.getUser();
+			/**
+			 * Compose an error response out of an error
+			 * @type {ErrorResponse~compose}
+			 */
+			composeErrorResponse,
 
-				if (!user) {
-					throw new AuthError('Unable to find user', 401);
-				}
+			/**
+			 * Permissions
+			 * @type {Permissions}
+			 */
+			tokens: auth.tokens,
 
-				const response = await sync.invokeAction(service, action, data, user);
+			/**
+			 * Users database API
+			 * @type {Database~UsersAPI}
+			 */
+			users: database.api.users,
 
-				callback({
-					error: null,
-					response
-				});
-			} catch (e) {
-				if (!e.isUserError) {
-					logger.error('unknown error in action request', e);
-				}
+			/**
+			 * Sync module
+			 * @type {Sync}
+			 */
+			sync,
 
-				callback({
-					error: {
-						status: e.status || 500,
+			/**
+			 * Logger module
+			 * @type {Logger}
+			 */
+			logger
+		};
 
-						// Admins receive internal error messages too
-						// Their accounts are considered secure
-						// 
-						// User error messages are considered safe to send to users, as it's their error
-						message: e.isUserError || user.role === 'admin'
-							? e.message
-							: 'I have no idea what just happened... An admin should probably get to work'
-					}
-				});
-			}
-		});
-
-		// The client can emit a 'subscribe' event to subscribe to the state machines events.
-		// These will then get relayed to the socket client.
-		client.on('subscribe', ({ service }, callback) => {
-			if (event in subscriptions) return;
-
-			logger.debug(`client subscribed to ${event}.`);
-
-			const relayStateUpdates = (state) => {
-				client.emit(`sync:state`, {
-					service,
-					state
-				});
-			};
-
-			try {
-				const service = sync.service(service);
-
-				subscriptions[service] = service.subscribe(relayStateUpdates);
-			} catch (e) {
-				if (!e.isUserError) {
-					logger.error('unknown error in action request', e);
-				}
-
-				callback({
-					error: {
-						status: e.status || 500,
-
-						// Admins receive internal error messages too
-						// Their accounts are considered secure
-						// 
-						// User error messages are considered safe to send to users, as it's their error
-						message: e.isUserError || user.role === 'admin'
-							? e.message
-							: 'I have no idea what just happened... An admin should probably get to work'
-					}
-				});
-			}
-
-			// We save the returned method from the subscribe function to later unsubscribe.
-			sync.subscribe(event, relayEvent);
-		});
-
-		// When the client wants to unsubscribe remove the event
-		client.on('unsubscribe', ({ service }, callback) => {
-			if (!(service in subscriptions)) {
-				return callback({
-					error: {
-						status: 202,
-						message: `No subscription for service ${service} found`
-					}
-				});
-			}
-
-			logger.debug(`Unsubscribing client from event ${event}.`);
-
-			subscriptions[event]();
-			delete subscriptions[event];
-		});
-
-		// When the client disconnects unsubscribe all subscriptions
-		client.on('disconnect', () => {
-			logger.debug('A client disconnected.');
-
-			Object.values(subscriptions).forEach(unsubscribe => unsubscribe());
-			subscriptions = null;
-		});
+		handleAuth(socket, socketContext);
+		handleSync(socket, socketContext);
 	});
 
 	// server.use((socket, next) => {

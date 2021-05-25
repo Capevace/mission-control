@@ -73,7 +73,7 @@ class Sync {
 		 * @type {Object.<string, Service>}
 		 */
 		this.services = {
-			'core': new Service('core')
+			// 'core': new Service('core', {}, dependencies)
 		};
 		
 		/**
@@ -82,10 +82,7 @@ class Sync {
 		 */
 		this.dependencies = dependencies;
 
-
-		console.log('deps', this.dependencies);
-
-		// autoBind(this);
+		autoBind(this);
 	}
 
 	/**
@@ -95,14 +92,13 @@ class Sync {
 	 * @return {Service}     The service
 	 */
 	createService(name, initialState = {}) {
-		throw new Error('wat');
 		if (name in this.services) {
 			throw new Error(`Service ${name} already exists`);
 		}
 
-		// this.services[name] = new Service(name, initialState, this.dependencies);
+		this.services[name] = new Service(name, initialState, this.dependencies);
 
-		// return this.services[name];
+		return this.services[name];
 	}
 
 	/**
@@ -112,7 +108,7 @@ class Sync {
 	 */
 	service(name) {
 		if (!(name in this.services)) {
-			throw new UserError(`Unknown service ${service}`, 404);
+			throw new UserError(`Unknown service ${name}`, 404);
 		}
 
 		const service = this.services[name];
@@ -122,6 +118,14 @@ class Sync {
 		 * @typedef {ServiceAPI}
 		 */
 		const serviceAPI = {
+			/** 
+			 * Get the current service state
+			 * @return {object} 
+			 */
+			get state() {
+				return service.state;
+			},
+
 			/**
 			 * Invoke an action on the service
 			 * @type {Service~handleAction} 

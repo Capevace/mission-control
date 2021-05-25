@@ -60,7 +60,7 @@ async function startMissionControl(progress) {
 	progress('start socket', 0.5);
 
 	// Initialize the socket server
-	const io = socket(sync, http, auth); // eslint-disable-line no-unused-vars
+	const io = socket({ sync, database, http, auth }); // eslint-disable-line no-unused-vars
 
 	
 	progress('load plugins', 0.75);
@@ -82,11 +82,11 @@ async function startMissionControl(progress) {
 		logging.logReadyMessage(config.http.url, config.auth.url);
 	});
 
-	if (config.debug) {
-		state.subscribe('*', (event, data) =>
-			eventLogger.debug(event, data.actionData || data)
-		);
-	}
+	// if (config.debug) {
+	// 	state.subscribe('*', (event, data) =>
+	// 		eventLogger.debug(event, data.actionData || data)
+	// 	);
+	// }
 };
 
 

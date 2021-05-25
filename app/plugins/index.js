@@ -78,52 +78,50 @@ module.exports = {
 			updateProgress('finished plugin', 0.75 + ((finished / pluginPaths.length) * 0.15));
 		}
 
-		//for (const pluginPath of pluginPaths) {
-		const initPromises = pluginPaths
-			.map(async pluginPath => {
-				return (async () => {
-					try {
-						const pluginFactory = require(pluginPath);
-
-						const { name } = path.parse(pluginPath);
-
-						logger.debug('init plugin', name);
-
-						// The context is the object, the plugin can use to access system internals
-						const context = new PluginContext(name, modules);
-
-						// Register in internal plugins
-						plugins[name] = {
-							version: '0.0.0', // Version here so we have a default
-							...await pluginFactory(context), // Init the plugin
-							name // Name afterwards so it can't be overriden
-						};
-
-						// Call Action to reflect new plugins state
-						sync.invokeAction('plugins', 'add', {
-							plugin: {
-								name: plugins[name].name, 
-								version: plugins[name].version, 
-								description: plugins[name].description
-							}
-						});
-
-						progressUpdate();
-						logger.debug(`loaded plugin: ${name}, version: ${plugins[name].version || 'unknown'}`);
-					} catch (e) {
-						logger.error('could not load plugin at path:', pluginPath, e);
-						throw e;
-					}
-				})();
-			});
-
 		try {
+			//for (const pluginPath of pluginPaths) {
+			const initPromises = pluginPaths
+				.map(pluginPath => ({ path: pluginPath, name: path.parse(pluginPath).name }))
+				.map(async ({ path, name }) => {
+					return (async () => {
+						try {
+							const pluginFactory = require(path);
+
+							logger.debug('init plugin', name);
+
+							// The context is the object, the plugin can use to access system internals
+							const context = new PluginContext(name, modules);
+
+							// Register in internal plugins
+							plugins[name] = {
+								version: '0.0.0', // Version here so we have a default
+								...await pluginFactory(context), // Init the plugin
+								name // Name afterwards so it can't be overriden
+							};
+
+							// Call Action to reflect new plugins state
+							sync.invokeAction('plugins', 'add', {
+								plugin: {
+									name: plugins[name].name, 
+									version: plugins[name].version, 
+									description: plugins[name].description
+								}
+							});
+
+							progressUpdate();
+							logger.debug(`loaded plugin: ${name}, version: ${plugins[name].version || 'unknown'}`);
+						} catch (e) {
+							logger.error('error in plugin: ' + name, { error: e });
+							throw e;
+						}
+					})();
+				});
 			// Wait til all plugins are initialized and loaded
 			await Promise.allSettled(initPromises);
 
 			logger.debug('all plugins initialized');
 		} catch (e) {
-			logger.error('error during plugin initialization', e);
+			logger.error('plugins module failed', e);
 		}
 	},
 

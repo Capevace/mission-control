@@ -30,6 +30,8 @@ const fs = require('fs');
 
 // const minify = require('html-minifier').minify;
 
+const buildErrorResponseComposer = require('@helpers/error-response-factory');
+
 const authRoutes = require('./routes/auth');
 const dashboardRoutes = require('./routes/dashboard');
 
@@ -45,6 +47,8 @@ const addPluginDashboardComponentsMiddleware = require('./middleware/plugin-dash
 module.exports = function http(sync, database, auth, sessionSecret) {
 	const app = express();
 	const server = createServer(app);
+
+	const composeErrorResponse = buildErrorResponseComposer(auth.permissions);
 
 	let components = {};
 	let pages = {};
@@ -98,23 +102,12 @@ module.exports = function http(sync, database, auth, sessionSecret) {
 	app.use(dashboardRoutes(dashboardRouter, auth));
 
 	app.use(function (err, req, res, next) {
-		if (err.isUserError) {			
-			res.status(err.status).json({
-				error: {
-					message: err.message,
-					status: err.status
-				}
-			});
-		} else {
-			logging.error('Unknown HTTP Error', err);
-
-			res.status(500).json({
-				error: {
-					message: 'An unknown error occurred',
-					status: 500
-				}
-			});
+		if (!err.isUserError) {			
+			logging.error('Unknown HTTP Error', { err });
 		}
+
+		res.status(err.status || 500)
+			.json(composeErrorResponse(err, req.user));
 	});
 
 	const context = {

@@ -2,7 +2,7 @@ const si = require('systeminformation');
 const publicIp = require('public-ip');
 const pkg = require('@root/package.json');
 
-async function fetchStaticInfo() {
+async function composeStaticStats(config) {
 	const [system, cpu, osInfo] = await Promise.all([
 		si.system(),
 		si.cpu(),
@@ -10,6 +10,8 @@ async function fetchStaticInfo() {
 	]);
 
 	return {
+		deviceName: config.name,
+		version: config.version,
 		system: {
 			manufacturer: system.manufacturer,
 			model: system.model
@@ -28,12 +30,11 @@ async function fetchStaticInfo() {
 			name: osInfo.codename,
 			architecture: osInfo.arch,
 			hostname: osInfo.hostname
-		},
-		version: config.version
+		}
 	};
 }
 
-async function fetchDynamicInfo() {
+async function combineWithDynamicStats(staticInfo) {
 	const [
 		temp,
 		memory,
@@ -57,10 +58,11 @@ async function fetchDynamicInfo() {
 	}, null);
 
 	return {
+		...staticInfo,
 		cpu: {
 			...staticInfo.cpu,
-			mainTemperature: temp.main,
-			currentLoad: currentLoad.currentload,
+			mainTemperature: temp.main || -1,
+			currentLoad: currentLoad.currentLoad,
 			cores: currentLoad.cpus.map(cpu => ({
 				load: cpu.load
 			}))
@@ -81,23 +83,23 @@ async function fetchDynamicInfo() {
 
 
 module.exports = async function telemetry(APP) {
-	const { sync, state, database, config, http } = APP;
+	const { config, sync, state, database, http } = APP;
 
 	const service = sync.createService('telemetry', {
 		stats: null
 	});
 
-	const staticInfo = await fetchStaticInfo();
+	const staticInfo = await composeStaticStats(config);
 
 	async function refreshStats() {
-		const dynamicInfo = await fetchDynamicInfo();
+		const stats = await combineWithDynamicStats(staticInfo);
 
 		service.setState({
-			stats: { ...staticInfo, ...dynamicInfo }
+			stats
 		});
 	}
 
-	refreshInfo();
+	refreshStats();
 	setInterval(refreshStats, 20000);
 
 	http.addComponentFile('basic-header', __dirname + '/header.html');

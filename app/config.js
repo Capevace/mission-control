@@ -28,6 +28,7 @@ let config = require('rc')('mission-control', {
 	basePath,
 	logLevel: 'http',
 	debug: false,
+	name: 'Mission Control',
 	auth: {
 		url: '/sso',
 		issuer: 'mission-control-sso',

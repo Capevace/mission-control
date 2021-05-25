@@ -84,7 +84,7 @@ User.systemUser = Object.freeze({
 
 	avatarUrl: null,
 
-	role: 'admin'
+	role: User.UserRole.system
 });
 
 module.exports = User;

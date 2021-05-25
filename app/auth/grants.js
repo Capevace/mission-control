@@ -15,6 +15,9 @@ const userRole = {
 	},
 	'user:password': {
 		'update:own': ['*']
+	},
+	'service': {
+		'update:any': ['*']
 	}
 };
 
@@ -33,8 +36,16 @@ const adminRole = {
 	}
 };
 
+const systemRole = {
+	...adminRole,
+	'plugin': {
+		'create:any': ['*']
+	}
+}
+
 module.exports = {
     guest: guestRole,
     user: userRole,
-    admin: adminRole
+    admin: adminRole,
+    system: systemRole
 };

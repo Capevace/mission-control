@@ -2,6 +2,7 @@ const autoBind = require('auto-bind');
 const jwt = require('jsonwebtoken');
 const Joi = require('joi');
 
+const AuthError = require('@helpers/AuthError');
 const logger = require('@helpers/logger').createLogger('Auth');
 
 class Tokens {
@@ -21,17 +22,24 @@ class Tokens {
 
 	verify(token) {
 		try {
+			const { user } = jwt.verify(token, this.sessionSecret, {
+				expiresIn: 86400,
+				issuer: 'mission-control',
+				audience: 'mission-control:api'
+			});
+			
 
-			return Tokens.tokenSchema.verify(
-				jwt.verify(token, this.sessionSecret, {
-					expiresIn: 86400,
-					issuer: 'mission-control',
-					audience: 'mission-control:api'
-				})
-			);
+
+			const { value, error } = Tokens.tokenSchema.validate({ user });
+			if (error) {
+				throw new AuthError('Token data invalid', 401);
+			}
+
+			return value;
 		} catch (e) {
-			logger.debug('Error verifying JWT', e);
-			return false;
+			logger.error('Error verifying JWT', e);
+			
+			throw new AuthError(e.message, 401);
 		}
 	}
 }

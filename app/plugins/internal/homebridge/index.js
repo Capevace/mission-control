@@ -30,7 +30,7 @@ module.exports = function homekitInit(APP) {
 		/**
 		 * @type {Array<HomebridgeDevice>}
 		 */
-		services: []
+		devices: {}
 	});
 
 	if (!config.homebridge.pin) {
@@ -45,7 +45,7 @@ module.exports = function homekitInit(APP) {
 		status: ConnectionStatus.connecting
 	});
 
-	http.addComponentFile('homekitSwitches', __dirname + '/component.html');
+	http.addComponentFile('homebridgeSwitches', __dirname + '/component.html');
 
 	const homebridge = new HapClient({
 		pin: config.homebridge.pin,
@@ -129,6 +129,11 @@ module.exports = function homekitInit(APP) {
 	function updateHomebridgeDevices(devices) {
 		let simplifiedDevices = {};
 		for (const device of devices) {
+			// Skip the "Homebridge 48EA" type entry that's basically just metadata (ProtocolInformation)
+			// We dont need this in a device list
+			if (device.type === 'ProtocolInformation')
+				continue;
+
 			simplifiedDevices[device.uniqueId] = simplifyDevice(device);
 		}
 
