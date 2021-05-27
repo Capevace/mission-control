@@ -50,7 +50,6 @@ async function startMissionControl(progress) {
 	const HTTP = require('./http/HTTP');
 	const socket = require('./socket');
 
-	
 	progress('start http', 0.4);
 
 	// Initialize the main mission control http server
