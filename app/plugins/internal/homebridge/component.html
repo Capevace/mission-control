@@ -49,7 +49,7 @@
         },
         methods: {
             toggle(uniqueId, changes) {
-                window.invokeAction('HOMEKIT:MODIFY-CHARACTERISTICS', {
+                this.$invokeAction('HOMEKIT:MODIFY-CHARACTERISTICS', {
                     uniqueId,
                     changes
                 });

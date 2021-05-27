@@ -47,15 +47,14 @@ async function startMissionControl(progress) {
 	
 	progress('load http & socket', 0.3);
 
-	const initHttp = require('./http');
+	const HTTP = require('./http/HTTP');
 	const socket = require('./socket');
 
 	
 	progress('start http', 0.4);
 
 	// Initialize the main mission control http server
-	const http = initHttp(sync, database, auth, sessionSecret);
-
+	const http = new HTTP(sessionSecret, { config, sync, database, auth, logging });
 	
 	progress('start socket', 0.5);
 
@@ -65,22 +64,22 @@ async function startMissionControl(progress) {
 	
 	progress('load plugins', 0.75);
 
-	const plugins = require('./plugins');
-	await plugins.initPlugins({
+	const Plugins = require('./plugins/Plugins');
+	const plugins = new Plugins({
 		auth,
 		http,
 		sync,
 		database,
 		config
-	}, progress);
+	});
+	plugins.on('progress', progress);
+	
+	await plugins.load();
 
 	
 	progress('http listen', 0.95);
 	
-	http.server.listen(config.http.port, () => {
-		logging.http(`server listening on port:`, config.http.port);
-		logging.logReadyMessage(config.http.url, config.auth.url);
-	});
+	http.listen();
 
 	// if (config.debug) {
 	// 	state.subscribe('*', (event, data) =>
