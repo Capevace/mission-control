@@ -17,7 +17,20 @@ module.exports = function handleSync(socket, { on, sync, logger }) {
 	on('action', async ({ service, action, data }) => {
 		logger.debug(`action request - service: ${service}, action: ${action}`);
 
-		return await sync.invokeAction(service, action, data, user);
+		try {
+			return await sync.invokeAction(service, action, data, socket.user);
+		} catch (e) {
+			if (!e.isUserError) {
+				logger.error(`error invoking action`, {
+					service,
+					action,
+					error: e
+				});
+			}
+
+			// Pass error to request error handler
+			throw e;
+		}
 	});
 
 	// client.on('subscribe', () => console.error('WE HAVE A WINNER'));
