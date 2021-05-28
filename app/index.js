@@ -25,10 +25,14 @@ async function startMissionControl(progress) {
 	logger.info(`Starting Mission Control...`);
 	progress('Boot Database', 0.01);
 
-	const database = require('@database'); // eslint-disable-line no-unused-vars
+	const Database = require('@database/Database');
+	const database = new Database(config.databasePath);
+	await database.init();
 
 	let sessionSecret = database.get('session-secret', null);
 	if (!sessionSecret) {
+		// TODO: UUIDs are time-based so this is incredibly insecure.
+		// Change this to some solid crypto random generation.
 		sessionSecret = uuid();
 		database.set('session-secret', sessionSecret);
 	}
