@@ -84,7 +84,7 @@ class Service {
 		 * Service logger
 		 * @type {Logger}
 		 */
-		this.logger = Logger.createLogger(`service:${name}`);
+		this.logger = Logger.createLogger(`Service:${name}`, 'magenta');
 		
 		/**
 		 * Permissions module
@@ -404,6 +404,8 @@ class Service {
 			this.emitter.emit(`action:${name}`);
 
 			return result;
+		} else {
+			throw new UserError(`action: ${name} not found on service ${this.name}`, 404);
 		}
 	}
 

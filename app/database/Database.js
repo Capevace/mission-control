@@ -4,6 +4,7 @@
  */
 
 const fs = require('fs/promises');
+const fsSync = require('fs');
 const autoBind = require('auto-bind');
 
 const UsersAPI = require('@database/api/UsersAPI');
@@ -58,9 +59,9 @@ class Database {
 	 * @protected
 	 */
 	_saveData() {
-		fs.writeFileSync(
-			config.databasePath,
-			JSON.stringify(database, null, 2),
+		fsSync.writeFileSync(
+			this.path,
+			JSON.stringify(this.data, null, 2),
 			err => {
 				if (err) logger.error('Error writing database file', err);
 			}
@@ -94,18 +95,18 @@ class Database {
 	 * @return {any}                          - The data from the database.
 	 */
 	get(key, defaultValue = null) {
-		return database[key] || defaultValue;
+		return this.data[key] || defaultValue;
 	}
 }
 
 Database.verifyOrCreateDatabaseAt = async function verifyOrCreateDatabaseAt(databasePath) {
 	// If the database.json file doenst exist, create it
 	// Otherwise, read from it and populate the database.
-	if (!(await fs.exists(config.databasePath))) {
-		await fs.writeFile(config.databasePath, '{}');
+	if (!(await fs.exists(databasePath))) {
+		await fs.writeFile(databasePath, '{}');
 	}
 };
 
 
-
+module.exports = Database;
 

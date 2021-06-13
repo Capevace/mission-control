@@ -9,6 +9,7 @@ const User = require('@models/User');
 
 const UserError = require('@helpers/UserError');
 const crypto = require('@helpers/crypto');
+const logger = require('@helpers/logger').createLogger('Users API');
 
 /**
  * Database API for the User model
@@ -26,7 +27,7 @@ class UsersAPI extends DatabaseAPI {
 
 		// TODO: Temporary user creation should not be handled in the UsersAPI class
 		// 		 Instead a new Defaults class or something should be created that handles all these edge cases.
-		const foundUsers = db.get('users', {});
+		const foundUsers = this.database.get('users', {});
 		
 		// If no users are present, we generate a temporary user account and tell the user in the console
 		if (Object.keys(foundUsers).length === 0) {

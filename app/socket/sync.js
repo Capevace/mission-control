@@ -53,7 +53,7 @@ module.exports = function handleSync(socket, { on, sync, logger }) {
 		subscriptions[serviceName] = service.subscribe(relayStateUpdates);
 
 		// Send initial state
-		logger.debug('sending initial state', { service, state: service.state });
+		logger.debug('sending initial state', { state: service.state });
 		relayStateUpdates(service.state);
 
 		return {

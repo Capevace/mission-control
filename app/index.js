@@ -15,7 +15,8 @@ const logging = require('@helpers/logger');
 
 module.exports = async function start() {
 	logging.logConfig(config);
-	logging.progress(startMissionControl);
+	startMissionControl(() => {});
+	// logging.progress(startMissionControl);
 };
 
 async function startMissionControl(progress) {
@@ -73,22 +74,18 @@ async function startMissionControl(progress) {
 		http,
 		sync,
 		database,
-		config
+		config,
+		logging
 	});
 	plugins.on('progress', progress);
 	
 	await plugins.load();
 
-	
 	progress('http listen', 0.95);
 	
 	http.listen();
 
-	// if (config.debug) {
-	// 	state.subscribe('*', (event, data) =>
-	// 		eventLogger.debug(event, data.actionData || data)
-	// 	);
-	// }
+	progress('done', 1.0);
 };
 
 

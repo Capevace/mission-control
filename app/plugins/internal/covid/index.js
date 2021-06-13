@@ -7,14 +7,15 @@ const cities = {
 
 
 module.exports = function bahnInit(APP) {
-	const { sync, permissions, logger, http, database } = APP;
+	const { sync, permissions, logger, dashboard, database } = APP;
 
 	// permissions
 	// 	.allow('admin', 'create', 'covid-data', 'any');
 
 	const service = sync.createService('covid', { cities: {} });
 
-	http.addComponentFile('covid', __dirname + '/component.html');
+	dashboard.component('covid')
+		.custom(__dirname + '/component.html');
 
 
 	const refreshInfo = async () => {

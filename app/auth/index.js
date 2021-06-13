@@ -28,7 +28,7 @@ module.exports = function initAuth(config, db, sessionSecret) {
 				passwordField: 'password'
 			},
 			async (username, password, done) => {
-				const user = await api.findUser(username);
+				const user = await api.findUnsafe(username);
 
 				if (user && (await crypto.comparePassword(password, user.password))) {
 					return done(null, user);
@@ -44,7 +44,7 @@ module.exports = function initAuth(config, db, sessionSecret) {
 	});
 
 	passport.deserializeUser(async function(username, cb) {
-		const user = await api.findUser(username);
+		const user = await api.find(username);
 
 		if (!user) return cb(null, false);
 

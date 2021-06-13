@@ -18,6 +18,9 @@ const userRole = {
 	},
 	'service': {
 		'update:any': ['*']
+	},
+	'homebridge': {
+		'update:any': ['*']
 	}
 };
 

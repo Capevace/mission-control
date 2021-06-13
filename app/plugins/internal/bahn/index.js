@@ -1,11 +1,12 @@
 const { routesToHL } = require('./api');
 
 module.exports = function bahnInit(APP) {
-	const { sync, logger, http } = APP;
+	const { sync, logger, dashboard } = APP;
 
 	const service = sync.createService('trains', { lines: [] });
 
-	http.addComponentFile('bahn', __dirname + '/component.html');
+	dashboard.component('bahn')
+		.custom(__dirname + '/component.html');
 
 	const refreshInfo = async () => {
 		try {

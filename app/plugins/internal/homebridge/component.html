@@ -48,11 +48,15 @@
             }
         },
         methods: {
-            toggle(uniqueId, changes) {
-                this.$invokeAction('HOMEKIT:MODIFY-CHARACTERISTICS', {
-                    uniqueId,
-                    changes
-                });
+            async toggle(uniqueId, changes) {
+                try {
+                    await this.$invokeAction('interact', {
+                        uniqueId,
+                        changes
+                    });
+                } catch (e) {
+                    alert(e.message);
+                }
             },
 
             isDeviceActive(device) {
