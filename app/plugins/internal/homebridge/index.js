@@ -137,7 +137,7 @@ module.exports = function homekitInit(APP) {
 
 			simplifiedDevices[device.uniqueId] = simplifyDevice(device);
 		}
-		console.log("WHAT", override ? simplifiedDevices : { ...service.state.devices, ...simplifiedDevices })
+		
 		service.setState({
 			devices: override ? simplifiedDevices : { ...service.state.devices, ...simplifiedDevices },
 			status: ConnectionStatus.connected
