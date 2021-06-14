@@ -360,7 +360,7 @@ class Service {
 					onChange.unsubscribe(wrappedState);
 
 					stateHasChanged = true;
-					state = newValue;
+					state = newState;
 					wrappedState = wrapState(state);
 				}
 			});
