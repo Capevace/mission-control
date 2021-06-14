@@ -1,4 +1,6 @@
-#!/usr/bin/env NODE_ENV=production node
+#!/usr/bin/env node
+// NODE_ENV=production ?
+
 const start = require('../app');
 
 start();

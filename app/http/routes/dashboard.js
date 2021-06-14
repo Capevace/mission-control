@@ -43,7 +43,7 @@ module.exports = function dashboardRoutes(app, auth) {
 	app.use('/resources', express.static(path.resolve(__dirname, '../../../resources')));
 
 	app.get('/apple-touch-icon.png', (req, res) => {
-		res.sendFile(path.resolve(__dirname, '../../../resources/mission-control-icon.png'));
+		res.sendFile(path.resolve(__dirname, '../../../resources/apple-touch-icon.png'));
 	});
 
 	app.get('/favicon.png', (req, res) => {
