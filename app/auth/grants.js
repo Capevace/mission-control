@@ -21,6 +21,9 @@ const userRole = {
 	},
 	'homebridge': {
 		'update:any': ['*']
+	},
+	'dashboard': {
+		'update:any': ['*']
 	}
 };
 
