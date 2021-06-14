@@ -1,7 +1,8 @@
 module.exports = function dashboardExample(APP) {
-	const { http } = APP;
+	const { dashboard } = APP;
 
-	http.addComponentFile('links', __dirname + '/links.html');
+	dashboard.component('links')
+		.custom(__dirname + '/links.html');
 
 	return {
 		version: '0.0.1',

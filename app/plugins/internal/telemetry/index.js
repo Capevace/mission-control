@@ -83,7 +83,7 @@ async function combineWithDynamicStats(staticInfo) {
 
 
 module.exports = async function telemetry(APP) {
-	const { config, sync, state, database, http } = APP;
+	const { config, sync, state, database, dashboard } = APP;
 
 	const service = sync.createService('telemetry', {
 		stats: null
@@ -102,7 +102,8 @@ module.exports = async function telemetry(APP) {
 	refreshStats();
 	setInterval(refreshStats, 20000);
 
-	http.addComponentFile('basic-header', __dirname + '/header.html');
+	dashboard.component('basic-header')
+		.custom(__dirname + '/header.html');
 
 	return {
 		version: '0.0.1',

@@ -18,8 +18,8 @@
  * @returns {Plugin}
  */
 module.exports = function fileBrowserInit(APP) {
-	APP.http.raw.proxy(
-		'/files', 
+	APP.http.proxy(
+		'/', 
 		'http://localhost:3002', 
 		{
 			onProxyReq(proxyReq, req) {

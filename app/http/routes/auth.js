@@ -62,7 +62,7 @@ module.exports = function authRoutes(app, { auth, database: db }) {
 		})),
 		async (req, res) => {
 			const username = req.params.username;
-			const user = await db.api.users.findUser(username);
+			const user = await db.api.users.find(username);
 
 			if (!user) {
 				throw new UserError(`User ${username} not found`, 404);
@@ -104,7 +104,7 @@ module.exports = function authRoutes(app, { auth, database: db }) {
 			await db.api.users.create(username, user);
 
 
-			res.json({ user: await db.api.users.findSafeUser(username) });
+			res.json({ user: await db.api.users.find(username) });
 		}
 	);
 
@@ -122,7 +122,7 @@ module.exports = function authRoutes(app, { auth, database: db }) {
 			
 			await db.api.users.update(username, user);
 
-			res.json({ user: await db.api.users.findSafeUser(username) });
+			res.json({ user: await db.api.users.find(username) });
 		}
 	);
 
@@ -143,7 +143,7 @@ module.exports = function authRoutes(app, { auth, database: db }) {
 
 			await db.api.users.update(username, user);
 
-			res.json({ user: await db.api.users.findSafeUser(username) });
+			res.json({ user: await db.api.users.find(username) });
 		}
 	);
 

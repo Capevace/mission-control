@@ -13,19 +13,16 @@
  * @requires querystring
  */
 
-const config = require('@config');
-const logging = require('@helpers/logger');
-
 const express = require('express');
 const { createServer } = require('http');
-
 const session = require('express-session');
 const FileStore = require('session-file-store')(session);
-const proxy = require('http-proxy-middleware');
 const flash = require('connect-flash');
 const bodyParser = require('body-parser');
 const passport = require('passport');
-const fs = require('fs');
+
+const DynamicDashboard = require('./DynamicDashboard');
+const PluginHTTPRouter = require('./PluginHTTPRouter');
 
 // const minify = require('html-minifier').minify;
 
@@ -54,14 +51,14 @@ class HTTP {
 		this.port = config.http.port;
 
 		this.app = express();
-		this.server = createServer(app);
+		this.server = createServer(this.app);
 
 		this.composeErrorResponse = buildErrorResponseComposer(auth.permissions);
 
-		app.use(logging.logMiddleware);
-		app.use(bodyParser.urlencoded({ extended: true }));
-		app.use(bodyParser.json());
-		app.use(
+		this.app.use(logging.logMiddleware);
+		this.app.use(bodyParser.urlencoded({ extended: true }));
+		this.app.use(bodyParser.json());
+		this.app.use(
 			session({
 				store: new FileStore({
 					path: config.basePath + '/session',
@@ -78,23 +75,23 @@ class HTTP {
 				},
 			})
 		);
-		app.use(flash());
+		this.app.use(flash());
 
-		app.use(passport.initialize());
-		app.use(passport.session());
+		this.app.use(passport.initialize());
+		this.app.use(passport.session());
 
 		// Parse host domain from headers
-		app.use(this.onRequest);
-		app.use(this.onError);
+		this.app.use(this.onRequest.bind(this));
+		this.app.use(this.onError.bind(this));
 
 		
 		this.authRouter = new express.Router();
-		app.use(authRoutes(this.authRouter, { database, auth }));
+		this.app.use(authRoutes(this.authRouter, { database, auth }));
 
 		// Dashboard routes need component & page data attached
 		this.dashboardRouter = new express.Router();
-		dashboardRouter.use(this.onDashboardRequest);
-		app.use(dashboardRoutes(dashboardRouter, auth));
+		this.dashboardRouter.use(this.onDashboardRequest.bind(this));
+		this.app.use(dashboardRoutes(this.dashboardRouter, auth));
 	}
 
 	onRequest(req, res, next) {
@@ -123,14 +120,14 @@ class HTTP {
 			.json(this.composeErrorResponse(err, req.user));
 	}
 
-	composePluginContext(pluginName) {
+	createHTTPPluginContext(pluginName) {
 		const baseUrl = `/plugins/${pluginName}`;
 
 		const pluginRouter = new PluginHTTPRouter(baseUrl, this.dashboard);
 
-		app.use(pluginRouter);
-		app.use(baseUrl, pluginRouter.unsafe);
-		app.use(baseUrl, this.auth.middleware.requireAuthentication, pluginRouter.root);
+		this.app.use(pluginRouter);
+		this.app.use(baseUrl, pluginRouter.unsafe);
+		this.app.use(baseUrl, this.auth.middleware.requireAuthentication, pluginRouter.root);
 
 		return pluginRouter;
 	}
@@ -143,138 +140,5 @@ class HTTP {
 	}
 }
 
-class DynamicDashboard {
-	constructor(sync) {
-		this.sync = sync;
-		
-		this.components = {};
-		this.pages = {};
-	}
 
-	get state() {
-		return Object.freeze(this.sync.state);
-	}
-
-	getComponentsHTML() {
-		return Object.values(this.components)
-			.map((component) => `<!-- ${component.name} COMPONENT HTML -->
-				${component.contentFn ? component.contentFn() : component.content}
-			`)
-			.reduce((fullHTML, html) => fullHTML + html, '');
-	}
-
-	getPagesJSON() {
-		return JSON.stringify(Object.values(this.pages));
-	}
-
-	createComponent(name, vueFilePath = null) {
-		if (name in this.components)
-			throw new Error(`Component ${name} already exists`);
-
-		// return component builder
-		this.components[name] = {
-			name,
-			vueFilePath
-		};
-
-		return {
-			vue: (vueFilePath) => {
-				this.components[name].vueFilePath = vueFilePath;
-
-				// Read from FS
-				// ? Compile
-			}
-		};
-	}
-
-	createPage(url, title) {
-		if (url in this.pages)
-			throw new Error(`Page at ${url} was already registered`);
-
-		this.dashboard.pages[url] = {
-			name,
-			content: null,
-			options: {}
-		};
-
-		const builder = {
-			vue: (vueFilePath) => {
-				const absolutePath = path.resolve(this.pluginPath, vueFilePath);
-
-				this.pages[url].content = {
-					type: 'vue',
-					path: absolutePath,
-					raw: fs.readFileSync(absolutePath)
-				};
-
-				// Read from FS
-				// ? Compile
-
-				return builder;
-			},
-
-			html: (htmlFilePath) => {
-				const absolutePath = path.resolve(this.pluginPath, htmlFilePath);
-				
-				this.pages[url].content = {
-					type: 'html',
-					path: absolutePath,
-					raw: fs.readFileSync(absolutePath)
-				};
-
-				return builder;
-			}	
-		};
-		return builder;
-	}
-}
-
-class PluginHTTPRouter extends express.Router {
-	constructor(baseURL, dashboard) {
-		super();
-
-		this.baseURL = baseURL;
-		this.dashboard = dashboard;
-
-		this.unsafe = new express.Router();
-		this.unsafe.baseURL = baseURL;
-
-		this.root = new express.Router();
-		this.root.baseURL = '/';
-
-		autoBind(this);
-	}
-
-	/**
-	 * Proxy an HTTP route to another target URL.
-	 * This is useful if you want to proxy something through mission-control auth.
-	 */
-	proxy(route, target, options = {}) {
-		this.use(
-			route,
-			proxy('/', {
-				target,
-				logLevel: config.debug ? 'debug' : 'warn',
-				ws: true,
-				pathRewrite: {
-					[`^${route}`]: '/',
-					[`^${route}/`]: '/',
-				},
-				...options,
-			})
-		);
-
-		return this;
-	}
-
-	
-	component(name, vueFilePath = null) {
-		return this.dashboard.createComponent(name, vueFilePath);
-	}
-
-	page() {
-		
-
-		
-	}
-}
+module.exports = HTTP;

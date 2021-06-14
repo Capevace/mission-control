@@ -1,23 +1,23 @@
-const loggers = require('@helpers/logger');
 const UserError = require('@helpers/UserError');
 
 const { v4: uuid } = require('uuid');
 const Joi = require('joi');
 
 class PluginContext {
-	constructor(name, { auth, http, sync, database, config }) {
+	constructor(name, { auth, http, sync, database, config, logging }) {
 		this.permissions = auth.permissions;
-		this.logger = loggers.createLogger(`${name}`);
-		this.http = http.composeAPIContext(name);
+		this.logger = logging.createLogger(`${name}`);
+		this.http = http.createHTTPPluginContext(name);
+		this.dashboard = http.dashboard;
 		this.database = database;
 		this.config = config;
 		this.sync = sync;
 		this.helpers = {
-			uuid
+			uuid,
+			Joi
 		};
+		this.UserError = UserError;
 	}
-
-
 }
 
 

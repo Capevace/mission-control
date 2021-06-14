@@ -47,7 +47,7 @@ module.exports = function handleAuth(socket, { unsafeOn, composeErrorResponse, t
 				throw new AuthError(`Invalid token`, 400);
 			}
 
-			const user = await users.findSafeUser(jwt.user.username);
+			const user = await users.find(jwt.user.username);
 
 			if (!user) {
 				throw new AuthError(`Could not find user with username ${jwt.user.username}`, 401);

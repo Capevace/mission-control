@@ -15,7 +15,8 @@ const logging = require('@helpers/logger');
 
 module.exports = async function start() {
 	logging.logConfig(config);
-	logging.progress(startMissionControl);
+	startMissionControl(() => {});
+	// logging.progress(startMissionControl);
 };
 
 async function startMissionControl(progress) {
@@ -25,10 +26,14 @@ async function startMissionControl(progress) {
 	logger.info(`Starting Mission Control...`);
 	progress('Boot Database', 0.01);
 
-	const database = require('@database'); // eslint-disable-line no-unused-vars
+	const Database = require('@database/Database');
+	const database = new Database(config.databasePath);
+	await database.init();
 
 	let sessionSecret = database.get('session-secret', null);
 	if (!sessionSecret) {
+		// TODO: UUIDs are time-based so this is incredibly insecure.
+		// Change this to some solid crypto random generation.
 		sessionSecret = uuid();
 		database.set('session-secret', sessionSecret);
 	}
@@ -69,22 +74,18 @@ async function startMissionControl(progress) {
 		http,
 		sync,
 		database,
-		config
+		config,
+		logging
 	});
 	plugins.on('progress', progress);
 	
 	await plugins.load();
 
-	
 	progress('http listen', 0.95);
 	
 	http.listen();
 
-	// if (config.debug) {
-	// 	state.subscribe('*', (event, data) =>
-	// 		eventLogger.debug(event, data.actionData || data)
-	// 	);
-	// }
+	progress('done', 1.0);
 };
 
 

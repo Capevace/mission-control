@@ -1,5 +1,5 @@
 module.exports = function youtubeDownloadInit(APP) {
-	APP.http.raw.proxy('/youtube-downloader', 'http://localhost:3003');
+	APP.http.proxy('/', 'http://localhost:3003');
 
 	return {
 		version: '0.0.1',

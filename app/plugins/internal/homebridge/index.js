@@ -22,7 +22,7 @@ const ConnectionStatus = {
 };
 
 module.exports = function homekitInit(APP) {
-	const { sync, logger, config, http } = APP;
+	const { sync, logger, config, dashboard } = APP;
 
 	const service = sync.createService('homebridge', {
 		status: ConnectionStatus.disconnected,
@@ -45,7 +45,8 @@ module.exports = function homekitInit(APP) {
 		status: ConnectionStatus.connecting
 	});
 
-	http.addComponentFile('homebridgeSwitches', __dirname + '/component.html');
+	dashboard.component('homebridgeSwitches')
+		.custom(__dirname + '/component.html');
 
 	const homebridge = new HapClient({
 		pin: config.homebridge.pin,
@@ -71,7 +72,7 @@ module.exports = function homekitInit(APP) {
 		 */
 		const devices = await homebridge.getAllServices();
 
-		updateHomebridgeDevices(devices);
+		updateHomebridgeDevices(devices, true);
 
 		if (monitor) {
 			monitor.finish();
@@ -126,7 +127,7 @@ module.exports = function homekitInit(APP) {
 	 * Set devices and update status to connected
 	 * @param  {Array.<HomebridgeDevice>} devices 
 	 */
-	function updateHomebridgeDevices(devices) {
+	function updateHomebridgeDevices(devices, override = false) {
 		let simplifiedDevices = {};
 		for (const device of devices) {
 			// Skip the "Homebridge 48EA" type entry that's basically just metadata (ProtocolInformation)
@@ -136,9 +137,9 @@ module.exports = function homekitInit(APP) {
 
 			simplifiedDevices[device.uniqueId] = simplifyDevice(device);
 		}
-
+		
 		service.setState({
-			devices: simplifiedDevices,
+			devices: override ? simplifiedDevices : { ...service.state.devices, ...simplifiedDevices },
 			status: ConnectionStatus.connected
 		});
 	}
