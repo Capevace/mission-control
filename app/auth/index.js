@@ -34,7 +34,7 @@ module.exports = function initAuth(config, db, sessionSecret) {
 					return done(null, user);
 				}
 
-				return done(null, false);
+				return done(null, false, { message: 'Incorrect username or password.' });
 			}
 		)
 	);
@@ -46,7 +46,9 @@ module.exports = function initAuth(config, db, sessionSecret) {
 	passport.deserializeUser(async function(username, cb) {
 		const user = await api.find(username);
 
-		if (!user) return cb(null, false);
+		if (!user) {
+			return cb(new Error(`User ${username} not found`), null);
+		}
 
 		return cb(null, user);
 	});
@@ -68,6 +70,7 @@ module.exports = function initAuth(config, db, sessionSecret) {
 				 */
 				async serveLoginPage(req, res) {
 					const errors = req.flash('error');
+
 					let content = await fs.readFile(path.resolve(__dirname,'../views/login.html'));
 
 					content = content.toString()
@@ -82,24 +85,40 @@ module.exports = function initAuth(config, db, sessionSecret) {
 					res.send(content);
 				},
 
-				/**
-				 * Perform authentication and log in the user.
-				 */
-				performAuthentication: passport.authenticate('local', {
-					failureRedirect: '/login',
-					successRedirect: '/',
-					failureFlash: 'Incorrect username or password.'
-				}),
+				authenticate(req, res, next) {
+					passport.authenticate('local', (error, user, info) => {
+						if (error) { 
+							logger.error('error during authentication', { error });
+							return next(error);
+						}
+						
+						if (!user) { 
+							req.flash('error', info.message || 'Oops, something went wrong');
+							
+							return res.redirect('/login');
+						}
+
+						req.logIn(user, (error) => {
+							if (error) { 
+								logger.error('error during authentication', { error });
+
+								return next(error);
+							}
+
+							return res.redirect('/');
+						});
+					})(req, res, next);
+				},
 
 				/**
 				 * Express handler to logout the user
 				 * @param  {express.Request} req
 				 * @param  {express.Response} res
 				 */
-				logout(req, res) {
-					req.logout();
+				logout(req, res, next) {
+					req.logOut();
 
-					res.redirect('/login');
+					next();
 				}
 			}
 		}

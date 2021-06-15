@@ -13,6 +13,7 @@ module.exports.comparePassword = async function comparePassword(password, hash) 
 
 		return match;
 	} catch (e) {
+		console.log(e);
 		return false;
 	}
 };

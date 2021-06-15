@@ -12,20 +12,36 @@ module.exports = class AuthMiddleware {
 	}
 
 	/**
-	 * Express handler to only let authenticated users pass.
+	 * Express middleware to only let authenticated users pass.
 	 *
 	 * If 'next' is passed for any of the arguments,
 	 * the middleware will call the next function instead
 	 * of redirecting.
 	 *
-	 * @param {string} loggedInUrl URL to redirect to if logged in
-	 * @param {string} loggedOutUrl URL to redirect to if logged out
+	 * @param {Request}  req  - Request
+	 * @param {Response} res  - Response
+	 * @param {Function} next - Next callback
 	 */
 	requireAuthentication(req, res, next) {
 		if (req.isAuthenticated()) {
 			next();
 		} else {
 			res.redirect('/login');
+		}
+	}
+
+	/**
+	 * Express handler to only let UNauthenticated users pass (ie. not logged in).
+	 *
+	 * @param {Request}  req  - Request
+	 * @param {Response} res  - Response
+	 * @param {Function} next - Next callback
+	 */
+	onlyUnauthenticated(req, res, next) {
+		if (req.isAuthenticated()) {
+			res.redirect('/');
+		} else {
+			next();
 		}
 	}
 

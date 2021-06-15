@@ -23,7 +23,8 @@ module.exports = function fileBrowserInit(APP) {
 		'http://localhost:3002', 
 		{
 			onProxyReq(proxyReq, req) {
-				proxyReq.setHeader('X-Files-Auth', req.user.username);
+				if (req.user)
+					proxyReq.setHeader('X-Files-Auth', req.user.username);
 			}
 		}
 	);

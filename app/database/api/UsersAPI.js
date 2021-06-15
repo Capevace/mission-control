@@ -32,12 +32,10 @@ class UsersAPI extends DatabaseAPI {
 		// If no users are present, we generate a temporary user account and tell the user in the console
 		if (Object.keys(foundUsers).length === 0) {
 			logger.newLine();
+			logger.warn('WARNING');
 			logger.warn('=========================================================');
-			logger.newLine();
 			logger.warn('No registered users found in DB!');
 			logger.warn(`Enabling admin account 'temp' with password '${this._tempPassword}'`);
-			logger.newLine();
-			logger.warn('=========================================================');
 			logger.newLine();
 		}
 	}
@@ -164,7 +162,7 @@ class UsersAPI extends DatabaseAPI {
 	 */
 	async updatePassword(username, password) {
 		const oldUser = await this.findUnsafe(username);
-
+		console.log('new password', username, password);
 		if (!oldUser)
 			throw new UserError(`User ${username} could not be found`);
 

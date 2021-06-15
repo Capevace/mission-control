@@ -1,26 +1,29 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Sign In</title>
-		<link rel="stylesheet" type="text/css" href="/assets/index.css" />
+		<title>Login – Mission Control</title>
+		<link rel="stylesheet" type="text/css" href="/assets/css/index.css" />
 		<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+		<link rel="icon" href="/favicon.png">
 	</head>
-	<body class="bg-main-darker text-white antialiased font-sans flex justify-center mt-10 sm:mt-24">
-		<form action="/login" method="post" class="max-w-2xl bg-main-dark rounded-2xl p-5 m-5">
-			<h1 class="text-2xl font-bold mb-5 w-full text-center text-main-lighter">Sign In</h1>
-			{{ERROR_MSG}}
+	<body class="bg-purple-700 text-white antialiased font-sans flex justify-center mt-10 sm:mt-24">
+		<form action="/login" method="post" class="max-w-2xl bg-purple-600 rounded-2xl p-5 m-5 forms">
+			<h1 class="text-2xl font-bold mb-5 w-full text-center text-purple-200">Login</h1>
+			<div class="text-purple-200 text-sm mb-5">{{ERROR_MSG}}</div>
 			<div class="flex flex-wrap mb-5 w-full ">
-				<label for="username" class="w-full text-xs mb-2 font-medium text-main-lighter">Username</label>
-				<input type="text" id="username" name="username" autofocus="autofocus" class="outline-none bg-main-darker text-main-light w-full rounded-xl border-2 border-transparent hover:shadow-lg focus:shadow-lg focus:border-main px-5 py-3 text-main-darkest"/>
+				<label for="username" class="w-full text-xs mb-2 font-medium text-purple-lighter">Username</label>
+				<input type="text" id="username" name="username" autofocus="autofocus" class=""/>
 			</div>
 
 			<div class="flex flex-wrap mb-8 w-full">
-				<label for="password" class="w-full text-xs mb-2 font-medium text-main-lighter">Password</label>
-				<input type="password" id="password" name="password" class="outline-none bg-main-darker text-main-light w-full rounded-xl border-2 border-transparent hover:shadow-lg focus:shadow-lg focus:border-main px-5 py-3 text-main-darkest" />
+				<label for="password" class="w-full text-xs mb-2 font-medium text-purple-lighter">Password</label>
+				<input type="password" id="password" name="password" class="" />
 			</div>
 
 			<div class="submit-container">
-				<button type="submit" class="rounded-xl bg-main-darker text-xl cursor-pointer font-bold w-full p-3 text-main-lighter hover:shadow-lg">Login</button>
+				<button type="submit" class="w-full">Login</button>
 			</div>
 		</form>
 

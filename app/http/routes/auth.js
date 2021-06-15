@@ -37,8 +37,13 @@ const validator = require('@http/middleware/validator');
 module.exports = function authRoutes(app, { auth, database: db }) {
 	
 	app.get('/login', auth.controllers.login.serveLoginPage);
-    app.post('/login', auth.controllers.login.performAuthentication);
-	app.get('/logout', auth.controllers.login.logout);
+    // app.post('/login', passport.authenticate('local', { 
+    // 	successRedirect: '/',
+    // 	failureRedirect: '/login',
+    // 	failureFlash: true
+    // }));
+    app.post('/login', auth.controllers.login.authenticate);
+	app.post('/logout', auth.controllers.login.logout, (req, res) => res.status(200).redirect('/login'));
 
 	/** Get current User as JSON */
 	app.get(
@@ -80,7 +85,6 @@ module.exports = function authRoutes(app, { auth, database: db }) {
 		auth.middleware.requireAuthentication, 
 		auth.middleware.requirePermission('read', 'any', 'user'),
 		async (req, res) => {
-			console.log('wat')
 			const usersMap = await db.api.users.all() || {};
 			const users = Object.values(usersMap)
 				.map(user => req.permission.filter(user));
@@ -158,7 +162,7 @@ module.exports = function authRoutes(app, { auth, database: db }) {
 		async (req, res) => {
 			await db.api.users.delete(req.params.username);
 
-			res.status(200).end();
+			res.status(200).json({ success: true });
 		}
 	);
 
@@ -176,7 +180,7 @@ module.exports = function authRoutes(app, { auth, database: db }) {
 
 			await db.api.users.updatePassword(username, newPassword);
 
-			res.status(200).end();
+			res.status(200).json({ success: true });
 		}
 	);
 
@@ -185,19 +189,20 @@ module.exports = function authRoutes(app, { auth, database: db }) {
 		'/users/:username/change-password',
 		auth.middleware.requireAuthentication, 
 		auth.middleware.requirePermission('update', 'any', 'user:password'),
-		validator.params(Joi.object({
-			username: Joi.string().required()
-		})),
 		validator.body(Joi.object({
-			user: User.schema
+			password: Joi.string().required()
 		})),
 		async (req, res) => {
 			const username = req.params.username;
 			const newPassword = req.body.password;
 
-			await db.api.users.updatePassword(username, newPassword);
+			try {
+				await db.api.users.updatePassword(username, newPassword);
+			} catch (e) {
+				console.log(e)
+			}
 
-			res.status(200).end();
+			res.status(200).json({ success: true });
 		}
 	);
 
