@@ -1,5 +1,7 @@
 const chalk = require('chalk');
 const uuid = require('uuid/v4');
+const superagent = require('superagent');
+
 
 /**
  * Notification type
@@ -61,6 +63,10 @@ module.exports = function initNotificationsPlugin({ sync, auth, state, logger, d
 					id
 				};
 			}
+
+			superagent
+				.get('http://datenregal.local:4001/ble/mode/notification')
+				.catch((e) => logger.error(`Couldn't run LED notification mode`, { error: e }));
 		});
 
 	service.action('delete')
