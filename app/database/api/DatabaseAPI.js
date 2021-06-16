@@ -19,6 +19,11 @@ class DatabaseAPI {
 		// Automatically bind all methods to "this"
 		autoBind(this);
 	}
+
+	/**
+	 * Called when data has been loaded / connection to DB established.
+	 */
+	async init() {}
 }
 
 module.exports = DatabaseAPI;

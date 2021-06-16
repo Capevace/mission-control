@@ -24,18 +24,25 @@ class UsersAPI extends DatabaseAPI {
 		 * @type {string}
 		 */
 		this._tempPassword = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+	}
 
+	/**
+	 * Called when data has been loaded / connection to DB established.
+	 */
+	async init() {
 		// TODO: Temporary user creation should not be handled in the UsersAPI class
 		// 		 Instead a new Defaults class or something should be created that handles all these edge cases.
-		const foundUsers = this.database.get('users', {});
-		
+		const foundUsers = this.database.get('users', null);
+
 		// If no users are present, we generate a temporary user account and tell the user in the console
 		if (Object.keys(foundUsers).length === 0) {
 			logger.newLine();
 			logger.warn('WARNING');
 			logger.warn('=========================================================');
 			logger.warn('No registered users found in DB!');
-			logger.warn(`Enabling admin account 'temp' with password '${this._tempPassword}'`);
+			logger.warn(`Enabling admin account`);
+			logger.warn(`		username: 'temp'`);
+			logger.warn(`		password: '${this._tempPassword}'`);
 			logger.newLine();
 		}
 	}
@@ -104,7 +111,7 @@ class UsersAPI extends DatabaseAPI {
 	 */
 	async create(username, userData) {
 		if (await this.find(username))
-			throw new UserError(`Username ${username} unavailable`);
+			throw new UserError(`Username '${username}' unavailable`);
 
 		// Password can not be changed in the update method
 		await this._setUser(username, {
@@ -120,7 +127,7 @@ class UsersAPI extends DatabaseAPI {
 	async delete(username) {
 		// If user does't exist
 		if (!await this.find(username)) {
-			throw new UserError(`User ${username} doesn't exists`);
+			throw new UserError(`User '${username}' doesn't exist`);
 		}
 
 		let users = await this.all();
@@ -143,7 +150,7 @@ class UsersAPI extends DatabaseAPI {
 		const oldUser = await this.findUnsafe(username);
 
 		if (!oldUser)
-			throw new UserError(`User ${username} could not be found`);
+			throw new UserError(`User '${username}' doesn't exist and needs to be created first`);
 
 		// Password can not be changed in the update method
 		await this._setUser(username, {
@@ -164,7 +171,7 @@ class UsersAPI extends DatabaseAPI {
 		const oldUser = await this.findUnsafe(username);
 		console.log('new password', username, password);
 		if (!oldUser)
-			throw new UserError(`User ${username} could not be found`);
+			throw new UserError(`User '${username}' doesn't exist and needs to be created first`);
 
 		await this._setUser(username, {
 			...oldUser,

@@ -57,6 +57,7 @@ const Service = require('./Service');
  * For dependency injection with internal modules like permissions
  * @typedef {DependencyInjectionModules}
  * @property {Permissions} permissions
+ * @property {Database} database
  */
 
 /**
@@ -136,7 +137,13 @@ class Sync {
 			 * Subscribe to service state changes
 			 * @type {Service~subscribe} 
 			 */
-			subscribe: service.subscribe
+			subscribe: service.subscribe,
+
+			/**
+			 * Filter state based on custom rules
+			 * @type {Service~filter} 
+			 */
+			filter: service.filter
 		};
 
 		return serviceAPI;

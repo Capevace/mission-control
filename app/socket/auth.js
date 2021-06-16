@@ -59,7 +59,7 @@ module.exports = function handleAuth(socket, { unsafeOn, composeErrorResponse, t
 			socket.authenticated = true;
 			socket.user = user;
 			socket.refreshUser = async () => {
-				socket.user = await users.findSafeUser(jwt.user.username);
+				socket.user = await users.find(jwt.user.username);
 			};
 
 			// restoreNamespaceConnection(socketIO.parentNsps, socket);

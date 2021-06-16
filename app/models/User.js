@@ -33,7 +33,8 @@ const User = composeModel(Joi.object({
 	avatarUrl: Joi.string()
 		.trim()
 		.max(512)
-		.uri(),
+		.uri()
+		.allow(null),
 
 	role: Joi.string()
 		.pattern(/^admin$|^user$|^guest$/, 'role')

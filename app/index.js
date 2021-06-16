@@ -47,7 +47,7 @@ async function startMissionControl(progress) {
 	progress('load sync', 0.2);
 	
 	const Sync = require('@sync/Sync');
-	const sync = new Sync({ permissions: auth.permissions });
+	const sync = new Sync({ database, permissions: auth.permissions });
 
 	
 	progress('load http & socket', 0.3);
@@ -82,7 +82,9 @@ async function startMissionControl(progress) {
 	await plugins.load();
 
 	progress('http listen', 0.95);
-	
+
+	// Add error handler for plugin HTTP routes
+	http.addErrorHandler();
 	http.listen();
 
 	progress('done', 1.0);

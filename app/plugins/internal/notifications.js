@@ -10,10 +10,15 @@ const uuid = require('uuid/v4');
  * @property {string} [body] - Notification body text
  */
 
-module.exports = function initNotificationsPlugin({ sync, auth, state, logger, database }) {
+module.exports = function initNotificationsPlugin({ sync, auth, state, logger, database, helpers }) {
 	const service = sync.createService('notifications', {
 		/* notifications for user */
 		// 'username': []
+	}).addFilter((state, { user }) => {
+		// Only pass the users notifications down
+		return {
+			[user.username]: state[user.username] || []
+		};
 	});
 
 	service.action('create')
@@ -31,27 +36,28 @@ module.exports = function initNotificationsPlugin({ sync, auth, state, logger, d
 					.max(128),
 				username: Joi.string()
 					.trim()
-			}).xor('role', 'user').unknown(false)
+			}).xor('role', 'username').unknown(false)
 		)
 		.handler(async (notification, context) => {
 			let newState = {};
 
-			const id = context.helpers.uuid();
+			const id = helpers.uuid().toString();
 
-			if (notification.role) {
-				const users = await database.api.users.all();
+			const users = notification.role
+				? await database.api.users.all()
+				: [await database.api.users.find(notification.username)];
 
-				for (const user of users) {
-					context.state[user][id] = {
-						notification,
-						id
-					};
+			for (const user of users) {
+				if (!user)
+					continue;
+
+				if (!context.state[user.username]) {
+					context.state[user.username] = {};
 				}
-			} else {
-				const user = await database.api.users.findUser(notification.username);
 
-				context.state[user][id] = {
-					notification,
+				context.state[user.username][id] = {
+					...notification,
+					createdAt: new Date().toISOString(),
 					id
 				};
 			}
@@ -67,7 +73,7 @@ module.exports = function initNotificationsPlugin({ sync, auth, state, logger, d
 			username = username || currentUser.username;
 
 			let scope = 'any';
-			if (user === currentUser.username) {
+			if (username === currentUser.username) {
 				scope = 'own';
 			}
 
@@ -78,13 +84,13 @@ module.exports = function initNotificationsPlugin({ sync, auth, state, logger, d
 			}
 
 			// Only delete notifications for users that actually exist
-			if (!(await database.api.users.findSafeUser(username))) {
+			if (!(await database.api.users.find(username))) {
 				throw new UserError(`User ${username} could not be found`, 404);
 			}
 
 
 			// Check if the notification actually exists
-			if (!state[username][id]) {
+			if (!state[username] || !state[username][id]) {
 				throw new UserError(`Notification ${id} could not be found`, 404);
 			}
 

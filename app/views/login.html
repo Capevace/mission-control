@@ -8,24 +8,33 @@
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 		<link rel="icon" href="/favicon.png">
 	</head>
-	<body class="bg-purple-700 text-white antialiased font-sans flex justify-center mt-10 sm:mt-24">
-		<form action="/login" method="post" class="max-w-2xl bg-purple-600 rounded-2xl p-5 m-5 forms">
+	<body class="app-background h-screen text-white antialiased font-sans flex justify-center items-center">
+		<form action="/login" method="post" class="max-w-2xl bg-purple-600 rounded-2xl p-5 m-3 forms sm:mb-32">
 			<h1 class="text-2xl font-bold mb-5 w-full text-center text-purple-200">Login</h1>
 			<div class="text-purple-200 text-sm mb-5">{{ERROR_MSG}}</div>
 			<div class="flex flex-wrap mb-5 w-full ">
 				<label for="username" class="w-full text-xs mb-2 font-medium text-purple-lighter">Username</label>
-				<input type="text" id="username" name="username" autofocus="autofocus" class=""/>
+				<input type="text" id="username" name="username" autocomplete="username" autofocus="autofocus" required/>
 			</div>
 
 			<div class="flex flex-wrap mb-8 w-full">
 				<label for="password" class="w-full text-xs mb-2 font-medium text-purple-lighter">Password</label>
-				<input type="password" id="password" name="password" class="" />
+				<input type="password" id="password" name="password" autocomplete="password" class="" required />
 			</div>
 
 			<div class="submit-container">
-				<button type="submit" class="w-full">Login</button>
+				<button type="submit" id="login-button" class="w-full" >Login</button>
 			</div>
 		</form>
+
+		<script type="text/javascript">
+			document
+				.querySelector('#login-button')
+				.addEventListener('click', (e) => {
+					e.target.disabled = true;
+					e.target.textContent = 'Logging in...'
+				});
+		</script>
 
 		<link
 			href="https://fonts.googleapis.com/css?family=Open+Sans:400|500"

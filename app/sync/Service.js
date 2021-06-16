@@ -75,6 +75,12 @@ class Service {
 		this.handlers = {};
 
 		/**
+		 * List of filters to filter state by before sync
+		 * @type {Array.<Service~filterFn>}
+		 */
+		this.filters = [];
+
+		/**
 		 * Internal event emitter
 		 * @type {EventEmitter}
 		 */
@@ -85,12 +91,15 @@ class Service {
 		 * @type {Logger}
 		 */
 		this.logger = Logger.createLogger(`Service:${name}`, 'magenta');
-		
+
 		/**
-		 * Permissions module
-		 * @type {Permissions}
+		 * Injected dependencies
+		 *
+		 * Used in action context as well
+		 * 
+		 * @type {DependencyInjectionModules}
 		 */
-		this.permissions = dependencies.permissions;
+		this.dependencies = dependencies;
 
 		autoBind(this);
 	}
@@ -302,11 +311,17 @@ class Service {
 				 * Permissions helper
 				 * @type {Permissions}
 				 */
-				permissions: this.permissions,
+				permissions: this.dependencies.permissions,
 
 				/**
-				 * Permissions helper
-				 * @type {Permissions}
+				 * Database module
+				 * @type {Database}
+				 */
+				database: this.dependencies.database,
+
+				/**
+				 * Current user
+				 * @type {User}
 				 */
 				user,
 
@@ -374,7 +389,7 @@ class Service {
 					// Permission 
 					permission(data, actionContext);
 				} else {
-					const { filter, granted } = this.permissions.evaluate(user.role, ...permission);
+					const { filter, granted } = this.dependencies.permissions.evaluate(user.role, ...permission);
 
 					if (!granted) {
 						throw new UserError(`${user.role} is not allowed to ${permission[0]} ${permission[2]} ${permission[1]}`, 403);
@@ -430,6 +445,47 @@ class Service {
 		this.emitter.on(`action:${actionName}`, handler);
 
 		return () => this.emitter.removeListener(`action:${actionName}`, handler);
+	}
+
+	/**
+	 * This callback is displayed as part of the Requester class.
+	 * @callback Service~filterFn
+	 * @param {number} responseCode
+	 * @param {string} responseMessage
+	 */
+
+	/**
+	 * Add a filter function to the state filter
+	 *
+	 * Filters will be chained! The first one you set will be the first one called.
+	 * So keep in mind, that later filter functions receive previously filtered data.
+	 *
+	 * @see {Service~filter}
+	 * @param  {Service~filterFn} fn - The filter function
+	 * @return {Service}           - Service instance for chaining
+	 */
+	addFilter(fn) {
+		this.filters.push(fn);
+
+		return this;
+	}
+
+	/**
+	 * Run added state filter functions with a given state
+	 *
+	 * This allows you to:
+	 * 	- user specific data
+	 * 	- filter state based on permissions
+	 * 	- filter state according to your needs
+	 *
+	 * @see {Service~addFilter}
+	 * @param  {object} state - The state to filter
+	 * @param  {User}   user  - The user the state should be filtered for
+	 * @return {object}       - The filtered state
+	 */
+	filter(state, user) {
+		return this.filters
+			.reduce((filteredState, filter) => filter(filteredState, { user, }), state);
 	}
 }
 

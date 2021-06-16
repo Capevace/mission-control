@@ -50,6 +50,10 @@ class Database {
 	 */
 	async init() {
 		this.data = require(this.path);
+
+		for (const api of Object.values(this.api)) {
+			await api.init();
+		}
 	}
 
 	/**

@@ -40,17 +40,29 @@ module.exports = function handleSync(socket, { on, sync, logger }) {
 	on('subscribe', async ({ service: serviceName }) => {
 		logger.debug(`client subscribed: ${serviceName}`);
 
-		if (serviceName in subscriptions) return;
+		if (serviceName in subscriptions) 
+			return {
+				subscriptions: Object.keys(subscriptions)
+			};
 
-		const relayStateUpdates = (state) => {
-			socket.emit(`sync`, {
-				service: serviceName,
-				state
-			});
+		const relayStateUpdates = async (state) => {
+			try {
+				const filteredState = subscriptions[serviceName].filter(state, socket.user);
+
+				socket.emit(`sync`, {
+					service: serviceName,
+					state
+				});
+			} catch (e) {
+				logger.error('error relaying state', { error: e });
+			}
 		};
 
 		const service = sync.service(serviceName);
-		subscriptions[serviceName] = service.subscribe(relayStateUpdates);
+		subscriptions[serviceName] = {
+			unsubscribe: service.subscribe(relayStateUpdates),
+			filter: service.filter
+		};
 
 		// Send initial state
 		logger.debug('sending initial state', { state: service.state });
@@ -71,7 +83,7 @@ module.exports = function handleSync(socket, { on, sync, logger }) {
 
 		logger.debug(`Unsubscribing client from service ${service}.`);
 
-		subscriptions[service]();
+		subscriptions[service].unsubscribe();
 		delete subscriptions[service];
 
 		return {
@@ -83,7 +95,7 @@ module.exports = function handleSync(socket, { on, sync, logger }) {
 	socket.on('disconnect', () => {
 		logger.debug('A client disconnected.');
 
-		Object.values(subscriptions).forEach(unsubscribe => unsubscribe());
+		Object.values(subscriptions).forEach(({ unsubscribe }) => unsubscribe());
 		subscriptions = null;
 	});
 };

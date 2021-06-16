@@ -79,7 +79,7 @@ module.exports = function authRoutes(app, { auth, database: db }) {
 		}
 	);
 
-	/** Create User */
+	/** Get all users */
 	app.get(
 		'/users',
 		auth.middleware.requireAuthentication, 

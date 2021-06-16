@@ -39,6 +39,12 @@ const adminRole = {
 	'user:password': {
 		...userRole['user:password'],
 		'update:any': ['*']
+	},
+	'notification': {
+		'create:any': ['*'],
+		'read:any': ['*'],
+		'update:any': ['*'],
+		'delete:any': ['*']
 	}
 };
 

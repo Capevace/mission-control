@@ -27,6 +27,7 @@ const PluginHTTPRouter = require('./PluginHTTPRouter');
 // const minify = require('html-minifier').minify;
 
 const buildErrorResponseComposer = require('@helpers/error-response-factory');
+const UserError = require('@helpers/UserError');
 
 const authRoutes = require('./routes/auth');
 const dashboardRoutes = require('./routes/dashboard');
@@ -86,7 +87,6 @@ class HTTP {
 
 		// Parse host domain from headers
 		this.app.use(this.onRequest.bind(this));
-		this.app.use(this.onError.bind(this));
 
 		this.authRouter = new express.Router();
 		this.app.use(authRoutes(this.authRouter, { database, auth }));
@@ -96,6 +96,23 @@ class HTTP {
 		this.dashboardRouter.use(this.onDashboardRequest.bind(this));
 		this.dashboardRouter = dashboardRoutes(this.dashboardRouter, { config, auth });
 		this.app.use(this.dashboardRouter);
+
+		// Add error handler for auth & dashboard routes
+		this.addErrorHandler();
+	}
+
+	/**
+	 * Add the event handler to the request chain.
+	 *
+	 * We call this after plugins have been initialized,
+	 * so our error handler gets registered after their route
+	 * registrations.
+	 * This seems to be a limitation of express, because
+	 * error handlers will not trigger for errors trown in 
+	 * routes that were registered after the error handler.
+	 */
+	addErrorHandler() {
+		this.app.use(this.onError.bind(this));
 	}
 
 	onRequest(req, res, next) {
@@ -116,6 +133,13 @@ class HTTP {
 	}
 
 	onError(err, req, res, next) {
+		// Joi packages errors in { error } format for some stupid reason
+		err = err.error || err;
+		
+		if (err.isJoi) {
+			err = new UserError(err.message, 400);
+		}
+
 		if (!err.isUserError) {			
 			this.logger.error('Unknown HTTP Error', { err });
 		}
