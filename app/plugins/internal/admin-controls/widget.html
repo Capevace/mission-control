@@ -1,0 +1,43 @@
+<script type="module">
+    const { dashboard } = MISSION_CONTROL;
+
+    const adminControls = dashboard.consumeService('admin-controls', {
+        template: `
+            <button
+                :disabled="loading"
+                icon="home"
+                @click="restart"
+            >
+                Restart
+            </button>
+        `,
+        components: {
+        },
+        data: () => ({
+            loading: false
+        }),
+        methods: {
+            async restart() {
+                try {
+                    this.loading = true;
+                    await this.$invokeAction('restart', {});
+
+                    this.$notify({
+                        type: 'info',
+                        title: 'Restarting in 2s',
+                    });
+                } catch (e) {
+                    this.$notify({
+                        type: 'error',
+                        title: e.message,
+                    });
+                }
+
+                this.loading = false;
+            }
+        }
+    });
+
+    dashboard.component('admin-controls', adminControls);
+
+</script>

@@ -45,7 +45,11 @@ const adminRole = {
 		'read:any': ['*'],
 		'update:any': ['*'],
 		'delete:any': ['*']
-	}
+	},
+	'admin-controls': {
+		'read:any': ['*'],
+		'update:any': ['*']
+	},
 };
 
 const systemRole = {

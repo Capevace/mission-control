@@ -55,7 +55,10 @@
                         changes
                     });
                 } catch (e) {
-                    alert(e.message);
+                    this.$notify({
+                        type: 'error',
+                        title: e.message,
+                    });
                 }
             },
 

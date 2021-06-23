@@ -485,7 +485,7 @@ class Service {
 	 */
 	filter(state, user) {
 		return this.filters
-			.reduce((filteredState, filter) => filter(filteredState, { user, }), state);
+			.reduce((filteredState, filter) => filter(filteredState, { user, permissions: this.dependencies.permissions }), state);
 	}
 }
 

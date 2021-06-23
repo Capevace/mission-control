@@ -13,7 +13,7 @@
     "w": 4,
     "h": 3,
     "i": "1",
-    "component": "links",
+    "component": "admin-controls",
     "moved": false
   }, {
     "x": 8,
@@ -54,7 +54,7 @@
     "w": 4,
     "h": 3,
     "i": "1",
-    "component": "links",
+    "component": "admin-controls",
     "moved": false
   }, {
     "x": 6,
@@ -95,7 +95,7 @@
     "w": 3,
     "h": 5,
     "i": "1",
-    "component": "links",
+    "component": "admin-controls",
     "moved": false
   }, {
     "x": 0,
@@ -136,7 +136,7 @@
     "w": 4,
     "h": 3,
     "i": "1",
-    "component": "links",
+    "component": "admin-controls",
     "moved": false
   }, {
     "x": 0,
@@ -177,7 +177,7 @@
     "w": 4,
     "h": 3,
     "i": "1",
-    "component": "links",
+    "component": "admin-controls",
     "moved": false
   }, {
     "x": 0,
