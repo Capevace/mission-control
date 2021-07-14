@@ -1,7 +1,7 @@
-const util = require('util');
-const exec = util.promisify(require('child_process').exec);
-
-
-module.exports = async function restart(password, hash) {
-	process.exit(0);
+/**
+ * Restart the server
+ */
+module.exports = async function restart() {
+	// We exit with an error to force systemd to restart the server
+	process.exit(1);
 };
