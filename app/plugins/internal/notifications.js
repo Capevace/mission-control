@@ -112,6 +112,7 @@ module.exports = function initNotificationsPlugin({ sync, logger, database, help
 				};
 			}
 
+			// TODO: (#37) Proper Hooks API after actions to react potentially to new notifications
 			superagent
 				.get('http://datenregal.local:4001/ble/mode/notification')
 				.catch((e) => logger.error(`Couldn't run LED notification mode`, { error: e }));
