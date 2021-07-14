@@ -1,6 +1,6 @@
 const express = require('express');
 const autoBind = require('auto-bind');
-const proxy = require('http-proxy-middleware');
+const HTTPRouter = require('./HTTPRouter');
 
 
 /**
@@ -13,21 +13,15 @@ const proxy = require('http-proxy-middleware');
  * There are two additional routers, one to place URLs at the root namespace,
  * and one at plugin namespace that doesn't check for authentication.
  */
-class HTTPContext extends express.Router {
+class HTTPContext extends HTTPRouter {
 	/**
 	 * Create a new Plugin HTTP Router instance.
 	 * @param  {String}           baseURL   - The plugin URL namespace.
 	 * @param  {DynamicDashboard} dashboard - Dashboard instance
 	 */
 	constructor(baseURL, dashboard) {
-		super();
-
-		/**
-		 * The base URL for the default plugin router.
-		 * @type {String}
-		 */
-		this.baseURL = baseURL;
-
+		super(baseURL);
+		
 		/**
 		 * The dynamic dashboard instance to manage components and pages.
 		 * @type {DynamicDashboard}
@@ -40,24 +34,22 @@ class HTTPContext extends express.Router {
 		 * Routes will be placed after the plugin URL namespace (/plugins/example-plugin/YOUR-ROUTES...).
 		 * For example for public APIs or something.
 		 *
-		 * Watch out for unauthorized accesses.
+		 * > **WARNING**: Watch out for unauthorized accesses.
 		 *
 		 * 
-		 * @type {express.Router}
+		 * @type {HTTPRouter}
 		 * @public
 		 * @readonly
 		 */
-		this.unsafe = new express.Router();
-		this.unsafe.baseURL = baseURL;
+		this.unsafeRoot = new HTTPRouter('/');
 
 		/**
 		 * Additional HTTP Router that adds routes at the root namespace ('/') instead of the plugin one.
-		 * @type {express.Router}
+		 * @type {HTTPRouter}
 		 * @public
 		 * @readonly
 		 */
-		this.root = new express.Router();
-		this.root.baseURL = '/';
+		this.root = new HTTPRouter('/');
 
 		/**
 		 * This log level will be used by http-proxy-middleware when used
@@ -69,27 +61,7 @@ class HTTPContext extends express.Router {
 		autoBind(this);
 	}
 
-	/**
-	 * Proxy an HTTP route to another target URL.
-	 * This is useful if you want to proxy something through mission-control auth.
-	 */
-	proxy(route, target, options = {}) {
-		this.use(
-			route,
-			proxy('/', {
-				target,
-				logLevel: this.proxyLogLevel,
-				ws: true,
-				pathRewrite: {
-					[`^${route}`]: '/',
-					[`^${route}/`]: '/',
-				},
-				...options,
-			})
-		);
-
-		return this;
-	}
+	
 }
 
 module.exports = HTTPContext;
