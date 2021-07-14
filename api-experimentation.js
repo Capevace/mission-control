@@ -265,3 +265,10 @@ const unsubscribeText = service.subscribe('cpus.text', (text) => {
 });
 
 
+settings
+	.create('thing')
+	.default(false)
+	.onChange(setting => {
+
+	});
+
