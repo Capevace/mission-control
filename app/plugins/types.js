@@ -18,16 +18,7 @@
  * @property {Object} raw
  */
 
-/**
- * The APP object
- * @typedef {Object} PluginContext
- * @type {object}
- * @property {Object} state
- * @property {Object} logger
- * @property {Object} config
- * @property {Object} dashboard
- * @property {HttpContext} http
- */
+
 
 /**
  * The plugin object
@@ -36,4 +27,15 @@
  * @property {string} version
  * @property {string} description
  * @property {string?} author
+ */
+
+/**
+ * Module dependency injection for plugins
+ * @typedef   {Object}   PluginDependencies
+ * @property  {Auth}     auth     - The Auth module
+ * @property  {HTTP}     http     - The HTTP module
+ * @property  {Sync}     sync     - The Sync instance
+ * @property  {Config}   config   - The Mission Control config
+ * @property  {Logging}  logging  - The logging module
+ * @property  {Database} database - The database instance
  */

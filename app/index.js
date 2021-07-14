@@ -9,9 +9,9 @@
  */
 
 require('module-alias/register');
-const config = require('@config');
-const argv = require('@helpers/argv');
+const config  = require('@config');
 const logging = require('@helpers/logger');
+const uuid    = require('@helpers/uuid');
 
 module.exports = async function start() {
 	logging.logConfig(config);
@@ -21,7 +21,6 @@ module.exports = async function start() {
 
 async function startMissionControl(progress) {
 	const logger = logging.createLogger('Main', 'cyan');
-	const eventLogger = logging.createLogger('Event', 'green');
 
 	logger.info(`Starting Mission Control...`);
 	progress('Boot Database', 0.01);

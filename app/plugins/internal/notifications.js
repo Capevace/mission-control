@@ -1,28 +1,78 @@
-const chalk = require('chalk');
-const uuid = require('uuid/v4');
 const superagent = require('superagent');
-
 
 /**
  * Notification type
  * 
  * @typedef {Notification}
- * @property {string} type - Type of notification
- * @property {string} title - Notification title
- * @property {string} [body] - Notification body text
+ * @property {string} id        - UUID of notification
+ * @property {string} type      - Type of notification
+ * @property {string} createdAt - Date of creation
+ * @property {string} title     - Notification title
+ * @property {string} [body]    - Notification body text
  */
 
-module.exports = function initNotificationsPlugin({ sync, auth, state, logger, database, helpers }) {
-	const service = sync.createService('notifications', {
+/**
+ * Notifications service state
+ * 
+ * @typedef {Record.<string, Notification[]>} NotificationServiceState
+ */
+
+module.exports = function initNotificationsPlugin({ sync, logger, database, helpers }) {
+	/**
+	 * Notification service
+	 * 
+	 * The notification service is responsible for keeping track of all notifications
+	 * for all users.
+	 * Notifications can be added and removed (read).
+	 * Each user has a list of notifications in the service state.
+	 * The state is filtered by the username of the current user, so that only
+	 * the notifications for the current user are returned.
+	 * 
+	 * When creating a notification, either a role or a username can be passed along with
+	 * the notification type, title and body.
+	 * When passing a `role`, the notification will be created for all users of that role.
+	 * When passing a `username`, the notification will only be created for the given user.
+	 * 
+	 * @service notifications
+	 */
+	const service = sync.createService('notifications', /** @type {NotificationServiceState} */ {
 		/* notifications for user */
 		// 'username': []
 	}).addFilter((state, { user }) => {
-		// Only pass the users notifications down
+		// This filter filters out notifications of other users from service state,
+		// so that only notifications of current user are shown.
 		return {
 			[user.username]: state[user.username] || []
 		};
 	});
 
+	/**
+	 * Action to create a notification
+	 * 
+	 * When creating a notification, either a role or a username can be passed along with
+	 * the notification type, title and body.
+	 * When passing a `role`, the notification will be created for all users of that role.
+	 * When passing a `username`, the notification will only be created for the given user.
+	 * 
+	 * @service notifications
+	 * @action create
+	 * @example 
+	 * 	// Create an error notification for all users of the role 'admin'
+	 * 	await service.invoke('create', { 
+	 * 		type: 'error', 
+	 * 		title: 'Error', 
+	 * 		body: 'Something went wrong', 
+	 * 		role: 'admin' 
+	 * 	});
+	 * 
+	 * 
+	 * @param {string} type - Type of notification
+	 * @param {string} title - Notification title
+	 * @param {string} [body] - Notification body text
+	 * @param {string} [role] - User role to show notification to
+	 * @param {string} [username] - Username of user to show notification to
+	 * @returns {void}
+	 */
 	service.action('create')
 		.requirePermission('create', 'notification', 'any')
 		.validate(Joi => 
@@ -41,8 +91,6 @@ module.exports = function initNotificationsPlugin({ sync, auth, state, logger, d
 			}).xor('role', 'username').unknown(false)
 		)
 		.handler(async (notification, context) => {
-			let newState = {};
-
 			const id = helpers.uuid().toString();
 
 			const users = notification.role
@@ -64,11 +112,31 @@ module.exports = function initNotificationsPlugin({ sync, auth, state, logger, d
 				};
 			}
 
+			// TODO: (#37) Proper Hooks API after actions to react potentially to new notifications
 			superagent
 				.get('http://datenregal.local:4001/ble/mode/notification')
 				.catch((e) => logger.error(`Couldn't run LED notification mode`, { error: e }));
 		});
 
+	/**
+	 * Action to delete a notification
+	 * 
+	 * If no username is passed, the notification will be deleted for the current user.
+	 * 
+	 * TODO: Checks for custom permission because of standard permission API limitation. Investigate for improvement?
+	 * 
+	 * @service notifications
+	 * @action delete
+	 * @example 
+	 * 	// Remove (mark as read) a notification for the current user (ommitted username)
+	 * 	await service.invoke('delete', { 
+	 * 		id: '5e1c1c7c-c0f8-4f0e-a9e2-e7e8a9f4d1c2'
+	 * 	});
+	 * 
+	 * @param {string} id - UUID of notification
+	 * @param {string} [username] - Username of user (defaults to user requesting action)
+	 * @returns {void}
+	 */
 	service.action('delete')
 		.validate(Joi => Joi.object({
 			id: Joi.string().uuid().required(),
@@ -104,81 +172,9 @@ module.exports = function initNotificationsPlugin({ sync, auth, state, logger, d
 			delete state[username][id];
 		});
 
-	// /**
-	//  * @ACTION
-	//  * Delete a notification.
-	//  * @constant NOTIFICATIONS:DELETE
-	//  * @property {string} id The id.
-	//  * @example demo-action-call
-	//  */
-	// state.addAction(
-	// 	'NOTIFICATIONS:DELETE', 
-	// 	(state, { id }) => {
-	// 		const newNotifications = state.notifications.filter(
-	// 			notification => notification.id !== id
-	// 		);
-
-	// 		return {
-	// 			...state,
-	// 			notifications: newNotifications
-	// 		};
-	// 	},
-	// 	(data) => ('id' in data) ? data : false
-	// );
-
-	// /**
-	//  * @ACTION
-	//  * Mark a notification as read.
-	//  * @constant NOTIFICATIONS:MARK-AS-READ
-	//  * @property {string} id The id.
-	//  * @example demo-action-call
-	//  */
-	// state.addAction(
-	// 	'NOTIFICATIONS:MARK-AS-READ', 
-	// 	(state, { id }) => {
-	// 		const newNotifications = state.notifications.map(notification =>
-	// 			notification.id === id
-	// 				? { ...notification, unread: false }
-	// 				: notification
-	// 		);
-
-	// 		return {
-	// 			...state,
-	// 			notifications: newNotifications
-	// 		};
-	// 	},
-	// 	(data) => ('id' in data) ? data : false
-	// );
-
-	// /**
-	//  * @ACTION
-	//  * Set all notifications. Used for clear-all effects.
-	//  * @constant NOTIFICATIONS:SET
-	//  * @property {array} notifications An array of notifications.
-	//  * @example demo-action-call
-	//  */
-	// state.addAction(
-	// 	'NOTIFICATIONS:SET', 
-	// 	(state, { notifications }) => {
-	// 		return {
-	// 			...state,
-	// 			notifications
-	// 		};
-	// 	},
-	// 	(data) => ('notifications' in data && Array.isArray(data.notifications)) ? data : false
-	// );
-
-
-	// state.subscribe(
-	// 	'action:NOTIFICATIONS:CREATE',
-	// 	({ actionData: { title, message } }) => {
-	// 		logger.info(`${chalk.bold(title)}: ${message}`);
-	// 	}
-	// );
-
 	return {
 		internal: true,
-		version: '0.0.1',
-		description: 'Internal Notification System'
+		version: '1.0.0',
+		description: 'Core plugin to enable notifications'
 	};
 };

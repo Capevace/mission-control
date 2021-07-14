@@ -2,6 +2,7 @@ const express = require('express');
 const autoBind = require('auto-bind');
 const proxy = require('http-proxy-middleware');
 
+
 /**
  * The HTTP API for plugins and an HTTP router.
  *
@@ -12,7 +13,7 @@ const proxy = require('http-proxy-middleware');
  * There are two additional routers, one to place URLs at the root namespace,
  * and one at plugin namespace that doesn't check for authentication.
  */
-class PluginHTTPRouter extends express.Router {
+class HTTPContext extends express.Router {
 	/**
 	 * Create a new Plugin HTTP Router instance.
 	 * @param  {String}           baseURL   - The plugin URL namespace.
@@ -64,6 +65,8 @@ class PluginHTTPRouter extends express.Router {
 		 * @public
 		 */
 		this.proxyLogLevel = 'warn';
+
+		autoBind(this);
 	}
 
 	/**
@@ -89,4 +92,4 @@ class PluginHTTPRouter extends express.Router {
 	}
 }
 
-module.exports = PluginHTTPRouter;
+module.exports = HTTPContext;

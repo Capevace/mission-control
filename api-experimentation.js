@@ -272,3 +272,17 @@ settings
 
 	});
 
+hooks
+	.service('notifications')
+	.onAction('create')
+	.run(() => {
+		// Do something
+	});
+
+hooks
+	.service('notifications')
+	.onSettingsChange('thing');
+
+hooks
+	.service('notifications')
+	.trigger('create', notification);
