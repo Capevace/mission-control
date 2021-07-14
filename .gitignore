@@ -1,3 +1,5 @@
+.DS_Store
+
 # Hide Storage in git
 storage/*
 
