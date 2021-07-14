@@ -5,7 +5,7 @@ const flash = require('connect-flash');
 const bodyParser = require('body-parser');
 
 const DynamicDashboard = require('./DynamicDashboard');
-const PluginHTTPRouter = require('./PluginHTTPRouter');
+const HTTPContext = require('./HTTPContext');
 
 // const minify = require('html-minifier').minify;
 
@@ -235,12 +235,12 @@ class HTTP {
 	/**
 	 * Create the API object used by plugins to interact with the HTTP module
 	 * @param  {string} 		  pluginName - The plugin name
-	 * @return {PluginHTTPRouter}           
+	 * @return {HTTPContext}           
 	 */
 	createHTTPPluginContext(pluginName) {
 		const baseUrl = `/plugins/${pluginName}`;
 
-		const pluginRouter = new PluginHTTPRouter(baseUrl, this.dashboard);
+		const httpContext = new HTTPContext(baseUrl, this.dashboard);
 
 		// Hook the plugin router into the express app:
 
@@ -248,21 +248,21 @@ class HTTP {
 		// example.com/:paths
 		// 
 		// DANGEROUS: no auth checks performed
-		this.app.use(pluginRouter.root);
+		this.app.use(httpContext.root);
 
 		// Router to use for namespaced URLs
 		// example.com/plugins/example-plugin/:paths
 		// 
 		// SAFE: auth checks before every request handler
-		this.app.use(baseUrl, this.auth.middleware.requireAuthentication, pluginRouter);
+		this.app.use(baseUrl, this.auth.middleware.requireAuthentication, httpContext);
 
 		// Router to use for namespaced URLs
 		// example.com/plugins/example-plugin/:paths
 		// 
 		// DANGEROUS: no auth checks performed
-		this.app.use(baseUrl, pluginRouter.unsafe);
+		this.app.use(baseUrl, httpContext.unsafe);
 
-		return pluginRouter;
+		return httpContext;
 	}
 
 	/**
