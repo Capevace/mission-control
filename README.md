@@ -15,16 +15,12 @@
 
 <br>
 
-When you start setting up software for your home – be it home automation, a NAS system or something else – you’ll end up having a few different dashboards for control, that are all kind of ugly anyway. That’s where Mission Control comes in. It is a beatutiful and easy-to-configure dashboard system for your home!
 
-Focus on
 
-building widgets and connecting your APIs and services
-and let Mission Control handle
+Beginning a real-time web project, like building your own home dashboard, can be a tedious and time-consuming process.
+Coding lots of boilerplate for authentication, authorization and data communication isn’t fun at all. By the time you get to building the thing you wanted you got bored and moved on to the next.
+Mission Control aims to provide all those features out-of-the-box so you can get to creating what matters right away.
 
-User Management
-Role-based permissions
-HTTP & WebSocket transports 
 
 ## Features
 
