@@ -1,30 +1,50 @@
 
 <html><head></head><body><p>&lt;div align="center"&gt;
     &lt;a href="https://mateffy.me/mission-control-project"&gt;
-        &lt;img src="resources/favicon.png"&gt;
+        &lt;img src="resources/screenshot-2.0.0-rc6.png"&gt;
     &lt;/a&gt;
     &lt;h1&gt;Mission Control&lt;/h1&gt;
     &lt;p&gt;
-        Beautiful home dashboard software built on Node.js 
+        Opinionated JavaScript framework for building real-time dashboards
     &lt;/p&gt;
     &lt;p&gt;
-        &lt;a href="https://mateffy.me/mission-control-project"&gt;Project Homepage&lt;/a&gt;
+        &lt;a href="https://mission-control.js.org"&gt;Project Homepage&lt;/a&gt;
         &lt;span&gt;&nbsp;|&nbsp;&lt;/span&gt;
-        &lt;a href="https://mateffy.me/mission-control"&gt;Docs&lt;/a&gt;
+        &lt;a href="https://mission-control.js.org"&gt;Docs&lt;/a&gt;
     &lt;/p&gt;
 &lt;/div&gt;
 
 </p>
 <p>&lt;br&gt;
 
+
+
 </p>
-<p>When you start setting up software for your home – be it home automation, a NAS system or something else – you’ll end up having a few different dashboards for control, that are all kind of ugly anyway. That’s where Mission Control comes in. It is a beatutiful and easy-to-configure dashboard system for your home!</p>
+<p>Beginning a real-time web project, like building your own home dashboard, can be a tedious and time-consuming process.
+Coding lots of boilerplate for authentication, authorization and data communication isn’t fun at all. By the time you get to building the thing you wanted you got bored and moved on to the next.
+Mission Control aims to provide all those features out-of-the-box so you can get to creating what matters right away.</p>
 <h2 id="features">Features</h2>
 <hr />
 <ul>
-<li>Control your HomeKit devices on the dashboard</li>
-<li>Embeddable file browser, youtube downloader and Spotify player</li>
-<li>Sleek, customizable UI</li>
+<li>Real-time state sync between server and client (service-based API)</li>
+<li>Plugin API for creating your own services</li>
+<li>Role-based permission API</li>
+<li>Built-in User Management</li>
+<li>HTTP &amp; WebSocket Transports</li>
+<li>Usecases:<ul>
+<li>Home Automation UIs / dashboards</li>
+<li>Analytics dashboard combining different data sources</li>
+</ul>
+</li>
+<li>Available plugins for:<ul>
+<li>HomeKit light control</li>
+<li>Spotify player</li>
+<li>YouTube downloader (youtube-dl integration)</li>
+<li>Filebrowser</li>
+<li>etc.</li>
+</ul>
+</li>
+<li>Kinda pretty UI (at least I like it... you decide or build your own!)</li>
 </ul>
 <h2 id="installation">Installation</h2>
 <hr />
@@ -42,9 +62,6 @@ Options:
   -V, --version       output the version number
   -u, --url &lt;url&gt;     the url mission control is reachable at
   -p, --port &lt;port&gt;   the port to use for mission control
-  -n, --no-sso        disable internal auth server process (to use own)
-  --auth-url &lt;url&gt;    the url to use for the single-sign-on server
-  --auth-port &lt;port&gt;  the port to use for the single-sign-on server
   -h, --help          display help for command</code></pre><h3 id="config">Config</h3>
 <p>A config file for mission-control will be created at <code>$HOME_DIR/.mission-control/config</code>. This can also be used to configure mission-control. However, options passed as command line arguments override settings in this file.</p>
 <h2 id="screenshots">Screenshots</h2>

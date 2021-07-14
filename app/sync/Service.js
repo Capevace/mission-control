@@ -110,7 +110,7 @@ class Service {
 	 * When setting state with this function, state will me merged with Object.assign
 	 * 
 	 * @param {object} newState New state
-	 * @emits
+	 * @emits state
 	 */
 	setState(newState) {
 		this.state = Object.freeze({

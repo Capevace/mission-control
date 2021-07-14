@@ -3,29 +3,48 @@ const fs = require('fs');
 const autoBind = require('auto-bind');
 
 /**
- * @typedef {ComponentContent}
+ * Data for a dashboard component
+ * @typedef {DynamicDashboard~Component}
+ * @property {String} name
+ * @property {DynamicDashboard~Component~Content} [content = null]
+ * @property {object} options
+ */
+
+/**
+ * @typedef {DynamicDashboard~Component~Content}
  * @property {'vue' | 'html'} type - The content type (vue component or html file)
  * @property {String} path         - The path to the file
  * @property {String} raw          - The raw contents of the file
  */
 
 /**
- * Data for a dashboard component
- * @typedef {Component}
+ * Data for a dashboard page
+ * @typedef {DynamicDashboard~Page}
  * @property {String} name
- * @property {ComponentContent} [content = null]
+ * @property {DynamicDashboard~Component~Content} [content = null]
  * @property {object} options
  */
 
 /**
- * Data for a dashboard page
- * @typedef {Page}
- * @property {String} name
- * @property {ComponentContent} [content = null]
- * @property {object} options
+ * DynamicDashboard class
+ * 
+ * @class
+ * @example
+ * 	const DynamicDashboard = require('dynamic-dashboard');
+ * 	const dashboard = new DynamicDashboard({
+ * 		sync
+ * 	});
+ * 
+ * 	dashboard
+ * 		.component('component-name')
+ * 		.html('./component.html')
+ * 
  */
-
 class DynamicDashboard {
+	/**
+	 * Create a new DynamicDashboard instance
+	 * @param {Sync} sync - An instance of the Sync system
+	 */
 	constructor(sync) {
 		this.sync = sync;
 		
@@ -77,7 +96,7 @@ class DynamicDashboard {
 			throw new Error(`Component ${name} already exists`);
 
 		/**
-		 * @type {Component}
+		 * @type {DynamicDashboard~Component}
 		 */
 		this.components[name] = {
 			name,
@@ -96,18 +115,18 @@ class DynamicDashboard {
 			vue: (vueFilePath) => {
 				throw new Error('Vue components are not supported yet.');
 
-				const absolutePath = path.resolve(this.pluginPath, htmlFilePath);
+				// const absolutePath = path.resolve(this.pluginPath, vueFilePath);
 
-				this.components[name].content = {
-					type: 'vue',
-					path: absolutePath,
-					raw: fs.readFileSync(absolutePath)
-				};
+				// this.components[name].content = {
+				// 	type: 'vue',
+				// 	path: absolutePath,
+				// 	raw: fs.readFileSync(absolutePath)
+				// };
 
-				// Read from FS
-				// ? Compile
+				// // Read from FS
+				// // ? Compile
 				
-				return html;
+				// return html;
 			},
 
 			/**
@@ -136,10 +155,10 @@ class DynamicDashboard {
 			throw new Error(`Page at ${url} was already registered`);
 
 		/**
-		 * @type {Page}
+		 * @type {DynamicDashboard~Page}
 		 */
 		this.dashboard.pages[url] = {
-			name,
+			title,
 			content: null,
 			options: {}
 		};
@@ -156,18 +175,18 @@ class DynamicDashboard {
 			vue: (vueFilePath) => {
 				throw new Error('Vue components are not supported yet.');
 
-				const absolutePath = path.resolve(this.pluginPath, vueFilePath);
+				// const absolutePath = path.resolve(this.pluginPath, vueFilePath);
 
-				this.pages[url].content = {
-					type: 'vue',
-					path: absolutePath,
-					raw: fs.readFileSync(absolutePath)
-				};
+				// this.pages[url].content = {
+				// 	type: 'vue',
+				// 	path: absolutePath,
+				// 	raw: fs.readFileSync(absolutePath)
+				// };
 
-				// Read from FS
-				// ? Compile
+				// // Read from FS
+				// // ? Compile
 
-				return builder;
+				// return builder;
 			},
 
 			/**

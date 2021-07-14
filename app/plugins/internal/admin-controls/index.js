@@ -18,7 +18,7 @@ module.exports = function adminControls({ dashboard, sync, auth, state, logger, 
 		.addFilter((state, { user, permissions }) => {
 			return permissions
 					.can(user.role)
-					.read('admin-controls', 'any')
+					.read('lifecycle', 'any')
 					.granted
 				? state
 				: { restarting: false };
@@ -27,8 +27,8 @@ module.exports = function adminControls({ dashboard, sync, auth, state, logger, 
 	
 
 	service.action('restart')
-		.requirePermission('update', 'admin-controls', 'any')
-		.handler(async (data, { state }) => {
+		.requirePermission('update', 'lifecycle', 'any')
+		.handler(async () => {
 			setTimeout(async () => {
 				await restart();
 			}, 2000);
@@ -44,6 +44,6 @@ module.exports = function adminControls({ dashboard, sync, auth, state, logger, 
 	return {
 		internal: true,
 		version: '0.0.1',
-		description: 'Admin Controls'
+		description: 'Mission Control lifecycle controls'
 	};
 };

@@ -22,7 +22,7 @@ const attachHostUrlMiddleware = require('./middleware/add-host-url');
  *
  * All HTTP communications run through this server, although third-party dependencies
  * might still create their own HTTP servers.
- * @return {express~Server} The express HTTP server.
+ * @class HTTP
  */
 class HTTP {
 	/**
@@ -96,8 +96,8 @@ class HTTP {
 		this.server = createServer(this.app);
 
 		/**
-		 * [composeErrorResponse description]
-		 * @type {[type]}
+		 * Initialized error response factory function
+		 * @type {ErrorResponse~compose}
 		 */
 		this.composeErrorResponse = buildErrorResponseComposer(auth.permissions);
 

@@ -1240,6 +1240,10 @@ video {
 	--tw-text-opacity: 1;
 	color: rgba(91, 33, 182, var(--tw-text-opacity));
 }
+.hover\:text-violet-500:hover {
+	--tw-text-opacity: 1;
+	color: rgba(139, 92, 246, var(--tw-text-opacity));
+}
 .hover\:no-underline:hover {
 	text-decoration: none;
 }

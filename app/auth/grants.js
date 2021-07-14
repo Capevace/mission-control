@@ -46,10 +46,10 @@ const adminRole = {
 		'update:any': ['*'],
 		'delete:any': ['*']
 	},
-	'admin-controls': {
+	'lifecycle': {
 		'read:any': ['*'],
 		'update:any': ['*']
-	},
+	}
 };
 
 const systemRole = {
@@ -57,7 +57,7 @@ const systemRole = {
 	'plugin': {
 		'create:any': ['*']
 	}
-}
+};
 
 module.exports = {
     guest: guestRole,

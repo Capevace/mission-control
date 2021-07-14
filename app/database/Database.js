@@ -1,8 +1,3 @@
-/**
- * @module @database
- * @since 2.0.0
- */
-
 const fs = require('fs/promises');
 const fsSync = require('fs');
 const autoBind = require('auto-bind');
@@ -14,6 +9,8 @@ const UsersAPI = require('@database/api/UsersAPI');
  * Currently the "Database" is pretty much a JSON key value store.
  * However this will be updated when switching to SQLite
  * https://github.com/Capevace/mission-control/issues/17
+ * @public
+ * @namespace database
  */
 class Database {
 	constructor(databasePath) {
