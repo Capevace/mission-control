@@ -12,7 +12,9 @@ const restart = require('@helpers/restart');
 
 module.exports = function adminControls({ dashboard, sync, auth, state, logger, database, helpers }) {
 	const service = sync
-		.createService('admin-controls', { restarting: false })
+		.createService('admin-controls', { 
+			startedAt: new Date()
+		})
 		.addFilter((state, { user, permissions }) => {
 			return permissions
 					.can(user.role)
@@ -22,14 +24,14 @@ module.exports = function adminControls({ dashboard, sync, auth, state, logger, 
 				: { restarting: false };
 		});
 
+	
+
 	service.action('restart')
 		.requirePermission('update', 'admin-controls', 'any')
-		.handler((data, { state }) => {
+		.handler(async (data, { state }) => {
 			setTimeout(async () => {
 				await restart();
 			}, 2000);
-
-			state.restarting = true;
 
 			return {
 				restartIn: 2000

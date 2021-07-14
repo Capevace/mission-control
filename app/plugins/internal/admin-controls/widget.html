@@ -1,43 +1,69 @@
 <script type="module">
-    const { dashboard } = MISSION_CONTROL;
+	const { dashboard } = MISSION_CONTROL;
 
-    const adminControls = dashboard.consumeService('admin-controls', {
-        template: `
-            <button
-                :disabled="loading"
-                icon="home"
-                @click="restart"
-            >
-                Restart
-            </button>
-        `,
-        components: {
-        },
-        data: () => ({
-            loading: false
-        }),
-        methods: {
-            async restart() {
-                try {
-                    this.loading = true;
-                    await this.$invokeAction('restart', {});
+	const adminControls = dashboard.consumeService('admin-controls', {
+		template: `
+			<section class="w-full">
+				<div class="dashboard-box-heading mb-3">
+					Mission Control Server (Uptime: {{ uptime }} seconds)
+				</div>
+				<div class="">
+					<forms-button
+						:loading="loading"
+						@click="restart"
+						class="w-full"
+					>
+						Restart
+					</forms-button>
+				</div>  
+			</section>
+		`,
+		components: {
+			formsButton: MISSION_CONTROL.components.forms.button
+		},
+		data: () => ({
+			loading: false
+		}),
+		computed: {
+			serverStartedAt() {
+				return this.adminControls.state
+					? this.adminControls.state.startedAt
+					: null;
+			},
+			uptime() {
+				return this.serverStartedAt
+					? Math.abs(new Date() - new Date(this.serverStartedAt)) / 1000
+					: 0;
+			}
+		},
+		methods: {
+			async restart() {
+				try {
+					this.loading = true;
+					await this.$invokeAction('restart', {});
 
-                    this.$notify({
-                        type: 'info',
-                        title: 'Restarting in 2s',
-                    });
-                } catch (e) {
-                    this.$notify({
-                        type: 'error',
-                        title: e.message,
-                    });
-                }
+					this.$notify({
+						type: 'info',
+						title: 'Restarting in 2s',
+					});
+				} catch (e) {
+					this.loading = false;
 
-                this.loading = false;
-            }
-        }
-    });
+					this.$notify({
+						type: 'error',
+						title: e.message,
+					});
+				}
+			}
+		},
+		watch: {
+			serverStartedAt() {
+				// If startedAt changes, the server has restarted
+				this.loading = false;
+			}
+		}
+	});
 
-    dashboard.component('admin-controls', adminControls);
+	dashboard.component('admin-controls', adminControls);
 
 </script>
