@@ -16,25 +16,18 @@ class Plugins extends EventEmitter {
 	/**
 	 * Create the plugin manager without loading plugins just yet.
 	 * 
-	 * @param  {object}   modules            - Dependency Injection of mission control modules
-	 * @param  {Auth}     modules.auth       - The Auth module
-	 * @param  {HTTP}     modules.http       - The HTTP module
-	 * @param  {Sync}     modules.sync       - The Sync instance
-	 * @param  {Config}   modules.config     - The Mission Control config
-	 * @param  {Logging}  modules.logging    - The logging module
-	 * @param  {Function} updateInitProgress - Function to update the intitialization progress bar
+	 * @param  {PluginDependencies} modules - Modules Dependency Injection 
 	 */
-	constructor(modules, updateInitProgress) {
+	constructor(modules) {
 		super();
 
-		const { sync, config, logging } = modules;
-		this.modules = modules;
+		const { sync, config, logging } = this.modules = modules;
 
 		this.logger = logging.createLogger('Plugins');
 		this.logger.debug('initializing plugins');
 
 		this.pluginsDir = path.resolve(config.basePath, 'plugins');
-		this.pluginService = this.setupPluginDataService(modules.sync);
+		this.pluginService = this.setupPluginDataService(sync);
 		this.plugins = {};
 
 		autoBind(this);
@@ -48,7 +41,7 @@ class Plugins extends EventEmitter {
 		const progressUpdate = () => {
 			finished++;
 			this.emit('progress', 0.75 + ((finished / pluginPaths.length) * 0.15));
-		}
+		};
 
 		try {
 			//for (const pluginPath of pluginPaths) {
