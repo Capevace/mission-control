@@ -233,23 +233,41 @@ class HTTP {
 	}
 
 	/**
-	 * [createHTTPPluginContext description]
-	 * @param  {[type]} pluginName [description]
-	 * @return {[type]}            [description]
+	 * Create the API object used by plugins to interact with the HTTP module
+	 * @param  {string} 		  pluginName - The plugin name
+	 * @return {PluginHTTPRouter}           
 	 */
 	createHTTPPluginContext(pluginName) {
 		const baseUrl = `/plugins/${pluginName}`;
 
 		const pluginRouter = new PluginHTTPRouter(baseUrl, this.dashboard);
 
-		this.app.use(baseUrl, this.auth.middleware.requireAuthentication, pluginRouter);
+		// Hook the plugin router into the express app:
+
+		// Router to use for root urls
+		// example.com/:paths
+		// 
+		// DANGEROUS: no auth checks performed
 		this.app.use(pluginRouter.root);
 
+		// Router to use for namespaced URLs
+		// example.com/plugins/example-plugin/:paths
+		// 
+		// SAFE: auth checks before every request handler
+		this.app.use(baseUrl, this.auth.middleware.requireAuthentication, pluginRouter);
+
+		// Router to use for namespaced URLs
+		// example.com/plugins/example-plugin/:paths
+		// 
+		// DANGEROUS: no auth checks performed
 		this.app.use(baseUrl, pluginRouter.unsafe);
 
 		return pluginRouter;
 	}
 
+	/**
+	 * Finish HTTP server setup and listen on given port 
+	 */
 	listen() {
 		this.server.listen(this.port, () => {
 			this.logger.http(`server listening on port:`, this.port);
