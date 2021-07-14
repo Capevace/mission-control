@@ -4,12 +4,12 @@
 	</a>
 	<h1>Mission Control</h1>
 	<p>
-		Beautiful home dashboard software built on Node.js 
+		Opinionated JavaScript framework for building real-time dashboards
 	</p>
 	<p>
-		<a href="https://mateffy.me/mission-control-project">Project Homepage</a>
+		<a href="https://mission-control.js.org">Project Homepage</a>
 		<span>&nbsp;|&nbsp;</span>
-		<a href="https://mateffy.me/mission-control">Docs</a>
+		<a href="https://mission-control.js.org">Docs</a>
 	</p>
 </div>
 
@@ -17,11 +17,32 @@
 
 When you start setting up software for your home – be it home automation, a NAS system or something else – you’ll end up having a few different dashboards for control, that are all kind of ugly anyway. That’s where Mission Control comes in. It is a beatutiful and easy-to-configure dashboard system for your home!
 
+Focus on
+
+building widgets and connecting your APIs and services
+and let Mission Control handle
+
+User Management
+Role-based permissions
+HTTP & WebSocket transports 
+
 ## Features
 
-- Control your HomeKit devices on the dashboard
-- Embeddable file browser, youtube downloader and Spotify player
-- Sleek, customizable UI
+- Real-time state sync between server and client (service-based API)
+- Plugin API for creating your own services
+- Role-based permission API
+- Built-in User Management
+- HTTP & WebSocket Transports
+- Usecases:
+	- Home Automation UIs / dashboards
+	- Analytics dashboard combining different data sources
+- Available plugins for:
+	- HomeKit light control
+	- Spotify player
+	- YouTube downloader (youtube-dl integration)
+	- Filebrowser
+	- etc.
+- Kinda pretty UI (at least I like it... you decide or build your own!)
 
 ## Installation
 
@@ -49,9 +70,6 @@ Options:
   -V, --version       output the version number
   -u, --url <url>     the url mission control is reachable at
   -p, --port <port>   the port to use for mission control
-  -n, --no-sso        disable internal auth server process (to use own)
-  --auth-url <url>    the url to use for the single-sign-on server
-  --auth-port <port>  the port to use for the single-sign-on server
   -h, --help          display help for command
 ```
 
