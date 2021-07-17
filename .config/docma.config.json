@@ -5,7 +5,12 @@
 		"./tutorials/**/*.html",
 		"./resources/screenshot-2.0.0-rc6.png",
 		"./resources/favicon.png",
-		"./README.md"
+		"./README.md",
+		{
+			"guides/http-api": "./tutorials/HTTP-API.md",
+			"guides/service-api": "./tutorials/Service-API.md",
+			"guides/create-plugin": "./tutorials/create-plugin.md"
+		}
 	],
 	"dest": "./docs",
 	"app": {
@@ -13,6 +18,11 @@
 		"title": "Mission Control Documentation",
 		"favicon": "resources/favicon.png",
 		"entrance": "content:welcome"
+	},
+	"jsdoc": {
+		"plugins": [
+			"plugins/markdown"
+		]
 	},
 	"template": {
 		"path": "docma-template-mission-control",
@@ -36,6 +46,24 @@
 						"label": "Docs",
 						"iconClass": "fas fa-book",
 						"href": "/"
+					},
+					{
+						"label": "Guides",
+						"iconClass": "fas fa-book",
+						"items": [
+							{
+								"label": "Create your first plugin",
+								"href": "guides/create-plugin"
+							},
+							{
+								"label": "Service API – real-time state sync",
+								"href": "guides/service-api"
+							},
+							{
+								"label": "HTTP API – custom http endpoints",
+								"href": "guides/http-api"
+							}
+						]
 					},
 					{
 						"label": "API Reference",

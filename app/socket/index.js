@@ -74,8 +74,8 @@ module.exports = function socket({ sync, database, http, auth }) {
 			composeErrorResponse,
 
 			/**
-			 * Permissions
-			 * @type {Permissions}
+			 * PermissionsAPI
+			 * @type {PermissionsAPI}
 			 */
 			tokens: auth.tokens,
 

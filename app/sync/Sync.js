@@ -3,14 +3,14 @@
  *
  * Sync is the main logic of mission control. It hosts the global event loop and
  * is responsible for managing state and synchronising it with connected clients.
- * The state can include like system information, HomeKit devices or anything 
+ * The state can include like system information, HomeKit devices or anything
  * plugins wish to make available to all clients.
  *
  * The event loop holds two types of event:
  *  - base-event
  * 	- request
  *
- * A base-event handles like any other event. 
+ * A base-event handles like any other event.
  * It will be called but won't want any response back.
  * Event handlers will be called asynchronously and no error is thrown if an
  * event doesn't have a listener.
@@ -56,7 +56,7 @@ const Service = require('./Service');
 /**
  * For dependency injection with internal modules like permissions
  * @typedef {DependencyInjectionModules}
- * @property {Permissions} permissions
+ * @property {PermissionsAPI} permissions
  * @property {Database} database
  */
 
@@ -66,29 +66,29 @@ const Service = require('./Service');
 class Sync {
 	/**
 	 * Create a new sync engine
-	 * @param {DependencyInjectionModules} dependencies - Dependency injection with internal modules (like permissions)                    
+	 * @param {Core} core - Mission Control core
 	 */
-	constructor(dependencies) {
+	constructor(core) {
 		/**
 		 * The services that sync manages
 		 * @type {Object.<string, Service>}
 		 */
 		this.services = {
-			// 'core': new Service('core', {}, dependencies)
+			// 'core': new Service('core', {}, core)
 		};
-		
+
 		/**
-		 * Dependency injection with internal modules like permissions
-		 * @type {DependencyInjectionModules}
+		 * Mission Control core
+		 * @type {Core}
 		 */
-		this.dependencies = dependencies;
+		this.core = core;
 
 		autoBind(this);
 	}
 
 	/**
 	 * Create a service and add it to Sync
-	 * 
+	 *
 	 * @param  {string} name Service name / identifier
 	 * @return {Service}     The service
 	 */
@@ -97,7 +97,7 @@ class Sync {
 			throw new Error(`Service ${name} already exists`);
 		}
 
-		this.services[name] = new Service(name, initialState, this.dependencies);
+		this.services[name] = new Service(name, initialState, this.core);
 
 		return this.services[name];
 	}
@@ -105,7 +105,7 @@ class Sync {
 	/**
 	 * Get a service
 	 * @param  {string}  name  Service name / identifier
-	 * @return {ServiceAPI}   
+	 * @return {ServiceAPI}
 	 */
 	service(name) {
 		if (!(name in this.services)) {
@@ -119,9 +119,9 @@ class Sync {
 		 * @typedef {ServiceAPI}
 		 */
 		const serviceAPI = {
-			/** 
+			/**
 			 * Get the current service state
-			 * @return {object} 
+			 * @return {object}
 			 */
 			get state() {
 				return service.state;
@@ -129,21 +129,21 @@ class Sync {
 
 			/**
 			 * Invoke an action on the service
-			 * @type {Service~handleAction} 
+			 * @type {Service~handleAction}
 			 */
 			invoke: service.invokeAction,
 
 			/**
 			 * Subscribe to service state changes
-			 * @type {Service~subscribe} 
+			 * @type {Service~subscribe}
 			 */
 			subscribe: service.subscribe,
 
 			/**
 			 * Filter state based on custom rules
-			 * @type {Service~filter} 
+			 * @type {Service~filter}
 			 */
-			filter: service.filter
+			filter: service.filter,
 		};
 
 		return serviceAPI;
@@ -161,7 +161,7 @@ class Sync {
 	async invokeAction(serviceName, action, data, user = User.systemUser) {
 		// const parts = fullActionName.split(':');
 		// const serviceName = parts[0];
-		
+
 		// const actionNamePart = parts.slice(1, parts.length);
 		// const name = actionName.join(':');
 
@@ -177,9 +177,9 @@ class Sync {
 
 	/**
 	 * Get the state of all services
-	 * 
+	 *
 	 * @example sync.state.notifications === sync.service('notifications').state;
-	 * 
+	 *
 	 * @return {object}                 State object with service names as keys or state for service with service name.
 	 */
 	get state() {

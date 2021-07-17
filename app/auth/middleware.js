@@ -2,7 +2,7 @@ const autoBind = require('auto-bind');
 
 module.exports = class AuthMiddleware {
 	/**
-	 * @param  {Permissions} permissions The Permissions object
+	 * @param  {PermissionsAPI} permissions The PermissionsAPI object
 	 * @return {AuthMiddleware}
 	 */
 	constructor(permissions) {

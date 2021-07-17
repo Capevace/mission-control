@@ -1,33 +1,37 @@
 <script type="module">
     const { dashboard } = MISSION_CONTROL;
 
-    const header = dashboard.consumeService('telemetry', {
+    const header = {
         template: `
-            <header class="flex font-semibold text-purple-50 text-lg">
-                <section class="w-1/3 leading-tight">
-                    <span class="block">{{ info.deviceName || 'Mission Control' }}</span>
-                    <span class="text-purple-400 text-xs">
-                        {{ info.deviceName ? 'Mission Control' : 'Server'}}
-                    </span>
-                </section>
+			<ServiceProvider service="telemetry" v-slot="{ stats }">
+				<header class="flex font-semibold text-purple-50 text-lg">
+					<section class="w-1/3 leading-tight">
+						<span class="block">{{ stats.deviceName || 'Mission Control' }}</span>
+						<span class="text-purple-400 text-xs">
+							{{ stats.deviceName ? 'Mission Control' : 'Server'}}
+						</span>
+					</section>
 
-                <section class="w-2/3 flex">
-                    <section class="w-1/3 leading-tight">
-                        <span class="block">{{ info.network.internalIPv4 }}</span>
-                        <span class="text-purple-400 text-xs">Internal IP</span>
-                    </section>
+					<section class="w-2/3 flex">
+						<section class="w-1/3 leading-tight">
+							<span class="block">{{ stats.network.internalIPv4 }}</span>
+							<span class="text-purple-400 text-xs">Internal IP</span>
+						</section>
 
-                    <section class="w-1/3 leading-tight">
-                        <span class="block">{{ info.network.publicIPv4 }}</span>
-                        <span class="text-purple-400 text-xs">Public IP</span>
-                    </section>
+						<section class="w-1/3 leading-tight">
+							<span class="block">{{ stats.network.publicIPv4 }}</span>
+							<span class="text-purple-400 text-xs">Public IP</span>
+						</section>
 
-                    <section class="w-1/3 leading-tight">
-                        <span class="block">{{ serverTime.toLocaleString() }}</span>
-                        <span class="text-purple-400 text-xs">Server Time</span>
-                    </section>
-                </section>
-            </header>
+						<section class="w-1/3 leading-tight">
+							<ClockProvider v-slot="{ now }">
+								<span class="block">{{ now.toLocaleString() }}</span>
+							</ClockProvider>
+							<span class="text-purple-400 text-xs">Server Time</span>
+						</section>
+					</section>
+				</header>
+			</ServiceProvider>
         `,
         data: () => ({
             serverTime: new Date()
@@ -38,21 +42,11 @@
         destroy() {
             clearInterval(this.refreshTimer);
         },
-        computed: {
-            info() {
-                return this.$stateWithDefault({
-                    stats: {
-                        deviceName: 'Mission Control',
-                        system: {},
-                        os: {},
-                        cpu: {},
-                        memory: {},
-                        network: {}
-                    }
-                }).stats;
-            }
-        }
-    });
+		components: {
+			ServiceProvider: MISSION_CONTROL.components.headless.ServiceProvider,
+			ClockProvider: MISSION_CONTROL.components.headless.ClockProvider,
+		}
+    };
 
     dashboard.component('basic-header', header);
 

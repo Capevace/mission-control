@@ -34,13 +34,12 @@ const AuthError = require('@helpers/AuthError');
 /**
  * Permission triple
  *
- * 0: Permissions.CRUD
+ * 0: PermissionsAPI.CRUD
  * 1: Resource (string)
- * 2: Permissions.Scope
- * 
- * @typedef {PermissionTriple} Array.<Permissions.CRUD | String | Permissions.Scope>
+ * 2: PermissionsAPI.Scope
+ *
+ * @typedef {PermissionTriple} Array.<PermissionsAPI.CRUD | String | PermissionsAPI.Scope>
  */
-
 
 /**
  * Sync engine service class
@@ -48,11 +47,11 @@ const AuthError = require('@helpers/AuthError');
 class Service {
 	/**
 	 * A Sync engine service
-	 * @param  {string}                     name         - Service name / identifier
-	 * @param  {object}                     initialState - Initial service state
-	 * @param  {DependencyInjectionModules} dependencies - Dependency Injection
+	 * @param  {string} name         - Service name / identifier
+	 * @param  {object} initialState - Initial service state
+	 * @param  {Core}   core         - Mission Control core (dependency injection)
 	 */
-	constructor(name, initialState, dependencies) {
+	constructor(name, initialState, core) {
 		/**
 		 * The service name
 		 * @type {string}
@@ -63,7 +62,7 @@ class Service {
 		 * The service internal state
 		 *
 		 * @readonly
-		 * 
+		 *
 		 * @type {object}
 		 */
 		this.state = Object.freeze(initialState);
@@ -93,13 +92,13 @@ class Service {
 		this.logger = Logger.createLogger(`Service:${name}`, 'magenta');
 
 		/**
-		 * Injected dependencies
+		 * Injected mission-control core
 		 *
 		 * Used in action context as well
-		 * 
-		 * @type {DependencyInjectionModules}
+		 *
+		 * @type {Core}
 		 */
-		this.dependencies = dependencies;
+		this.core = core;
 
 		autoBind(this);
 	}
@@ -108,14 +107,14 @@ class Service {
 	 * Set the state and merge the new data
 	 *
 	 * When setting state with this function, state will me merged with Object.assign
-	 * 
+	 *
 	 * @param {object} newState New state
 	 * @emits state
 	 */
 	setState(newState) {
 		this.state = Object.freeze({
 			...this.state,
-			...newState
+			...newState,
 		});
 
 		this.emitter.emit('state', this.state);
@@ -136,17 +135,23 @@ class Service {
 		 * @typedef {ActionOptions}
 		 */
 		options = {
-			handler: () => { throw new Error(`Action '${name}' in service '${this.name}' has no handler`); },
+			handler: () => {
+				throw new Error(
+					`Action '${name}' in service '${this.name}' has no handler`
+				);
+			},
 			schema: null,
 			...options,
 			permissions: [
 				['update', 'service', 'any'],
-				...(options.permissions || [])
-			]
+				...(options.permissions || []),
+			],
 		};
 
 		if (name in Object.keys(this.handlers)) {
-			throw new Error(`Action handler for '${name}' already exists on service ${this.name}`);
+			throw new Error(
+				`Action handler for '${name}' already exists on service ${this.name}`
+			);
 		}
 
 		/**
@@ -169,14 +174,14 @@ class Service {
 			 * Action handler
 			 * @type {ActionHandler}
 			 */
-			handler: options.handler
+			handler: options.handler,
 		};
 
 		/**
 		 * Build an action by adding handlers or permissions to verify.
 		 *
 		 * Easier to use api with lots of helper functions
-		 * 
+		 *
 		 * @typedef {ActionBuilder}
 		 */
 		let builder = {
@@ -187,7 +192,9 @@ class Service {
 			 */
 			handler: (handler) => {
 				if (typeof handler !== 'function') {
-					throw new Error(`Action handler for '${name}' has to be a function`);
+					throw new Error(
+						`Action handler for '${name}' has to be a function`
+					);
 				}
 
 				this.handlers[name].handler = handler;
@@ -213,14 +220,16 @@ class Service {
 
 			/**
 			 * Set a required permission to run the action
-			 * @param  {Permissions.CRUD}   crud      - The crud value
+			 * @param  {PermissionsAPI.CRUD}   crud      - The crud value
 			 * @param  {string}             resource  - The resource to check for
-			 * @param  {Permissions.Scope}  scope     - The scope to check
+			 * @param  {PermissionsAPI.Scope}  scope     - The scope to check
 			 * @return {ActionBuilder}                - Builder for chaining
 			 */
 			requirePermission: (crud, resource, scope = 'any') => {
 				if (scope !== 'any' && scope !== 'own') {
-					throw new Error(`Permission scope has to be either 'any' or 'own'.`);
+					throw new Error(
+						`Permission scope has to be either 'any' or 'own'.`
+					);
 				}
 
 				this.handlers[name].permissions.push([crud, resource, scope]);
@@ -235,10 +244,14 @@ class Service {
 			 */
 			requirePermissions: (perms) => {
 				if (!Array.isArray(perms)) {
-					throw new Error(`You need to pass permissions as an array like this (e.g. [['read', 'user', 'any'], ['update', 'user', 'own']]`)
+					throw new Error(
+						`You need to pass permissions as an array like this (e.g. [['read', 'user', 'any'], ['update', 'user', 'own']]`
+					);
 				}
 
-				perms.forEach(permissionArray => builder.requirePermission(...permissionArray));
+				perms.forEach((permissionArray) =>
+					builder.requirePermission(...permissionArray)
+				);
 
 				return builder;
 			},
@@ -252,7 +265,7 @@ class Service {
 				this.handlers[name].permissions.push(callback);
 
 				return builder;
-			}
+			},
 		};
 
 		return builder;
@@ -260,7 +273,7 @@ class Service {
 
 	/**
 	 * Run action handler if it exists
-	 * 
+	 *
 	 * @param  {String} name                     - Action name / identifier
 	 * @param  {Object} data                     - Action data object
 	 * @param  {User}   [user = User.systemUser] - Role of user to validate permissions for
@@ -268,21 +281,26 @@ class Service {
 	 * @example await notificationsService.handleAction('create', { /* ... *\/ }, 'user');
 	 */
 	async invokeAction(name, data, user = User.systemUser) {
-		this.logger.debug(`invoke action: ${name}, user: ${JSON.stringify(user)}, data: ${JSON.stringify(data)}`);
+		this.logger.debug(
+			`invoke action: ${name}, user: ${JSON.stringify(
+				user
+			)}, data: ${JSON.stringify(data)}`
+		);
 
 		if (name in this.handlers) {
 			const action = this.handlers[name];
 
-			// TODO: Probably the way we set state right now 
+			// TODO: Probably the way we set state right now
 			// is not atomic. This is fine for now but shoud be noted in documentation.
 			// Improvement for later
 			let stateHasChanged = false;
 
 			let state = Object.assign({}, this.state);
-			
-			const wrapState = stateToWrap => onChange(state, () => {
-				stateHasChanged = true;
-			});
+
+			const wrapState = (stateToWrap) =>
+				onChange(state, () => {
+					stateHasChanged = true;
+				});
 			let wrappedState = wrapState(state);
 
 			/**
@@ -308,16 +326,16 @@ class Service {
 				Joi,
 
 				/**
-				 * Permissions helper
-				 * @type {Permissions}
+				 * PermissionsAPI helper
+				 * @type {PermissionsAPI}
 				 */
-				permissions: this.dependencies.permissions,
+				permissions: this.core.auth.permissions,
 
 				/**
 				 * Database module
 				 * @type {Database}
 				 */
-				database: this.dependencies.database,
+				database: this.core.database,
 
 				/**
 				 * Current user
@@ -333,7 +351,7 @@ class Service {
 				 * to listeners.
 				 *
 				 * Changes can also be flushed manually using `state.flush()`.
-				 * 
+				 *
 				 * @type {object}
 				 */
 				get state() {
@@ -356,7 +374,7 @@ class Service {
 				 * 	create video filters out 'id'
 				 * 	create upload filters allows 'id'
 				 *
-				 * 
+				 *
 				 * @param  {Object} data Data to validate
 				 * @return {Object}      Filtered data
 				 */
@@ -369,15 +387,13 @@ class Service {
 					return data;
 				},
 
-
-
 				setState(newState) {
 					onChange.unsubscribe(wrappedState);
 
 					stateHasChanged = true;
 					state = newState;
 					wrappedState = wrapState(state);
-				}
+				},
 			});
 
 			// Validate permissions
@@ -386,13 +402,20 @@ class Service {
 			for (const permission of action.permissions) {
 				// Check for PermissionEvaluationHandler instead of PermissionTriple
 				if (typeof permission === 'function') {
-					// Permission 
+					// Permission
 					permission(data, actionContext);
 				} else {
-					const { filter, granted } = this.dependencies.permissions.evaluate(user.role, ...permission);
+					const { filter, granted } =
+						this.core.auth.permissions.evaluate(
+							user.role,
+							...permission
+						);
 
 					if (!granted) {
-						throw new UserError(`${user.role} is not allowed to ${permission[0]} ${permission[2]} ${permission[1]}`, 403);
+						throw new UserError(
+							`${user.role} is not allowed to ${permission[0]} ${permission[2]} ${permission[1]}`,
+							403
+						);
 					}
 
 					filters.push(filter);
@@ -407,7 +430,7 @@ class Service {
 					throw new UserError(e.message, 400);
 				}
 			}
-			
+
 			// Run action handler
 			const result = await action.handler(data, actionContext);
 
@@ -420,7 +443,10 @@ class Service {
 
 			return result;
 		} else {
-			throw new UserError(`action: ${name} not found on service ${this.name}`, 404);
+			throw new UserError(
+				`action: ${name} not found on service ${this.name}`,
+				404
+			);
 		}
 	}
 
@@ -444,7 +470,8 @@ class Service {
 	on(actionName, handler) {
 		this.emitter.on(`action:${actionName}`, handler);
 
-		return () => this.emitter.removeListener(`action:${actionName}`, handler);
+		return () =>
+			this.emitter.removeListener(`action:${actionName}`, handler);
 	}
 
 	/**
@@ -484,8 +511,14 @@ class Service {
 	 * @return {object}       - The filtered state
 	 */
 	filter(state, user) {
-		return this.filters
-			.reduce((filteredState, filter) => filter(filteredState, { user, permissions: this.dependencies.permissions }), state);
+		return this.filters.reduce(
+			(filteredState, filter) =>
+				filter(filteredState, {
+					user,
+					permissions: this.core.auth.permissions,
+				}),
+			state
+		);
 	}
 }
 

@@ -4,7 +4,7 @@ const autoBind = require('auto-bind');
 /**
  * Class responsible for evaluation role-based permissions
  */
-class Permissions {
+class PermissionsAPI {
 	constructor(grants) {
 		this.access = new AccessControl(grants);
 
@@ -57,7 +57,7 @@ class Permissions {
  * @readonly
  * @enum {string}
  */
-Permissions.CRUD = {
+PermissionsAPI.CRUD = {
 	/** User allowed to create a resource */
 	create: 'create',
 
@@ -76,7 +76,7 @@ Permissions.CRUD = {
  * @readonly
  * @enum {string}
  */
-Permissions.Scope = {
+PermissionsAPI.Scope = {
 	/** User allowed to access any resource */
 	any: 'any',
 
@@ -86,7 +86,7 @@ Permissions.Scope = {
 
 /**
  * Array data structure for permissions
- * @typedef {Array<Permissions.CRUD | String | Permissions.Scope>} PermissionTriple
+ * @typedef {Array<PermissionsAPI.CRUD | String | PermissionsAPI.Scope>} PermissionTriple
  */
 
-module.exports = Permissions;
+module.exports = PermissionsAPI;

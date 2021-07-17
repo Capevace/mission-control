@@ -4,14 +4,14 @@ const autoBind = require('auto-bind');
 
 /**
  * Data for a dashboard component
- * @typedef {DynamicDashboard~Component}
+ * @typedef {DashboardAPI~Component}
  * @property {String} name
- * @property {DynamicDashboard~Component~Content} [content = null]
+ * @property {DashboardAPI~Component~Content} [content = null]
  * @property {object} options
  */
 
 /**
- * @typedef {DynamicDashboard~Component~Content}
+ * @typedef {DashboardAPI~Component~Content}
  * @property {'vue' | 'html'} type - The content type (vue component or html file)
  * @property {String} path         - The path to the file
  * @property {String} raw          - The raw contents of the file
@@ -19,19 +19,19 @@ const autoBind = require('auto-bind');
 
 /**
  * Data for a dashboard page
- * @typedef {DynamicDashboard~Page}
+ * @typedef {DashboardAPI~Page}
  * @property {String} name
- * @property {DynamicDashboard~Component~Content} [content = null]
+ * @property {DashboardAPI~Component~Content} [content = null]
  * @property {object} options
  */
 
 /**
- * DynamicDashboard class
+ * DashboardAPI class
  * 
  * @class
  * @example
- * 	const DynamicDashboard = require('dynamic-dashboard');
- * 	const dashboard = new DynamicDashboard({
+ * 	const DashboardAPI = require('dynamic-dashboard');
+ * 	const dashboard = new DashboardAPI({
  * 		sync
  * 	});
  * 
@@ -40,9 +40,9 @@ const autoBind = require('auto-bind');
  * 		.html('./component.html')
  * 
  */
-class DynamicDashboard {
+class DashboardAPI {
 	/**
-	 * Create a new DynamicDashboard instance
+	 * Create a new DashboardAPI instance
 	 * @param {Sync} sync - An instance of the Sync system
 	 */
 	constructor(sync) {
@@ -96,7 +96,7 @@ class DynamicDashboard {
 			throw new Error(`Component ${name} already exists`);
 
 		/**
-		 * @type {DynamicDashboard~Component}
+		 * @type {DashboardAPI~Component}
 		 */
 		this.components[name] = {
 			name,
@@ -155,7 +155,7 @@ class DynamicDashboard {
 			throw new Error(`Page at ${url} was already registered`);
 
 		/**
-		 * @type {DynamicDashboard~Page}
+		 * @type {DashboardAPI~Page}
 		 */
 		this.dashboard.pages[url] = {
 			title,
@@ -210,4 +210,4 @@ class DynamicDashboard {
 	}
 }
 
-module.exports = DynamicDashboard;
+module.exports = DashboardAPI;

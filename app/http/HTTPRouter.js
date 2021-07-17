@@ -1,7 +1,5 @@
 const express = require('express');
-const autoBind = require('auto-bind');
 const proxy = require('http-proxy-middleware');
-
 
 module.exports = class HTTPRouter extends express.Router {
 	constructor(baseURL) {
@@ -11,16 +9,14 @@ module.exports = class HTTPRouter extends express.Router {
 		 * The base URL for the default plugin router.
 		 * @type {String}
 		 */
-		 this.baseURL = baseURL;
-
-		autoBind(this);
+		this.baseURL = baseURL;
 	}
 
 	/**
 	 * Proxy an HTTP route to another target URL.
 	 * This is useful if you want to proxy something through mission-control auth.
 	 */
-	 proxy(route, target, options = {}) {
+	proxy(route, target, options = {}) {
 		this.use(
 			route,
 			proxy('/', {
@@ -37,4 +33,4 @@ module.exports = class HTTPRouter extends express.Router {
 
 		return this;
 	}
-}
+};

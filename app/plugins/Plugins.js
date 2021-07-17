@@ -3,7 +3,7 @@ const fs = require('fs/promises');
 const EventEmitter = require('events');
 const autoBind = require('auto-bind');
 
-const PluginContext = require('./PluginContext');
+const PluginAPI = require('./PluginAPI');
 
 const filterOutDisabledPlugins = (filename) => !filename.startsWith('_');
 
@@ -54,7 +54,7 @@ class Plugins extends EventEmitter {
 						this.logger.debug('init plugin', name);
 
 						// The context is the object, the plugin can use to access system internals
-						const context = new PluginContext(name, this.modules);
+						const context = new PluginAPI(name, this.modules);
 
 						// Register in internal plugins
 						this.plugins[name] = {

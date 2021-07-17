@@ -12,7 +12,7 @@
 
 /**
  * The HTTP context object
- * @typedef {Object} HttpContext
+ * @typedef {Object} PluginHTTPAPI
  * @type {object}
  * @property {Object} noAuth
  * @property {Object} raw
@@ -39,3 +39,4 @@
  * @property  {Logging}  logging  - The logging module
  * @property  {Database} database - The database instance
  */
+

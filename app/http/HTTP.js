@@ -1,11 +1,11 @@
 const express = require('express');
 const { createServer } = require('http');
-const session = require('cookie-session')
+const session = require('cookie-session');
 const flash = require('connect-flash');
 const bodyParser = require('body-parser');
 
-const DynamicDashboard = require('./DynamicDashboard');
-const HTTPContext = require('./HTTPContext');
+const DashboardAPI = require('./DashboardAPI');
+const PluginHTTPAPI = require('./PluginHTTPAPI');
 
 // const minify = require('html-minifier').minify;
 
@@ -27,17 +27,12 @@ const attachHostUrlMiddleware = require('./middleware/add-host-url');
 class HTTP {
 	/**
 	 * Create a HTTP server instance.
-	 * 
-	 * @param  {string}   sessionSecret         - The session secret used for cookies and JWT tokens
-	 * @param  {object}   dependencies          - Dependency injection
-	 * @param  {Config}   dependencies.config   - Mission Control config
-	 * @param  {Sync}     dependencies.sync     - Sync module instance
-	 * @param  {Database} dependencies.database - Active database instance
-	 * @param  {Auth}     dependencies.auth     - Auth module instance
-	 * @param  {Logging}  dependencies.logging  - Logging module (Logger factory)
+	 *
+	 * @param  {Core}   core          - Mission Control core
+	 * @param  {string} sessionSecret - The session secret used for cookies and JWT token
 	 */
-	constructor(sessionSecret, dependencies) {
-		const { config, sync, database, auth, logging } = dependencies;
+	constructor(core, sessionSecret) {
+		const { config, sync, database, auth, logging } = core;
 
 		/**
 		 * Mission Control Config
@@ -77,9 +72,9 @@ class HTTP {
 		 * Instance of dynamic dashboard, responsible for managing
 		 * dashboard components and pages created by plugins.
 		 *
-		 * @type {DynamicDashboard}
+		 * @type {DashboardAPI}
 		 */
-		this.dashboard = new DynamicDashboard(sync);
+		this.dashboard = new DashboardAPI(sync);
 
 		/**
 		 * The express app
@@ -99,7 +94,9 @@ class HTTP {
 		 * Initialized error response factory function
 		 * @type {ErrorResponse~compose}
 		 */
-		this.composeErrorResponse = buildErrorResponseComposer(auth.permissions);
+		this.composeErrorResponse = buildErrorResponseComposer(
+			auth.permissions
+		);
 
 		// Add HTTP logging middleware to express chain.
 		// Add at beginning to be able to capture response
@@ -110,11 +107,13 @@ class HTTP {
 		this.app.use(bodyParser.json());
 
 		// Add session to express chain
-		this.app.use(session({
-			name: 'mission-control',
-			secret: sessionSecret
-		}));
-		
+		this.app.use(
+			session({
+				name: 'mission-control',
+				secret: sessionSecret,
+			})
+		);
+
 		// Flash messages (login errors etc)
 		this.app.use(flash());
 
@@ -138,8 +137,13 @@ class HTTP {
 		this.dashboardRouter = new express.Router();
 
 		// Bind component & page data to dashboard requests
-		this.dashboardRouter.use(this.attachComponentsAndPagesMiddleware.bind(this));
-		this.dashboardRouter = dashboardRoutes(this.dashboardRouter, { config, auth });
+		this.dashboardRouter.use(
+			this.attachComponentsAndPagesMiddleware.bind(this)
+		);
+		this.dashboardRouter = dashboardRoutes(this.dashboardRouter, {
+			config,
+			auth,
+		});
 		this.app.use(this.dashboardRouter);
 
 		// Add error handler for auth & dashboard routes.
@@ -176,7 +180,7 @@ class HTTP {
 	 * so our error handler gets registered after their route
 	 * registrations.
 	 * This seems to be a limitation of express, because
-	 * error handlers will not trigger for errors trown in 
+	 * error handlers will not trigger for errors trown in
 	 * routes that were registered after the error handler.
 	 */
 	addErrorHandler() {
@@ -185,7 +189,7 @@ class HTTP {
 
 	/**
 	 * Express middleware to add components and pages to request.
-	 * 
+	 *
 	 * @param  {express~Request}   req  - The express request
 	 * @param  {express~Response}  res  - The express response
 	 * @param  {Function}          next - Middleware callback
@@ -212,7 +216,7 @@ class HTTP {
 	onError(err, req, res, next) {
 		// Joi packages errors in { error } format for some stupid reason
 		err = err.error || err;
-		
+
 		// Joi returns weird errors so we morph them
 		// into a UserError for convenience
 		if (err.isJoi) {
@@ -222,51 +226,56 @@ class HTTP {
 
 		// If an error is NOT a UserError, that means its an internal error
 		// that we haven't caught properly. These should be logged.
-		if (!err.isUserError) {			
+		if (!err.isUserError) {
 			this.logger.error('Unknown HTTP Error', { err });
 		}
 
 		// Return error status and compose JSON error response
 		// @see {JSONErrorResponse}
-		res.status(err.status || 500)
-			.json(this.composeErrorResponse(err, req.user));
+		res.status(err.status || 500).json(
+			this.composeErrorResponse(err, req.user)
+		);
 	}
 
 	/**
 	 * Create the API object used by plugins to interact with the HTTP module
 	 * @param  {string} 		  pluginName - The plugin name
-	 * @return {HTTPContext}           
+	 * @return {PluginHTTPAPI}
 	 */
-	createHTTPPluginContext(pluginName) {
+	createHTTPPluginAPI(pluginName) {
 		const baseUrl = `/plugins/${pluginName}`;
 
-		const httpContext = new HTTPContext(baseUrl, this.dashboard);
+		const httpAPI = new PluginHTTPAPI(baseUrl, this.dashboard);
 
 		// Hook the plugin router into the express app:
 
 		// Router to use for root urls
 		// example.com/:paths
-		// 
+		//
 		// DANGEROUS: no auth checks performed
-		this.app.use(httpContext.root);
+		this.app.use(httpAPI.root);
 
 		// Router to use for namespaced URLs
 		// example.com/plugins/example-plugin/:paths
-		// 
+		//
 		// SAFE: auth checks before every request handler
-		this.app.use(baseUrl, this.auth.middleware.requireAuthentication, httpContext);
+		this.app.use(
+			baseUrl,
+			this.auth.middleware.requireAuthentication,
+			httpAPI
+		);
 
 		// Router to use for namespaced URLs
 		// example.com/plugins/example-plugin/:paths
-		// 
+		//
 		// DANGEROUS: no auth checks performed
-		this.app.use(baseUrl, httpContext.unsafe);
+		this.app.use(httpAPI.unsafeRoot);
 
-		return httpContext;
+		return httpAPI;
 	}
 
 	/**
-	 * Finish HTTP server setup and listen on given port 
+	 * Finish HTTP server setup and listen on given port
 	 */
 	listen() {
 		this.server.listen(this.port, () => {
@@ -275,6 +284,5 @@ class HTTP {
 		});
 	}
 }
-
 
 module.exports = HTTP;

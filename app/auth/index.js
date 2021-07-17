@@ -5,10 +5,8 @@ const LocalStrategy = require('passport-local').Strategy;
 
 const logger = require('@helpers/logger').createLogger('Auth');
 const crypto = require('@helpers/crypto');
-const UserError = require('@helpers/UserError');
 
-
-const Permissions = require('./permissions');
+const PermissionsAPI = require('./permissions');
 const AuthMiddleware = require('./middleware');
 const Tokens = require('./tokens');
 
@@ -16,34 +14,38 @@ const grants = require('./grants');
 
 // const initRoutes = require('./database-api');
 
-
-module.exports = function initAuth(config, db, sessionSecret) {
-	const api = db.api.users;
+module.exports = function initAuth(core, sessionSecret) {
+	const api = core.database.api.users;
 
 	passport.use(
 		'local',
 		new LocalStrategy(
-				{
+			{
 				usernameField: 'username',
-				passwordField: 'password'
+				passwordField: 'password',
 			},
 			async (username, password, done) => {
 				const user = await api.findUnsafe(username);
 
-				if (user && (await crypto.comparePassword(password, user.password))) {
+				if (
+					user &&
+					(await crypto.comparePassword(password, user.password))
+				) {
 					return done(null, user);
 				}
 
-				return done(null, false, { message: 'Incorrect username or password.' });
+				return done(null, false, {
+					message: 'Incorrect username or password.',
+				});
 			}
 		)
 	);
 
-	passport.serializeUser(function(user, cb) {
+	passport.serializeUser(function (user, cb) {
 		cb(null, user.username);
 	});
 
-	passport.deserializeUser(async function(username, cb) {
+	passport.deserializeUser(async function (username, cb) {
 		const user = await api.find(username);
 
 		if (!user) {
@@ -53,7 +55,7 @@ module.exports = function initAuth(config, db, sessionSecret) {
 		return cb(null, user);
 	});
 
-	const permissions = new Permissions(grants);
+	const permissions = new PermissionsAPI(grants);
 	const tokens = new Tokens(sessionSecret);
 	const middleware = new AuthMiddleware(permissions);
 
@@ -71,36 +73,46 @@ module.exports = function initAuth(config, db, sessionSecret) {
 				async serveLoginPage(req, res) {
 					const errors = req.flash('error');
 
-					let content = await fs.readFile(path.resolve(__dirname,'../views/login.html'));
+					let content = await fs.readFile(
+						path.resolve(__dirname, '../views/login.html')
+					);
 
-					content = content.toString()
+					content = content
+						.toString()
 						.replace(
 							'{{ERROR_MSG}}',
 							errors.length > 0
 								? `<p class="error-msg">${errors[0]}</p>`
 								: ''
 						)
-						.replace(/\{\{URL\}\}/g, config.http.url);
+						.replace(/\{\{URL\}\}/g, core.config.http.url);
 
 					res.send(content);
 				},
 
 				authenticate(req, res, next) {
 					passport.authenticate('local', (error, user, info) => {
-						if (error) { 
-							logger.error('error during authentication', { error });
+						if (error) {
+							logger.error('error during authentication', {
+								error,
+							});
 							return next(error);
 						}
-						
-						if (!user) { 
-							req.flash('error', info.message || 'Oops, something went wrong');
-							
+
+						if (!user) {
+							req.flash(
+								'error',
+								info.message || 'Oops, something went wrong'
+							);
+
 							return res.redirect('/login');
 						}
 
 						req.logIn(user, (error) => {
-							if (error) { 
-								logger.error('error during authentication', { error });
+							if (error) {
+								logger.error('error during authentication', {
+									error,
+								});
 
 								return next(error);
 							}
@@ -119,8 +131,8 @@ module.exports = function initAuth(config, db, sessionSecret) {
 					req.logOut();
 
 					next();
-				}
-			}
-		}
+				},
+			},
+		},
 	};
 };

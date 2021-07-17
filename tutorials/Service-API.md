@@ -1,4 +1,4 @@
-# HTTP API Guide
+# Service API Guide
 
 The HTTP API can be used in plugin initializers and is available in the `PluginContext`.
 

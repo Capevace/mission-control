@@ -1,54 +1,237 @@
 <script type="module">
-    const { dashboard } = MISSION_CONTROL;
+    const { dashboard, components } = MISSION_CONTROL;
 
-    const homebridgeComponent = dashboard.consumeService('homebridge', {
+	function hslToHex(h, s, l) {
+  l /= 100;
+  const a = s * Math.min(l, 1 - l) / 100;
+  const f = n => {
+    const k = (n + h / 30) % 12;
+    const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+    return Math.round(255 * color).toString(16).padStart(2, '0');   // convert to Hex and prefix "0" if needed
+  };
+  return `#${f(0)}${f(8)}${f(4)}`;
+}
+
+function hexToHSL(H) {
+  // Convert hex to RGB first
+  let r = 0, g = 0, b = 0;
+  if (H.length == 4) {
+    r = "0x" + H[1] + H[1];
+    g = "0x" + H[2] + H[2];
+    b = "0x" + H[3] + H[3];
+  } else if (H.length == 7) {
+    r = "0x" + H[1] + H[2];
+    g = "0x" + H[3] + H[4];
+    b = "0x" + H[5] + H[6];
+  }
+  // Then to HSL
+  r /= 255;
+  g /= 255;
+  b /= 255;
+  let cmin = Math.min(r,g,b),
+      cmax = Math.max(r,g,b),
+      delta = cmax - cmin,
+      h = 0,
+      s = 0,
+      l = 0;
+
+  if (delta == 0)
+    h = 0;
+  else if (cmax == r)
+    h = ((g - b) / delta) % 6;
+  else if (cmax == g)
+    h = (b - r) / delta + 2;
+  else
+    h = (r - g) / delta + 4;
+
+  h = Math.round(h * 60);
+
+  if (h < 0)
+    h += 360;
+
+  l = (cmax + cmin) / 2;
+  s = delta == 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
+  s = +(s * 100).toFixed(1);
+  l = +(l * 100).toFixed(1);
+
+  return [ h, s, l ];
+}
+
+	const homebridgeToggles = {
+		props: {
+			devices: {
+				type: Array,
+				default: () => [],
+			}
+		},
+		template: `
+			<div class="flex flex-wrap gap-5 mb-8" >
+				<SmartToggle
+					v-for="(device) in devices"
+					:key="device.uniqueId"
+					:active="isDeviceActive(device)"
+					:icon="iconForDevice(device)"
+					:color="colorForDevice(device)"
+					:shadow="shadowForDevice(device)"
+					@click="$emit('invoke', 'interact', { uniqueId: device.uniqueId, changes: { On: !isDeviceActive(device) } })"
+					@contextmenu.prevent="edit(device)"
+				>
+					{{ device.name }}
+				</SmartToggle>
+			</div>
+		`,
+		methods: {
+			edit(device) {
+				this.$emit('edit', device);
+			},
+			isDeviceActive(device) {
+                return !!device.values.On;
+            },
+			iconForDevice(device) {
+				switch (device.name) {
+					case 'Bed':
+						return 'bed';
+
+					case 'Flamingo':
+						return 'flamingo';
+
+					case 'Rainbow Mode':
+						return 'rainbow';
+
+					case 'Strip (Steckdose)':
+						return device.values.On
+							? 'light-switch-on'
+							: 'light-switch-off';
+
+					case 'Ständer':
+					case 'Desk':
+					case 'LED Strip':
+					default:
+						return 'lamp-desk';
+
+				}
+			},
+			colorForDevice(device) {
+				switch (device.name) {
+					case 'Flamingo':
+						return '#FFB1D6';
+					case 'LED Strip':
+						return `hsl(${device.values.Hue}, ${device.values.Saturation}%, ${device.values.Brightness}%)`;
+
+					case 'Ständer':
+					case 'Bed':
+					case 'Desk':
+						return 'rgb(255, 236, 177)';
+
+					default:
+						return '#f5f3ff';
+				}
+			},
+			shadowForDevice(device) {
+				switch (device.name) {
+					case 'Strip (Steckdose)':
+						return false;
+
+					default:
+						return true;
+				}
+			}
+		},
+		components: {
+			SmartToggle: components.form.SmartToggle,
+
+		}
+	}
+
+	const DeviceEditor = {
+		components: {
+			ColorInput: components.form.ColorInput,
+		},
+		template: `
+			<form>
+				<ColorInput v-model="color" />
+			</form>
+		`,
+		props: {
+			device: {
+				type: Object,
+				required: true
+			}
+		},
+		data: (vm) => ({
+			color: vm.hexColor
+		}),
+		computed: {
+			hexColor() {
+				const [ h, s, l ] = [ this.device.values.Hue, this.device.values.Saturation, this.device.values.Brightness ];
+
+				return hslToHex(h, s, l);
+			},
+		},
+		watch: {
+			device() {
+				this.color = this.hexColor;
+			},
+			color() {
+				const [ h, s, l ] = hexToHSL(this.color);
+				this.$emit('invoke', 'interact', {
+					uniqueId: this.device.uniqueId,
+					changes: {
+						Hue: h,
+						Saturation: s,
+						Brightness: l
+					}
+				});
+			}
+		}
+	};
+
+    const homebridgeComponent = {
         template: `
-            <section class="">
-                <div 
-                    v-if="homekitState.status === 'connected'"
-                    class="flex flex-wrap gap-5 mb-8"
-                    
-                >
-                    <virtual-switch
-                        v-for="(device) in devices"
-                        :key="device.uniqueId"
-                        :active="isDeviceActive(device)"
-                        icon="home"
-                        @click="toggle(device.uniqueId, { On: !isDeviceActive(device) })"
-                    >
-                        {{ device.name }}
-                    </virtual-switch>
-                </div>
-                <div 
-                    v-else-if="status === 'connecting'"
-                    class="flex items-center justify-center text-3xl font-semibold text-purple-500"
-                >
-                    Loading
-                </div>
-                <p v-else class="text-purple-400 text-xs leading-normal max-w-prose">
-                    You need to set a <a class="text-purple-300 underline" href="https://github.com/homebridge/homebridge">homebridge</a> pin in config (found in ~/.mission-control/config) or by specifying the <pre class="inline font-mono ">--homebridge-pin [pin]</pre> CLI option for devices to be listed here.
-                </p>
-            </section>
+			<ServiceProvider service="homebridge" v-slot="{ status, devices, invokeAction }">
+				<section class="">
+					<homebridge-toggles 
+						v-if="status === 'connected'" 
+						:devices="values(devices)"
+						@invoke="invokeAction"
+						@edit="edit"
+					/>
+					<div 
+						v-else-if="status === 'connecting'"
+						class="flex items-center justify-center text-3xl font-semibold text-purple-500"
+					>
+						Loading
+					</div>
+					<p v-else class="text-purple-400 text-xs leading-normal max-w-prose">
+						You need to set a <a class="text-purple-300 underline" href="https://github.com/homebridge/homebridge">homebridge</a> pin in config (found in ~/.mission-control/config) or by specifying the <pre class="inline font-mono ">--homebridge-pin [pin]</pre> CLI option for devices to be listed here.
+					</p>
+
+					<SideContext v-if="selectedDevice" @close="selectedDevice = null">
+						<template v-slot:title>{{ selectedDevice.name }}</template>
+						<DeviceEditor :device="selectedDevice" @invoke="invokeAction" />
+					</SideContext>
+				</section>
+			</ServiceProvider>
         `,
         components: {
-            'virtual-switch': MISSION_CONTROL.components.switch
+			DeviceEditor,
+			homebridgeToggles,
+			ServiceProvider: components.headless.ServiceProvider,
+			SideContext: components.portals.SideContext,
         },
-        computed: {
-            homekitState() {
-                return this.$stateWithDefault({
-                    status: 'connected',
-                    devices: {}
-                });
-            },
-            devices() {
-                return Object.values(this.homekitState.devices);
-            },
-            rows() {
-                return MISSION_CONTROL.utils.chunkArray(this.devices, 4);
-            }
-        },
+		data: () => ({
+			selectedDevice: null
+		}),
         methods: {
-            async toggle(uniqueId, changes) {
+			edit(device) {
+				this.selectedDevice = device;
+			},
+
+			values(devices) {
+                return Object.values(devices);
+            },
+
+			async toggle(uniqueId, changes) {
                 try {
                     await this.$invokeAction('interact', {
                         uniqueId,
@@ -60,13 +243,9 @@
                         title: e.message,
                     });
                 }
-            },
-
-            isDeviceActive(device) {
-                return !!device.values.On;
             }
         }
-    });
+    };
 
     dashboard.component('homebridge-buttons', homebridgeComponent);
 

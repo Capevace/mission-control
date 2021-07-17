@@ -1,0 +1,115 @@
+
+<html><head></head><body><h1 id="http-api-guide">HTTP API Guide</h1>
+<hr />
+<p>The HTTP API can be used in plugin initializers and is available in the <code>PluginContext</code>.</p>
+<p><em>Example:</em></p>
+<pre><code class="js">// File: my-plugin/index.js
+module.exports = function initPlugin({ config, http }) {
+    // Create a route at /plugins/my-plugin/hello-world
+    http.get('/hello-world', (req, res) =&gt; {
+        res.json({
+            message: 'Hello World!'
+        });
+    });
+
+    // /plugins/my-plugin/assets -&gt; Files from /resources
+    http.use(
+        '/assets',
+        express.static(__dirname + '/resources')
+    );
+}</code></pre>
+<p>Plugins can use the HTTP API to accept custom HTTP endpoints.</p>
+<blockquote>
+<p><strong>NOTE:</strong> You won't need to create custom HTTP endpoints for service data. See <a href="service-api.md#http-endpoints">Service API &gt; HTTP endpoints</a>.</p>
+</blockquote>
+<p>There are three <code>express.Router</code> routers to register routes on:</p>
+<h2 id="contents">Contents</h2>
+<hr />
+<ul>
+<li><a href="#http-routers">HTTP Routers</a><ul>
+<li><a href="#http--httpcontext-extends-httprouter">http</a></li>
+<li><a href="#httproot--httprouter">http.root</a></li>
+<li><a href="#httpunsaferoot--httprouter">http.unsafeRoot</a></li>
+</ul>
+</li>
+<li><a href="#http-router-api">HTTP Router API</a><ul>
+<li><a href="#routerbaseurl--string">router.baseUrl</a></li>
+<li><a href="#httpproxy-route-target--options--">router.proxy</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="http-routers">HTTP Routers</h2>
+<hr />
+<h3 id="http--httpcontext-extends-httprouter">http: <code>HTTPContext</code> <em>extends</em> <code>HTTPRouter</code></h3>
+<p><em>Root URL:</em> <code>/</code>
+<em>Authentication required</em></p>
+<p>The <code>http</code> object itself extends <code>express.Router</code>.</p>
+<p>These routes will be prefixed with the plugins URL root: <code>/plugins/PLUGIN-NAME/</code>.
+Authentication is required for these routes, and permission checks are automatically performed.
+This means a user object is a given when handling these requests.</p>
+<p><em>Example</em>: </p>
+<pre><code class="js">// File: my-plugin/index.js
+
+// Create a post route at /plugins/my-plugin/random-number
+http.post('/random-number', (req, res) =&gt; {
+    res.json({
+        number: Math.random()
+    });
+});</code></pre>
+<hr>
+<h3 id="httproot--httprouter">http.root: <code>HTTPRouter</code></h3>
+<p><em>Root URL:</em> <code>/</code>
+<em>Authentication required</em></p>
+<p>This HTTP router listens at the HTTP root <code>/</code> so routes will be available at <code>https://mission-control.local/...</code>.</p>
+<p>Authentication is also required for these routes, and permission checks are automatically performed.
+This means a user object is a given when handling these requests.</p>
+<p><em>Example</em>: </p>
+<pre><code class="js">// File: my-plugin/index.js
+
+// Create a authenticated post route at /random-number
+http.root.post('/random-number', (req, res) =&gt; {
+    res.json({
+        number: Math.random()
+    });
+});</code></pre>
+<h3 id="httpunsaferoot--httprouter">http.unsafeRoot: <code>HTTPRouter</code></h3>
+<p><em>Root URL:</em> <code>/</code></p>
+<blockquote>
+<p><strong>Warning</strong>: 
+<em>Authentication will not be required by default! These routes are **PUBLIC</em>.**</p>
+</blockquote>
+<p>This HTTP router listens at the HTTP root <code>/</code> so routes will be available at <code>https://mission-control.local/...</code>.</p>
+<p>Authentication is also required for these routes, and permission checks are automatically performed.
+This means a user object is a given when handling these requests.</p>
+<p><em>Example</em>: </p>
+<pre><code class="js">// File: my-plugin/index.js
+
+// Create a UNSAFE post route at /random-number
+http.unsafeRoot.post('/random-number', (req, res) =&gt; {
+    res.json({
+        number: Math.random()
+    });
+});</code></pre>
+<h2 id="http-router-api">HTTP Router API</h2>
+<hr />
+<h3 id="routerbaseurl--string">router.baseUrl: <code>String</code></h3>
+<p>The router's base URL.
+The <code>config.http.url</code> value will be used for this.
+<em>Unless the <code>http.root / http.unsafeRoot</code> router is used, URLS will be prefixed with <code>/plugins/PLUGIN-NAME</code>.</em></p>
+<hr>
+<h3 id="httpproxy-route-target--options--">http.proxy(route, target, [options])</h3>
+<p>Proxy an HTTP request to another target URL</p>
+<p>This is useful if you want to proxy another service through mission-control, for example <code>homebridge-config-ui-x</code> or a similar webapp.</p>
+<p>The options are passed to <code>http-proxy-middleware</code> directly, which is the proxy implementation used.</p>
+<p><em>Example:</em></p>
+<pre><code class="js">// File: my-plugin/index.js
+
+// Create a post route at /plugins/my-plugin/do-something
+http.proxy('/homebridge', 'http://localhost:8080' {
+    onProxyReq(proxyReq, req) {
+        // pass user to service
+        if (req.user)
+            proxyReq.setHeader('X-Auth-User', req.user.username);
+    }
+});</code></pre>
+</body></html>

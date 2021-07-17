@@ -1,7 +1,5 @@
 <script type="module">
-    const { dashboard, utils } = MISSION_CONTROL;
-
-    const leftPad = utils.leftPad;
+    const { dashboard, utils: { leftPad }, components } = MISSION_CONTROL;
 
     function dateToTime(date, onlyMinutes = false) {
         const hours = leftPad(date.getHours(), 2, '0');
@@ -107,35 +105,33 @@
         }
     }
 
-    const trainsComponent = dashboard.consumeService('trains', {
+    const trainsComponent = {
         template: `
-            <section class="w-full h-full">
-                <div class="dashboard-box-heading mb-3 ">
-                    Trains to Lübeck Hbf
-                    <a class="link ml-3" href="https://reiseauskunft.bahn.de/bin/query.exe/dn?revia=yes&existOptimizePrice-deactivated=1&country=DEU&dbkanal_007=L01_S01_D001_KIN0001_qf-bahn-svb-kl2_lz03&start=1&protocol=https%3A&REQ0JourneyStopsS0A=1&S=ZOB%2C+L%C3%BCneburg&REQ0JourneyStopsSID=A%3D1%40O%3DZOB%2C+L%C3%BCneburg%40X%3D10419523%40Y%3D53249302%40U%3D80%40L%3D000626772%40B%3D1%40p%3D1623428175%40&Z=L%C3%BCbeck+Hbf&REQ0JourneyStopsZID=&timesel=depart&returnDate=&returnTime=&returnTimesel=depart&optimize=0&auskunft_travelers_number=1&tariffTravellerType.1=E&tariffTravellerReductionClass.1=0&tariffClass=2&rtMode=DB-HYBRID&externRequest=yes&HWAI=JS!js%3Dyes!ajax%3Dyes!#hfsseq1|l5.018015162.1623743447">bahn.de</a>
-                </div>
-                <div class="dashboard-box w-full flex flex-col justify-start pr-3">
-                    <div class="list-none p-0 w-full text-main-lightest inline-block overflow-y-scroll h-full">
-                        <bahn-row
-                            v-for="(route, index) in routes"
-                            :route="route"
-                            :class="{ 'mb-4': index !== routes.length - 1 }"
-                        />
-                    </div>
-                </div>
-            </section>
+			<ServiceProvider service="trains" v-slot="{ routes }">
+				<section class="w-full h-full">
+					<PanelLabel>
+						Trains to Lübeck Hbf
+						<a class="link ml-3" href="https://reiseauskunft.bahn.de/bin/query.exe/dn?revia=yes&existOptimizePrice-deactivated=1&country=DEU&dbkanal_007=L01_S01_D001_KIN0001_qf-bahn-svb-kl2_lz03&start=1&protocol=https%3A&REQ0JourneyStopsS0A=1&S=ZOB%2C+L%C3%BCneburg&REQ0JourneyStopsSID=A%3D1%40O%3DZOB%2C+L%C3%BCneburg%40X%3D10419523%40Y%3D53249302%40U%3D80%40L%3D000626772%40B%3D1%40p%3D1623428175%40&Z=L%C3%BCbeck+Hbf&REQ0JourneyStopsZID=&timesel=depart&returnDate=&returnTime=&returnTimesel=depart&optimize=0&auskunft_travelers_number=1&tariffTravellerType.1=E&tariffTravellerReductionClass.1=0&tariffClass=2&rtMode=DB-HYBRID&externRequest=yes&HWAI=JS!js%3Dyes!ajax%3Dyes!#hfsseq1|l5.018015162.1623743447">bahn.de</a>
+					</PanelLabel>
+					<Panel>
+						<div class="list-none p-0 w-full text-main-lightest inline-block overflow-y-scroll h-full">
+							<bahn-row
+								v-for="(route, index) in routes"
+								:route="route"
+								:class="{ 'mb-4': index !== routes.length - 1 }"
+							/>
+						</div>
+					</Panel>
+				</section>
+			</ServiceProvider>
         `,
-        computed: {
-            routes() {
-                return this.$stateWithDefault({
-                    routes: []
-                }).routes;
-            }
-        },
         components: {
-            bahnRow
+            bahnRow,
+			ServiceProvider: components.headless.ServiceProvider,
+			Panel: components.common.Panel,
+			PanelLabel: components.common.PanelLabel,
         }
-    });
+    };
 
     dashboard.component('bahn', trainsComponent);
 </script>

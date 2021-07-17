@@ -1,39 +1,50 @@
 <script type="module">
-	const { dashboard } = MISSION_CONTROL;
+	const { dashboard, components, utils: { formatDistanceStrict } } = MISSION_CONTROL;
 
-	const adminControls = dashboard.consumeService('admin-controls', {
+	const adminControls = {
 		template: `
-			<section class="w-full">
-				<div class="dashboard-box-heading mb-3">
-					Mission Control Server (Uptime: {{ uptime }} seconds)
-				</div>
-				<div class="">
-					<forms-button
-						:loading="loading"
-						@click="restart"
-						class="w-full"
-					>
-						Restart
-					</forms-button>
-				</div>  
-			</section>
+			<ServiceProvider service="admin-controls" v-slot="{ startedAt }">
+				<section>
+					<PanelLabel>
+						Server
+					</PanelLabel>
+					<Panel class="flex items-center">
+						<div class="flex-1 font-semibold ">
+							<ClockProvider v-slot="{ now }">
+								<InfoBlock label="Uptime">
+									<template :data-now="now.toISOString()">
+										{{ startedAt | uptime }}
+									</template>
+								</InfoBlock>
+							</ClockProvider>
+						</div>
+						<div>
+							<Button
+								:loading="!startedAt"
+								@click="restart"
+								class="w-full"
+							>
+								Restart
+							</Button>
+						</div>  
+					</Panel>
+				</section>
+			</ServiceProvider>
 		`,
 		components: {
-			formsButton: MISSION_CONTROL.components.forms.button
+			Button: components.form.Button,
+			ServiceProvider: components.headless.ServiceProvider,
+			ClockProvider: components.headless.ClockProvider,
+			Panel: components.common.Panel,
+			PanelLabel: components.common.PanelLabel,
+			InfoBlock: components.common.InfoBlock,
 		},
 		data: () => ({
 			loading: false
 		}),
-		computed: {
-			serverStartedAt() {
-				return this.adminControls.state
-					? this.adminControls.state.startedAt
-					: null;
-			},
-			uptime() {
-				return this.serverStartedAt
-					? Math.abs(new Date() - new Date(this.serverStartedAt)) / 1000
-					: 0;
+		filters: {
+			uptime(value) {
+				return formatDistanceStrict(new Date(), new Date(value));
 			}
 		},
 		methods: {
@@ -62,7 +73,7 @@
 				this.loading = false;
 			}
 		}
-	});
+	};
 
 	dashboard.component('admin-controls', adminControls);
 

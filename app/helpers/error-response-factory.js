@@ -13,7 +13,7 @@
 
 /**
  * Factory function to create error response composing functions
- * @param  {Permissions} permissions - Permissions object
+ * @param  {PermissionsAPI} permissions - PermissionsAPI object
  * @return {ErrorResponse~compose}   - The response compose function
  */
 function buildErrorResponseComposer(permissions) {
