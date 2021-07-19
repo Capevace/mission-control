@@ -1,5 +1,7 @@
 const autoBind = require('auto-bind');
 
+const UserError = require('@helpers/UserError');
+
 module.exports = class AuthMiddleware {
 	/**
 	 * @param  {PermissionsAPI} permissions The PermissionsAPI object
@@ -54,16 +56,26 @@ module.exports = class AuthMiddleware {
 	 */
 	requirePermission(type, scope, resource) {
 		return (req, res, next) => {
-			const permission = this.permissions.evaluate(req.user.role, type, resource, scope);
+			const permission = this.permissions.evaluate(
+				req.user.role,
+				type,
+				resource,
+				scope
+			);
 
 			if (permission.granted) {
 				req.permission = permission;
 
 				next();
 			} else {
-				// e.g.				Not allowed to update this  user 
-				next(new UserError(`Not allowed to ${type} this ${resource}`, 403));
+				// e.g.				Not allowed to update this  user
+				next(
+					new UserError(
+						`Not allowed to ${type} this ${resource}`,
+						403
+					)
+				);
 			}
 		};
 	}
-}
+};

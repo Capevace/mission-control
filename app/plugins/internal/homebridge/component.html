@@ -1,61 +1,7 @@
 <script type="module">
     const { dashboard, components } = MISSION_CONTROL;
 
-	function hslToHex(h, s, l) {
-  l /= 100;
-  const a = s * Math.min(l, 1 - l) / 100;
-  const f = n => {
-    const k = (n + h / 30) % 12;
-    const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
-    return Math.round(255 * color).toString(16).padStart(2, '0');   // convert to Hex and prefix "0" if needed
-  };
-  return `#${f(0)}${f(8)}${f(4)}`;
-}
-
-function hexToHSL(H) {
-  // Convert hex to RGB first
-  let r = 0, g = 0, b = 0;
-  if (H.length == 4) {
-    r = "0x" + H[1] + H[1];
-    g = "0x" + H[2] + H[2];
-    b = "0x" + H[3] + H[3];
-  } else if (H.length == 7) {
-    r = "0x" + H[1] + H[2];
-    g = "0x" + H[3] + H[4];
-    b = "0x" + H[5] + H[6];
-  }
-  // Then to HSL
-  r /= 255;
-  g /= 255;
-  b /= 255;
-  let cmin = Math.min(r,g,b),
-      cmax = Math.max(r,g,b),
-      delta = cmax - cmin,
-      h = 0,
-      s = 0,
-      l = 0;
-
-  if (delta == 0)
-    h = 0;
-  else if (cmax == r)
-    h = ((g - b) / delta) % 6;
-  else if (cmax == g)
-    h = (b - r) / delta + 2;
-  else
-    h = (r - g) / delta + 4;
-
-  h = Math.round(h * 60);
-
-  if (h < 0)
-    h += 360;
-
-  l = (cmax + cmin) / 2;
-  s = delta == 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
-  s = +(s * 100).toFixed(1);
-  l = +(l * 100).toFixed(1);
-
-  return [ h, s, l ];
-}
+	
 
 	const homebridgeToggles = {
 		props: {
@@ -143,49 +89,6 @@ function hexToHSL(H) {
 		}
 	}
 
-	const DeviceEditor = {
-		components: {
-			ColorInput: components.form.ColorInput,
-		},
-		template: `
-			<form>
-				<ColorInput v-model="color" />
-			</form>
-		`,
-		props: {
-			device: {
-				type: Object,
-				required: true
-			}
-		},
-		data: (vm) => ({
-			color: vm.hexColor
-		}),
-		computed: {
-			hexColor() {
-				const [ h, s, l ] = [ this.device.values.Hue, this.device.values.Saturation, this.device.values.Brightness ];
-
-				return hslToHex(h, s, l);
-			},
-		},
-		watch: {
-			device() {
-				this.color = this.hexColor;
-			},
-			color() {
-				const [ h, s, l ] = hexToHSL(this.color);
-				this.$emit('invoke', 'interact', {
-					uniqueId: this.device.uniqueId,
-					changes: {
-						Hue: h,
-						Saturation: s,
-						Brightness: l
-					}
-				});
-			}
-		}
-	};
-
     const homebridgeComponent = {
         template: `
 			<ServiceProvider service="homebridge" v-slot="{ status, devices, invokeAction }">
@@ -206,15 +109,15 @@ function hexToHSL(H) {
 						You need to set a <a class="text-purple-300 underline" href="https://github.com/homebridge/homebridge">homebridge</a> pin in config (found in ~/.mission-control/config) or by specifying the <pre class="inline font-mono ">--homebridge-pin [pin]</pre> CLI option for devices to be listed here.
 					</p>
 
-					<SideContext v-if="selectedDevice" @close="selectedDevice = null">
+					<SideContext v-if="selectedDevice && devices[selectedDevice.uniqueId]" @close="selectedDevice = null">
 						<template v-slot:title>{{ selectedDevice.name }}</template>
-						<DeviceEditor :device="selectedDevice" @invoke="invokeAction" />
+						<DeviceSettings :device="devices[selectedDevice.uniqueId]" @invoke="invokeAction" />
 					</SideContext>
 				</section>
 			</ServiceProvider>
         `,
         components: {
-			DeviceEditor,
+			DeviceSettings: components.views.users.DeviceSettings,
 			homebridgeToggles,
 			ServiceProvider: components.headless.ServiceProvider,
 			SideContext: components.portals.SideContext,
