@@ -16,9 +16,9 @@
 					v-for="(device) in devices"
 					:key="device.uniqueId"
 					:active="isDeviceActive(device)"
-					:icon="iconForDevice(device)"
-					:color="colorForDevice(device)"
-					:shadow="shadowForDevice(device)"
+					:icon="device.icon"
+					:color="device.color"
+					:shadow="device.shadow"
 					@click="$emit('invoke', 'interact', { uniqueId: device.uniqueId, changes: { On: !isDeviceActive(device) } })"
 					@contextmenu.prevent="edit(device)"
 				>
@@ -33,55 +33,6 @@
 			isDeviceActive(device) {
                 return !!device.values.On;
             },
-			iconForDevice(device) {
-				switch (device.name) {
-					case 'Bed':
-						return 'bed';
-
-					case 'Flamingo':
-						return 'flamingo';
-
-					case 'Rainbow Mode':
-						return 'rainbow';
-
-					case 'Strip (Steckdose)':
-						return device.values.On
-							? 'light-switch-on'
-							: 'light-switch-off';
-
-					case 'Ständer':
-					case 'Desk':
-					case 'LED Strip':
-					default:
-						return 'lamp-desk';
-
-				}
-			},
-			colorForDevice(device) {
-				switch (device.name) {
-					case 'Flamingo':
-						return '#FFB1D6';
-					case 'LED Strip':
-						return `hsl(${device.values.Hue}, ${device.values.Saturation}%, ${device.values.Brightness}%)`;
-
-					case 'Ständer':
-					case 'Bed':
-					case 'Desk':
-						return 'rgb(255, 236, 177)';
-
-					default:
-						return '#f5f3ff';
-				}
-			},
-			shadowForDevice(device) {
-				switch (device.name) {
-					case 'Strip (Steckdose)':
-						return false;
-
-					default:
-						return true;
-				}
-			}
 		},
 		components: {
 			SmartToggle: components.form.SmartToggle,
@@ -111,7 +62,7 @@
 
 					<SideContext v-if="selectedDevice && devices[selectedDevice.uniqueId]" @close="selectedDevice = null">
 						<template v-slot:title>{{ selectedDevice.name }}</template>
-						<DeviceSettings :device="devices[selectedDevice.uniqueId]" @invoke="invokeAction" />
+						<DeviceSettings :device="deviceWithIcon(devices[selectedDevice.uniqueId])" @invoke="invokeAction" />
 					</SideContext>
 				</section>
 			</ServiceProvider>
@@ -125,13 +76,24 @@
 		data: () => ({
 			selectedDevice: null
 		}),
+		computed: {
+			
+		},
         methods: {
+			deviceWithIcon(device) {
+				return {
+					...device,
+					icon: this.iconForDevice(device),
+					color: this.colorForDevice(device),
+					shadow: this.shadowForDevice(device),
+				};
+			},
 			edit(device) {
-				this.selectedDevice = device;
+				this.selectedDevice = this.deviceWithIcon(device);
 			},
 
 			values(devices) {
-                return Object.values(devices);
+                return Object.values(devices).map(device => this.deviceWithIcon(device));
             },
 
 			async toggle(uniqueId, changes) {
@@ -146,8 +108,59 @@
                         title: e.message,
                     });
                 }
-            }
-        }
+            },
+
+			iconForDevice(device) {
+				switch (device.name) {
+					case 'Bed':
+						return 'bed';
+
+					case 'Flamingo':
+						return 'flamingo';
+
+					case 'Rainbow Mode':
+						return 'rainbow';
+
+					case 'Strip (Steckdose)':
+						return device.values.On
+							? 'light-switch-on'
+							: 'light-switch-off';
+
+					case 'Ständer':
+					case 'Desk':
+					case 'LED Strip':
+					default:
+						return 'lamp-desk';
+
+				}
+			},
+
+			colorForDevice(device) {
+				switch (device.name) {
+					case 'Flamingo':
+						return '#FFB1D6';
+					case 'LED Strip':
+						return `hsl(${device.values.Hue}, ${device.values.Saturation}%, ${device.values.Brightness}%)`;
+
+					case 'Ständer':
+					case 'Bed':
+					case 'Desk':
+						return 'rgb(255, 236, 177)';
+
+					default:
+						return '#f5f3ff';
+				}
+			},
+			shadowForDevice(device) {
+				switch (device.name) {
+					case 'Strip (Steckdose)':
+						return false;
+
+					default:
+						return true;
+				}
+			}
+        },
     };
 
     dashboard.component('homebridge-buttons', homebridgeComponent);

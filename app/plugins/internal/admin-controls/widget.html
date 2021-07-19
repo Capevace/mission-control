@@ -3,7 +3,7 @@
 
 	const adminControls = {
 		template: `
-			<ServiceProvider service="admin-controls" v-slot="{ startedAt }">
+			<ServiceProvider service="admin-controls" v-slot="{ restarting, startedAt, invokeAction }">
 				<section>
 					<PanelLabel>
 						Server
@@ -20,8 +20,8 @@
 						</div>
 						<div>
 							<Button
-								:loading="!startedAt"
-								@click="restart"
+								:loading="restarting"
+								@click="restart(invokeAction)"
 								class="w-full"
 							>
 								Restart
@@ -48,10 +48,10 @@
 			}
 		},
 		methods: {
-			async restart() {
+			async restart(invoke) {
 				try {
 					this.loading = true;
-					await this.$invokeAction('restart', {});
+					await invoke('restart', {});
 
 					this.$notify({
 						type: 'info',
