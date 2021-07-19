@@ -9,5 +9,7 @@
     "/js/page-notifications.js": "/js/page-notifications.js",
     "/js/page-settings.js": "/js/page-settings.js",
     "/js/page-users.js": "/js/page-users.js",
+    "/js/page-create-user.js": "/js/page-create-user.js",
+    "/js/page-user.js": "/js/page-user.js",
     "/css/index.css": "/css/index.css"
 }
