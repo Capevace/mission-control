@@ -253,7 +253,7 @@ class HTTP {
 		// example.com/:paths
 		//
 		// DANGEROUS: no auth checks performed
-		this.app.use(httpAPI.root);
+		this.app.use('/', this.auth.middleware.requireAuthentication, httpAPI.root);
 
 		// Router to use for namespaced URLs
 		// example.com/plugins/example-plugin/:paths

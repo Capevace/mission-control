@@ -1,5 +1,19 @@
+const proxy = require('http-proxy-middleware');
+
 module.exports = function youtubeDownloadInit(APP) {
-	APP.http.proxy('/', 'http://localhost:3003');
+	APP.http.root.use(
+		'/ssh',
+		APP.auth.middleware.requirePermission('update', 'any', 'shell'),
+		proxy('/ssh', {
+			target: 'http://datenregal.local:3003/ssh',
+			logLevel: this.proxyLogLevel,
+			ws: true,
+			changeOrigin: false,
+			pathRewrite: {
+				'^/ssh/': '/'
+			}
+		})
+	);
 
 	return {
 		version: '0.0.1',

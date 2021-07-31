@@ -49,6 +49,10 @@ const adminRole = {
 	'lifecycle': {
 		'read:any': ['*'],
 		'update:any': ['*']
+	},
+	'shell': {
+		'read:any': ['*'],
+		'update:any': ['*']
 	}
 };
 

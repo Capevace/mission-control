@@ -93,6 +93,12 @@ class PluginAPI {
 		this.sync = dependencies.sync;
 
 		/**
+		 * Auth API
+		 * @type {AuthAPI}
+		 */
+		this.auth = dependencies.auth;
+
+		/**
 		 * Permissions API
 		 * @type {PermissionsAPI}
 		 */

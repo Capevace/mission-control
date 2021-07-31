@@ -32,6 +32,7 @@ const handleSync = require('./sync');
 module.exports = function socket({ sync, database, http, auth }) {
 	const logger = Logger.createLogger('Socket', 'magenta');
 	const server = new Server(http.server, {
+		path: '/api/socket.io'
 		// cookie: {
 		// 	name: 'io',
 		// 	httpOnly: false
