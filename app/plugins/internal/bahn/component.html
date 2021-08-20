@@ -61,8 +61,8 @@
             expanded: false
         }),
         template: `
-            <div
-                class="list-reset flex cursor-pointer flex-wrap"
+            <button
+                class="block w-full list-reset flex cursor-pointer flex-wrap text-left"
                 @click="expanded = !expanded"
             >
                 <div class="flex-shrink-0 flex flex-col justify-start font-semibold mr-4 mb-2">
@@ -93,7 +93,7 @@
                         {{ route.buses.length }}
                     </div>
                 </div>
-            </div>
+            </button>
         `,
         filters: {
             dateify(value) {

@@ -74,7 +74,7 @@ class HTTP {
 		 *
 		 * @type {DashboardAPI}
 		 */
-		this.dashboard = new DashboardAPI(sync);
+		this.dashboard = new DashboardAPI(sync, !config.debug);
 
 		/**
 		 * The express app
@@ -253,7 +253,11 @@ class HTTP {
 		// example.com/:paths
 		//
 		// DANGEROUS: no auth checks performed
-		this.app.use('/', this.auth.middleware.requireAuthentication, httpAPI.root);
+		this.app.use(
+			'/',
+			this.auth.middleware.requireAuthentication,
+			httpAPI.root
+		);
 
 		// Router to use for namespaced URLs
 		// example.com/plugins/example-plugin/:paths

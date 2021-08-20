@@ -27,27 +27,30 @@ const autoBind = require('auto-bind');
 
 /**
  * DashboardAPI class
- * 
+ *
  * @class
  * @example
  * 	const DashboardAPI = require('dynamic-dashboard');
  * 	const dashboard = new DashboardAPI({
  * 		sync
  * 	});
- * 
+ *
  * 	dashboard
  * 		.component('component-name')
  * 		.html('./component.html')
- * 
+ *
  */
 class DashboardAPI {
 	/**
 	 * Create a new DashboardAPI instance
 	 * @param {Sync} sync - An instance of the Sync system
+	 * @param {boolean} shouldCache - Should cache components and pages
 	 */
-	constructor(sync) {
+	constructor(sync, shouldCache = true) {
 		this.sync = sync;
-		
+
+		this.shouldCache = shouldCache;
+
 		/**
 		 * The registered dashboard components
 		 * @protected
@@ -69,16 +72,25 @@ class DashboardAPI {
 		return Object.freeze(this.sync.state);
 	}
 
-	getComponentsHTML() {
-		return Object.values(this.components)
-			.map((component) => {
-				if (component.content === null || component.content.type !== 'custom-html') {
-					return '';
-				}
+	async getComponentsHTML() {
+		let html = '';
 
-				return `<!-- COMPONENT - CUSTOM - ${component.name} -->\n${component.content.raw}\n\n`;
-			})
-			.reduce((fullHTML, html) => fullHTML + html, '');
+		for (const component of Object.values(this.components)) {
+			if (
+				component.content === null ||
+				component.content.type !== 'custom-html'
+			) {
+				return '';
+			}
+
+			const content = this.shouldCache
+				? component.content.raw
+				: await component.content.read();
+
+			html += `<!-- COMPONENT - CUSTOM - ${component.name} -->\n${content}\n\n`;
+		}
+
+		return html;
 	}
 
 	getPagesJSON() {
@@ -87,7 +99,7 @@ class DashboardAPI {
 
 	/**
 	 * Create a new component and return its component builder.
-	 * 
+	 *
 	 * @param  {String} name          - Component name (kebab-case)
 	 * @return {ComponentBuilder}
 	 */
@@ -100,7 +112,7 @@ class DashboardAPI {
 		 */
 		this.components[name] = {
 			name,
-			content: null
+			content: null,
 		};
 
 		/**
@@ -125,7 +137,7 @@ class DashboardAPI {
 
 				// // Read from FS
 				// // ? Compile
-				
+
 				// return html;
 			},
 
@@ -135,16 +147,20 @@ class DashboardAPI {
 			 * @return {ComponentBuilder} Builder for chaining
 			 */
 			custom: (htmlFilePath) => {
-				const absolutePath = path.resolve(this.pluginPath, htmlFilePath);
-				
+				const absolutePath = path.resolve(
+					this.pluginPath,
+					htmlFilePath
+				);
+
 				this.components[name].content = {
 					type: 'custom-html',
 					path: absolutePath,
-					raw: fs.readFileSync(absolutePath)
+					raw: fs.readFileSync(absolutePath),
+					read: async () => await fs.promises.readFile(absolutePath),
 				};
 
 				return builder;
-			}
+			},
 		};
 
 		return builder;
@@ -160,7 +176,7 @@ class DashboardAPI {
 		this.dashboard.pages[url] = {
 			title,
 			content: null,
-			options: {}
+			options: {},
 		};
 
 		/**
@@ -195,16 +211,20 @@ class DashboardAPI {
 			 * @return {PageBuilder} Builder for chaining
 			 */
 			custom: (htmlFilePath) => {
-				const absolutePath = path.resolve(this.pluginPath, htmlFilePath);
-				
+				const absolutePath = path.resolve(
+					this.pluginPath,
+					htmlFilePath
+				);
+
 				this.pages[url].content = {
 					type: 'custom-html',
 					path: absolutePath,
-					raw: fs.readFileSync(absolutePath)
+					raw: fs.readFileSync(absolutePath),
+					read: async () => await fs.promises.readFile(absolutePath),
 				};
 
 				return builder;
-			}
+			},
 		};
 		return builder;
 	}

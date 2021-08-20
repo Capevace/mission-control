@@ -1,0 +1,78 @@
+<script type="module">
+    const { dashboard, utils: { leftPad }, components } = MISSION_CONTROL;
+
+    function dateToTime(date, onlyMinutes = false) {
+        const hours = leftPad(date.getHours(), 2, '0');
+        const minutes = leftPad(date.getMinutes(), 2, '0');
+
+        return onlyMinutes
+            ? minutes
+            : `${hours}:${minutes}`;
+    }
+
+    const PingItemRow = {
+        props: {
+            item: {
+                type: Object,
+                required: true
+            }
+        },
+        data: () => ({
+        }),
+        template: `
+            <div
+                class="flex flex-col flex-wrap"
+            >
+                <div class="flex justify-start items-center font-semibold">
+                    <div class="flex-1 text-lg text-purple-50 leading-tight mr-2">
+                        {{ item.name }}
+                    </div>
+                    <div class="w-3 h-3 bg-green-500 rounded-full border-2 border-purple-900"></div>
+                </div>
+
+                <div class="flex justify-between items-center font-semibold">
+                    <div class="text-base text-purple-400">
+                        {{ item.tag || 'Tag' }}
+                    </div>
+					<div class="font-mono text-purple-400">
+                        {{ item.port || ':8080' }}
+                    </div>
+                </div>
+            </div>
+        `,
+        filters: {
+            
+        },
+        components: {
+            
+        }
+    }
+
+    const Ping = {
+        template: `
+			<ServiceProvider service="ping" v-slot="{ items }">
+				<section class="w-full h-full">
+					<PanelLabel>
+						Ping
+					</PanelLabel>
+					<Panel>
+						<div class="flex flex-col gap-5 p-0 w-full text-main-lightest inline-block overflow-y-scroll h-full">
+							<PingItemRow
+								v-for="(item, index) in items"
+								:item="item"
+							/>
+						</div>
+					</Panel>
+				</section>
+			</ServiceProvider>
+        `,
+        components: {
+            PingItemRow,
+			ServiceProvider: components.headless.ServiceProvider,
+			Panel: components.common.Panel,
+			PanelLabel: components.common.PanelLabel,
+        }
+    };
+
+    dashboard.component('ping', Ping);
+</script>
