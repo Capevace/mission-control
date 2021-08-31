@@ -3,7 +3,10 @@ const path = require('path');
 const express = require('express');
 const addTrailingSlashMiddleware = require('@helpers/add-trailing-slash-middleware');
 
-module.exports = function dashboardRoutes(app, { config, auth }) {
+module.exports = async function dashboardRoutes(
+	app,
+	{ config, sync, auth, nuxt }
+) {
 	const dashboardHtmlPath = path.resolve(
 		__dirname,
 		'../../views/dashboard.html'
@@ -21,6 +24,8 @@ module.exports = function dashboardRoutes(app, { config, auth }) {
 
 	function renderDashboard(mobile = false, generateAPIToken) {
 		return async (req, res) => {
+			req.$sync = sync;
+			return nuxt.render(req, res);
 			const html = (mobile ? dashboardHtmlMobile : dashboardHtml)
 				.replace(
 					/{{SERVER_REPLACE_API_KEY}}/gm,
@@ -44,11 +49,7 @@ module.exports = function dashboardRoutes(app, { config, auth }) {
 	}
 
 	// Dashboard HTML routes
-	app.get(
-		'/',
-		auth.middleware.requireAuthentication,
-		renderDashboard(false, auth.tokens.generate)
-	);
+
 	app.get(
 		'/mobile',
 		addTrailingSlashMiddleware,
@@ -82,6 +83,28 @@ module.exports = function dashboardRoutes(app, { config, auth }) {
 	app.get('/favicon.png', (req, res) => {
 		res.sendFile(path.resolve(__dirname, '../../../resources/favicon.png'));
 	});
+
+	const nuxtRoutes = require('/Users/mat/Projects/nuxt/mission-control/.nuxt/routes.json');
+
+	app.get(
+		'/_nuxt/*',
+		auth.middleware.requireAuthentication,
+		renderDashboard(false, auth.tokens.generate)
+	);
+
+	app.get(
+		'/__webpack_hmr/*',
+		auth.middleware.requireAuthentication,
+		renderDashboard(false, auth.tokens.generate)
+	);
+
+	for (const route of nuxtRoutes) {
+		app.get(
+			route.path,
+			auth.middleware.requireAuthentication,
+			renderDashboard(false, auth.tokens.generate)
+		);
+	}
 
 	return app;
 };

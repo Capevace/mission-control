@@ -1,0 +1,38 @@
+<script type="module">
+	const { dashboard, components, utils: { formatDistanceStrict } } = MISSION_CONTROL;
+
+	const adminControls = {
+		template: `
+			<ServiceProvider service="f1" v-slot="{ weekends, nextSession }">
+				<section>
+					<PanelLabel>
+						Upcoming F1 Weekends
+					</PanelLabel>
+					<Panel class="flex items-center">
+						<div class="flex-1 font-semibold ">
+							<InfoBlock label="Next Session">
+								{{ currentSession }}
+							</InfoBlock>
+						</div>
+					</Panel>
+				</section>
+			</ServiceProvider>
+		`,
+		components: {
+			ServiceProvider: components.headless.ServiceProvider,
+			Panel: components.common.Panel,
+			PanelLabel: components.common.PanelLabel,
+			InfoBlock: components.common.InfoBlock,
+		},
+		methods: {
+			currentSession(session) {
+				return session
+					? `${session.track.name} – ${session.name}`
+					: '-';
+			}
+		}
+	};
+
+	dashboard.component('f1', adminControls);
+
+</script>

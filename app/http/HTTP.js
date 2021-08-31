@@ -31,7 +31,7 @@ class HTTP {
 	 * @param  {Core}   core          - Mission Control core
 	 * @param  {string} sessionSecret - The session secret used for cookies and JWT token
 	 */
-	constructor(core, sessionSecret) {
+	constructor(core, sessionSecret, nuxt) {
 		const { config, sync, database, auth, logging } = core;
 
 		/**
@@ -49,6 +49,14 @@ class HTTP {
 		 * @type {Auth}
 		 */
 		this.auth = auth;
+
+		/**
+		 * Sync module instance
+		 *
+		 * @protected
+		 * @type {Sync}
+		 */
+		this.sync = sync;
 
 		/**
 		 * Logging module used to create Logger instances
@@ -75,6 +83,13 @@ class HTTP {
 		 * @type {DashboardAPI}
 		 */
 		this.dashboard = new DashboardAPI(sync, !config.debug);
+
+		/**
+		 * Instance of Nuxt
+		 *
+		 * @type {Nuxt}
+		 */
+		this.nuxt = nuxt;
 
 		/**
 		 * The express app
@@ -140,17 +155,6 @@ class HTTP {
 		this.dashboardRouter.use(
 			this.attachComponentsAndPagesMiddleware.bind(this)
 		);
-		this.dashboardRouter = dashboardRoutes(this.dashboardRouter, {
-			config,
-			auth,
-		});
-		this.app.use(this.dashboardRouter);
-
-		// Add error handler for auth & dashboard routes.
-		// We have this in a seperate function so we can call it two times.
-		// 	1. After auth & dashboard routes so these have an error handler
-		// 	2. After plugin initialization so plugin routes have one too
-		this.addErrorHandler();
 	}
 
 	/**
@@ -281,7 +285,21 @@ class HTTP {
 	/**
 	 * Finish HTTP server setup and listen on given port
 	 */
-	listen() {
+	async listen() {
+		this.dashboardRouter = await dashboardRoutes(this.dashboardRouter, {
+			config: this.config,
+			auth: this.auth,
+			nuxt: this.nuxt,
+			sync: this.sync,
+		});
+		this.app.use(this.dashboardRouter);
+
+		// Add error handler for auth & dashboard routes.
+		// We have this in a seperate function so we can call it two times.
+		// 	1. After auth & dashboard routes so these have an error handler
+		// 	2. After plugin initialization so plugin routes have one too
+		this.addErrorHandler();
+
 		this.server.listen(this.port, () => {
 			this.logger.http(`server listening on port:`, this.port);
 			this.logging.logReadyMessage(this.url);

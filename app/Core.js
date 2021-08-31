@@ -1,3 +1,4 @@
+process.env.DEBUG = 'nuxt:*';
 const Logging = require('@helpers/logger');
 const uuid = require('@helpers/uuid');
 const autoBind = require('auto-bind');
@@ -71,13 +72,18 @@ module.exports = class Core {
 
 		this.progress('load http & socket', 0.3);
 
+		const initNuxt = require('./nuxt');
+		const { nuxt, builder } = initNuxt();
+
+		const build = await builder.build();
+
 		const HTTP = require('./http/HTTP');
 		const initSocket = require('./socket');
 
 		this.progress('start http', 0.4);
 
 		// Initialize the main mission control http server
-		this.http = new HTTP(this, sessionSecret);
+		this.http = new HTTP(this, sessionSecret, nuxt);
 
 		this.progress('start socket', 0.5);
 
