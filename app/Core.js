@@ -73,9 +73,11 @@ module.exports = class Core {
 		this.progress('load http & socket', 0.3);
 
 		const initNuxt = require('./nuxt');
-		const { nuxt, builder } = initNuxt();
+		const { nuxt, builder } = await initNuxt();
 
-		const build = await builder.build();
+		await builder.build();
+
+		await nuxt.ready();
 
 		const HTTP = require('./http/HTTP');
 		const initSocket = require('./socket');

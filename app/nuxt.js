@@ -1,31 +1,37 @@
 const path = require('path');
 const { Nuxt, Builder } = require('nuxt');
+const { getDefaultNuxtConfig } = require('@nuxt/config');
+const { BundleBuilder } = require('@nuxt/webpack');
 
-module.exports = function initNuxt(sync) {
+module.exports = async function initNuxt() {
 	const nuxt = new Nuxt({
+		...getDefaultNuxtConfig(),
+
 		dev: true,
-		rootDir: path.resolve(__dirname, '../../nuxt/mission-control'),
-		buildDir: path.resolve(__dirname, '../../nuxt/mission-control/.nuxt'),
+		// srcDir: 'src',
+		rootDir: path.resolve(__dirname, '../'),
 		telemetry: false,
-		server: {
-			socket: '/dev/null',
+		dir: {
+			app: 'ass',
 		},
-		// modulesDir: [
-		// 	path.resolve(__dirname, '../../nuxt/mission-control/node_modules'),
-		// ],
+
+		// css: ['~/assets/css/tailwind.css'],
+
+		components: true,
+		// server: {
+		// 	socket: '/dev/null',
+		// },
+		modulesDir: [
+			'/Users/mat/Projects/mission-control/node_modules/nuxt/bin/node_modules',
+			'/Users/mat/Projects/mission-control/node_modules/nuxt/node_modules',
+			'/Users/mat/Projects/mission-control/node_modules',
+		],
 
 		buildModules: [
+			'@nuxt/typescript-build',
 			// https://go.nuxtjs.dev/tailwindcss
 			'@nuxtjs/tailwindcss',
 		],
-
-		build: {
-			postcss: {
-				plugins: {
-					tailwindcss: {},
-				},
-			},
-		},
 
 		head: {
 			title: 'mission-control',
@@ -43,26 +49,40 @@ module.exports = function initNuxt(sync) {
 			],
 			link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
 		},
-		router: {
-			extendRoutes(routes) {
-				console.log(routes);
-				return [
-					{
-						name: 'dashboard',
-						path: '/',
-						component: path.resolve(
-							__dirname,
-							'/Users/mat/Projects/mission-control/app/views/Dashboard.vue'
-						),
-					},
-					...routes,
-				];
-			},
-		},
+		// router: {
+		// 	extendRoutes(routes) {
+		// 		console.log(routes);
+		// 		return [
+		// 			// {
+		// 			// 	name: 'dashboard',
+		// 			// 	path: '/',
+		// 			// 	component: path.resolve(
+		// 			// 		__dirname,
+		// 			// 		'/Users/mat/Projects/mission-control/app/views/Dashboard.vue'
+		// 			// 	),
+		// 			// },
+		// 			...routes,
+		// 		];
+		// 	},
+		// },
 	});
+
+	await nuxt.ready();
+
+	// nuxt.moduleContainer.extendRoutes((routes) => [
+	// 	// {
+	// 	// 	name: 'dashboard',
+	// 	// 	path: '/',
+	// 	// 	component: path.resolve(
+	// 	// 		__dirname,
+	// 	// 		'/Users/mat/Projects/mission-control/app/views/Dashboard.vue'
+	// 	// 	),
+	// 	// },
+	// 	...routes,
+	// ]);
 
 	return {
 		nuxt,
-		builder: new Builder(nuxt),
+		builder: new Builder(nuxt, BundleBuilder),
 	};
 };

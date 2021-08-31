@@ -35,39 +35,35 @@ let config = require('rc')('mission-control', {
 		audience: 'mission-control',
 		secret: 'applepie',
 		port: 3001,
-		proxy: true
+		proxy: true,
 	},
 	http: {
 		url: `http://${internalIp.v4.sync()}:3000`,
-		port: process.env.PORT || 3000,
-		allowedDomains: []
+		port: process.env.PORT || 3001,
+		allowedDomains: [],
 	},
 	dashboard: {
-		path: path.resolve(
-			__dirname,
-			'../resources/dashboard-ui'
-		), // static ui path
+		path: path.resolve(__dirname, '../resources/dashboard-ui'), // static ui path
 	},
 	homebridge: {
 		pin: null,
 	},
 	spotify: {
-		path: path.resolve(
-			__dirname,
-			'../resources/spotify-ui'
-		), // ui path
+		path: path.resolve(__dirname, '../resources/spotify-ui'), // ui path
 		clientId: '', // 'f1421bd3dada404da546902b6849f2d7',
-		secret: '' // '2192e52bff6740cb8dbce0011305bb20'
+		secret: '', // '2192e52bff6740cb8dbce0011305bb20'
 	},
 	ifttt: {
-		token: 'dq0U6fRhl-t35dc_HnDem5'
+		token: 'dq0U6fRhl-t35dc_HnDem5',
 	},
 	databasePath: basePath + '/database.json',
 	storagePath: basePath + '/storage',
 });
 
 if (!fs.existsSync(config.basePath)) {
-	logger.warn('Base path not found. Creating base directory ' + config.basePath);
+	logger.warn(
+		'Base path not found. Creating base directory ' + config.basePath
+	);
 
 	fs.mkdirSync(config.basePath, { recursive: true });
 }
@@ -75,7 +71,8 @@ if (!fs.existsSync(config.basePath)) {
 if (!fs.existsSync(config.basePath + '/config')) {
 	logger.warn('Config file not found. Creating...');
 
-	fs.writeFileSync(config.basePath + '/config',
+	fs.writeFileSync(
+		config.basePath + '/config',
 		`; Mission Control Config File
 
 ; Enable debug mode here

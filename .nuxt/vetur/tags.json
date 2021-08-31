@@ -1,0 +1,14 @@
+{
+  "NuxtLogo": {
+    "description": "Auto imported from components/NuxtLogo.vue"
+  },
+  "Provider": {
+    "description": "Auto imported from components/Provider.vue"
+  },
+  "ServiceProvider": {
+    "description": "Auto imported from components/ServiceProvider.vue"
+  },
+  "Tutorial": {
+    "description": "Auto imported from components/Tutorial.vue"
+  }
+}
