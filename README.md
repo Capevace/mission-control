@@ -15,7 +15,10 @@
 
 <br>
 
+> This repository will soon be renamed and moved to [@bildschirm/bildschirm](https://github.com/bildschirm/bildschirm).
+> Most recent changes are already over there. This repo will be archived after the move is complete.
 
+<br>
 
 Beginning a real-time web project, like building your own home dashboard, can be a tedious and time-consuming process.
 Coding lots of boilerplate for authentication, authorization and data communication isn’t fun at all. By the time you get to building the thing you wanted you got bored and moved on to the next.
