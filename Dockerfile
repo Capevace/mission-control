@@ -8,4 +8,4 @@ RUN npm install
 
 COPY . .
 
-CMD [ "node", "start.js" ]
+CMD [ "node", "scripts/start.js" ]
