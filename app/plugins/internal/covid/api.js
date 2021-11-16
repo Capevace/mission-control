@@ -1,24 +1,46 @@
 const superagent = require('superagent');
 
 module.exports = {
-	newestCovidCSV,
+	fetchNewestCOVIDData,
 	parseCityData,
-	filterHistoricalData
+	fetchHistoricalData,
+	findCityInHistoricalData
 };
 
-function filterHistoricalData(cities) {
-	for (const city in cities) {
-		cities[city] = {
-			total: cities[city].casesLast7Days,
-			r: cities[city].casesPerPopulation
+/**
+ * Fetch historical COVID data
+ * @return {Array<HistoricalCityData>}
+ */
+async function fetchHistoricalData() {
+	// https://interaktiv.morgenpost.de/data/corona/rki-incidence.json?t=38yjt
+	const { body } = await superagent.get('https://interaktiv.morgenpost.de/data/corona/rki-incidence.json');
+
+	return body;
+}
+
+/**
+ * Returns an array of incidence objects { date: Date, value: number }
+ * @param  {string} cityId ID of city
+ * @return {Array<{ date: Date, value: number }>}
+ */
+function findCityInHistoricalData(historicalData, cityId) {
+	let city = null;
+	for (const c of body) {
+		if (c.id === cityId) {
+			city = c;
+			break;
 		}
 	}
 
-	return cities;
+	if (!city) {
+		throw new Error(`Unable to find city with ID ${cityId}`);
+	}
+
+	return city.history;
 }
 
 // Return routes to Lübeck (includes buses)
-async function newestCovidCSV() {
+async function fetchNewestCOVIDData() {
 	const { text } = await superagent.get('https://interaktiv.morgenpost.de/data/corona/cases.rki.v2.csv');
 
 	return text;

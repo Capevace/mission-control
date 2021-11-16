@@ -1,9 +1,11 @@
-const { newestCovidCSV, parseCityData, filterHistoricalData } = require('./api');
+const { fetchNewestCOVIDData, parseCityData, fetchHistoricalData, findCityInHistoricalData } = require('./api');
 
 const cities = {
 	'de.ni.03355': 'Lüneburg',
 	'de.sh.01003': 'Lübeck'
 };
+
+
 
 
 module.exports = function bahnInit(APP) {
@@ -20,30 +22,22 @@ module.exports = function bahnInit(APP) {
 
 	const refreshInfo = async () => {
 		try {
-			const csvText = await newestCovidCSV();
-			let citiesData = { ...cities };
+			const csvText = await fetchNewestCOVIDData();
+			// const historicalDataJSON = await fetchHistoricalData();
 
-			let historicalData = database.get('covid-data-historical', {});
+			let citiesData = { ...cities };
+			let historicalData = { ...cities };
 
 			for (const id in citiesData) {
-				let historicalCityData = historicalData[id] || [];
-				const lastHistoricalDataRow = historicalCityData[historicalCityData.length - 1];
-
-				const newCityData = parseCityData(csvText, id);
-
-				if (!lastHistoricalDataRow || lastHistoricalDataRow.date < newCityData.date) {
-					// historicalCityData.push(newCityData);
-				}
-
-				historicalData[id] = historicalCityData;
-				citiesData[id] = newCityData;
+				citiesData[id] = parseCityData(csvText, id);
+				// historicalData[id] = findCityInHistoricalData(historicalDataJSON, id);
 			}
 
 			// database.set('covid-data-historical', historicalData);
 
 			service.setState({
 				cities: citiesData,
-				// historical: filterHistoricalData(historicalData)
+				historical: historicalData
 			});
 		} catch (e) {
 			logger.error('Error occurred during covid API check', e);
