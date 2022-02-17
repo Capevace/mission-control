@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html class="app-background">
 	<head>
 		<title>Mission Control</title>
 		<link rel="stylesheet" type="text/css" href="/assets/css/index.css" />
-		<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=0"> 
 		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="theme-color" content="#6c27d8" media="(prefers-color-scheme: light)" />
+		<meta name="theme-color" content="#6c27d8" media="(prefers-color-scheme: dark)" />
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 		<link rel="icon" href="/favicon.png">
 	</head>
@@ -25,6 +27,7 @@
 			|| '{{SERVER_REPLACE_URL}}';
 		window.MISSION_CONTROL_USER = {{SERVER_REPLACE_USER_JSON}};
 		window.MISSION_CONTROL_PAGES = {{SERVER_REPLACE_PAGES_JSON}};
+		window.MISSION_CONTROL_COMPONENTS_DICT = {{SERVER_REPLACE_COMPONENTS_DICT}};
 		// window.MISSION_CONTROL_INITIAL_STATE = {{SERVER_REPLACE_STATE_JSON}};
 	</script>
 	<script type="text/javascript" src="/assets/js/index.js"></script>

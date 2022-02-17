@@ -1,14 +1,19 @@
 const autoBind = require('auto-bind');
+const { promisify } = require('util');
 
 const UserError = require('@helpers/UserError');
 
 module.exports = class AuthMiddleware {
 	/**
-	 * @param  {PermissionsAPI} permissions The PermissionsAPI object
+	 * @param  {PermissionsAPI} permissions
+	 * @param  {TokensAPI} 		tokens
+	 * @param  {UsersAPI} 		api
 	 * @return {AuthMiddleware}
 	 */
-	constructor(permissions) {
+	constructor(permissions, tokens, api) {
 		this.permissions = permissions;
+		this.tokens = tokens;
+		this.api = api;
 
 		autoBind(this);
 	}
@@ -24,11 +29,35 @@ module.exports = class AuthMiddleware {
 	 * @param {Response} res  - Response
 	 * @param {Function} next - Next callback
 	 */
-	requireAuthentication(req, res, next) {
-		if (req.isAuthenticated()) {
-			next();
-		} else {
-			res.redirect('/login');
+	async requireAuthentication(req, res, next) {
+		try {
+			console.info('AUTH', req.cookies);
+			if (req && req.cookies && 'access_token' in req.cookies) {
+				try {
+					const token = req.cookies['access_token'];
+
+					const username = this.tokens.verifyCaddyJWT(token, 'a3c6eeee16e4479e9f31786e30b3ebdc');
+					console.info('JWT payload', username);
+					const user = await this.api.find(username);
+					console.info('user', user);
+
+					const logIn = promisify(req.logIn.bind(req));
+					await logIn(user);
+
+					console.info('JWT USER', user);
+				} catch (e) {
+					console.warn('invalid jwt token', e);
+				}
+			} 
+
+			if (req.isAuthenticated()) {
+				next();
+			} else {
+				res.redirect('/login');
+			}
+		} catch (e) {
+			console.error('TEST ERR', e);
+			return next(e);
 		}
 	}
 

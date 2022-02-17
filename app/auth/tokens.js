@@ -42,6 +42,22 @@ class Tokens {
 			throw new AuthError(e.message, 401);
 		}
 	}
+
+	verifyCaddyJWT(token, caddySecret) {
+		try {
+			const { sub } = jwt.verify(token, caddySecret, {});
+			
+			if (!sub) {
+				throw new AuthError('Token data invalid', 401);
+			}
+
+			return sub;
+		} catch (e) {
+			logger.error('Error verifying JWT', e);
+			
+			throw new AuthError(e.message, 401);
+		}
+	}
 }
 
 /**

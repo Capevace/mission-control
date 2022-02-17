@@ -19,9 +19,10 @@ module.exports = function dashboardRoutes(app, { config, auth }) {
 		return (req, res) => {
 			const html = (mobile ? dashboardHtmlMobile : dashboardHtml)
 				.replace(/{{SERVER_REPLACE_API_KEY}}/gm, generateAPIToken(req.user))
-				.replace(/{{SERVER_REPLACE_DASHBOARD_DATA}}/, req.getComponentsHtml())
 				.replace(/{{SERVER_REPLACE_USER_JSON}}/, JSON.stringify({ ...req.user, password: undefined }))
-				.replace(/{{SERVER_REPLACE_PAGES_JSON}}/, req.getPagesJson());
+				.replace(/{{SERVER_REPLACE_DASHBOARD_DATA}}/, req.getComponentsHtml())
+				.replace(/{{SERVER_REPLACE_PAGES_JSON}}/, req.getPagesJson())
+				.replace(/{{SERVER_REPLACE_COMPONENTS_DICT}}/, req.getComponents());
 
 			res.set('Content-Type', 'text/html').send(html);
 		};

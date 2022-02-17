@@ -1,6 +1,6 @@
 {
 	"name": "@capevace/mission-control",
-	"version": "2.0.0-rc16",
+	"version": "2.0.0-rc20",
 	"description": "Beautiful smart home dashboard software built on Node.js.",
 	"main": "app/index.js",
 	"scripts": {
@@ -38,6 +38,7 @@
 		"cli-progress": "^3.9.0",
 		"commander": "^6.1.0",
 		"connect-flash": "^0.1.1",
+		"cookie-parser": "^1.4.6",
 		"cookie-session": "^1.4.0",
 		"db-hafas": "^5.0.2",
 		"eventemitter2": "^5.0.1",
@@ -67,9 +68,6 @@
 		"uuid": "^3.3.2"
 	},
 	"devDependencies": {
-		"@babel/cli": "^7.11.5",
-		"@babel/core": "^7.11.5",
-		"@babel/preset-env": "^7.11.5",
 		"docma": "^3.2.2",
 		"docma-template-mission-control": "^1.0.0",
 		"esdoc": "^1.1.0",

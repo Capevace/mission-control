@@ -3,6 +3,7 @@ const { createServer } = require('http');
 const session = require('cookie-session');
 const flash = require('connect-flash');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 
 const DashboardAPI = require('./DashboardAPI');
 const PluginHTTPAPI = require('./PluginHTTPAPI');
@@ -103,6 +104,7 @@ class HTTP {
 		// timing info.
 		this.app.use(logging.logMiddleware);
 
+		this.app.use(cookieParser());
 		this.app.use(bodyParser.urlencoded({ extended: true }));
 		this.app.use(bodyParser.json());
 
@@ -200,6 +202,7 @@ class HTTP {
 		// and it would be wasteful to evaluate them everytime.
 		req.getComponentsHtml = this.dashboard.getComponentsHTML;
 		req.getPagesJson = this.dashboard.getPagesJSON;
+		req.getComponents = () => this.dashboard.componentsJson;
 
 		next();
 	}

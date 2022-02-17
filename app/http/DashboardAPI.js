@@ -69,6 +69,19 @@ class DashboardAPI {
 		return Object.freeze(this.sync.state);
 	}
 
+	get componentsJson() {
+		const json = Object.keys(this.components)
+			.reduce((components, componentId) => {
+				components[componentId] = {
+					name: this.components[componentId].name
+				};
+
+				return components;
+			}, {});
+
+		return JSON.stringify(json);
+	}
+
 	getComponentsHTML() {
 		return Object.values(this.components)
 			.map((component) => {

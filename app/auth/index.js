@@ -41,6 +41,30 @@ module.exports = function initAuth(core, sessionSecret) {
 		)
 	);
 
+	// const jwtOptions = {
+	// 	jwtFromRequest: fromExtractors([
+	// 		cookieExtractor,
+	// 		fromAuthHeaderAsBearerToken(),
+	// 	]),
+	// 	secretOrKey: 'secret',
+	// 	issuer: 'mydomain.com',
+	// 	audience: 'api.mydomain.com',
+	// 	jwtCookieName: 'jwt',
+	// };
+
+	// passport.use(
+	// 	'jwt',
+	// 	new JwtStrategy(jwtOptions, async (jwt_payload, next) => {
+	// 		const user = await api.find(jwt_payload.sub);
+
+	// 		if (user) {
+	// 			next(null, user);
+	// 		} else {
+	// 			next(null, false);
+	// 		}
+	// 	})
+	// );
+
 	passport.serializeUser(function (user, cb) {
 		cb(null, user.username);
 	});
@@ -57,7 +81,7 @@ module.exports = function initAuth(core, sessionSecret) {
 
 	const permissions = new PermissionsAPI(grants);
 	const tokens = new Tokens(sessionSecret);
-	const middleware = new AuthMiddleware(permissions);
+	const middleware = new AuthMiddleware(permissions, tokens, api);
 
 	return {
 		passport,
@@ -90,7 +114,7 @@ module.exports = function initAuth(core, sessionSecret) {
 					res.send(content);
 				},
 
-				authenticate(req, res, next) {
+				async authenticate(req, res, next) {
 					passport.authenticate('local', (error, user, info) => {
 						if (error) {
 							logger.error('error during authentication', {
