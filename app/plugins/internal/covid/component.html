@@ -11,8 +11,8 @@
 					<div class="dashboard-box-heading mb-3">
 						COVID-19 Data <span class="ml-1 text-purple-500">(Last 7 days)</span>
 					</div>
-					<div class="flex flex-wrap w-full overflow-x-scroll">
-						<div class="dashboard-box mb-3 min-w-sm max-w-xs mr-5 flex-1" v-for="city of filterCities(cities)">
+					<div class="flex flex-wrap w-full gap-5">
+						<div class="dashboard-box min-w-sm flex-1" v-for="city of filterCities(cities)">
 							<div class="font-semibold text-purple-200 flex justify-between items-center">
 								{{city.label}}
 							</div>

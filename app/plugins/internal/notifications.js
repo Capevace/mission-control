@@ -44,6 +44,7 @@ module.exports = function initNotificationsPlugin({
 		.createService(
 			'notifications',
 			/** @type {NotificationServiceState} */ {
+				mat: {}
 				/* notifications for user */
 				// 'username': []
 			}
