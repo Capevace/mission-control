@@ -40,6 +40,8 @@ module.exports = function dashboardRoutes(app, { config, auth }) {
 	app.use('/assets', express.static(config.dashboard.path));
 	app.use('/resources', express.static(path.resolve(__dirname, '../../../resources')));
 
+	app.use('/apple-splash', express.static(path.resolve(__dirname, '../../../resources/apple-splash')));
+
 	app.get('/apple-touch-icon.png', (req, res) => {
 		res.sendFile(path.resolve(__dirname, '../../../resources/apple-touch-icon.png'));
 	});

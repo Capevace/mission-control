@@ -6,9 +6,9 @@
 			<ServiceProvider service="telemetry" v-slot="{ stats }">
 				<header class="flex flex-wrap md:flex-no-wrap font-semibold text-purple-50 text-lg gap-2">
 					<section class="w-full md:w-1/3 leading-tight">
-						<span class="block">{{ stats.deviceName || 'Mission Control' }}</span>
+						<span class="block">{{ stats.version || '-' }}</span>
 						<span class="text-purple-400 text-xs">
-							{{ stats.deviceName ? 'Mission Control' : 'Server'}}
+							Mission Control Version
 						</span>
 					</section>
 
