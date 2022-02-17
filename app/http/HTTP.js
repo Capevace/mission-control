@@ -8,8 +8,6 @@ const cookieParser = require('cookie-parser');
 const DashboardAPI = require('./DashboardAPI');
 const PluginHTTPAPI = require('./PluginHTTPAPI');
 
-// const minify = require('html-minifier').minify;
-
 const buildErrorResponseComposer = require('@helpers/error-response-factory');
 const UserError = require('@helpers/UserError');
 

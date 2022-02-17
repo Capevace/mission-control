@@ -81,7 +81,7 @@ module.exports = function initAuth(core, sessionSecret) {
 
 	const permissions = new PermissionsAPI(grants);
 	const tokens = new Tokens(sessionSecret);
-	const middleware = new AuthMiddleware(permissions, tokens, api);
+	const middleware = new AuthMiddleware(permissions, tokens, api, core.logging);
 
 	return {
 		passport,

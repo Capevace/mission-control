@@ -28,6 +28,9 @@ var log = require('npmlog')
 // level -+   |      |                         |
 //        v   v      v                         v
     log.info('fyi', 'I have a kitty cat: %j', {ass:true});
-    log.enableProgress()
+    log.enableProgress();
+    log.showProgress('foo', 0.5);
+
+    log.warn('fyi', 'I have a kitty cat: %j', {ass:true});
 
     setTimeout(() => {}, 20000);

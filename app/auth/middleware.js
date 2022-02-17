@@ -10,10 +10,11 @@ module.exports = class AuthMiddleware {
 	 * @param  {UsersAPI} 		api
 	 * @return {AuthMiddleware}
 	 */
-	constructor(permissions, tokens, api) {
+	constructor(permissions, tokens, api, logging) {
 		this.permissions = permissions;
 		this.tokens = tokens;
 		this.api = api;
+		this.logger = logging.createLogger('Auth');
 
 		autoBind(this);
 	}
@@ -31,22 +32,19 @@ module.exports = class AuthMiddleware {
 	 */
 	async requireAuthentication(req, res, next) {
 		try {
-			console.info('AUTH', req.cookies);
 			if (req && req.cookies && 'access_token' in req.cookies) {
 				try {
 					const token = req.cookies['access_token'];
 
 					const username = this.tokens.verifyCaddyJWT(token, 'a3c6eeee16e4479e9f31786e30b3ebdc');
-					console.info('JWT payload', username);
 					const user = await this.api.find(username);
-					console.info('user', user);
 
 					const logIn = promisify(req.logIn.bind(req));
 					await logIn(user);
 
-					console.info('JWT USER', user);
+					this.logger.debug('authenticated user via Caddy JWT', user);
 				} catch (e) {
-					console.warn('invalid jwt token', e);
+					this.logger.warn('invalid jwt token', e);
 				}
 			} 
 
@@ -56,7 +54,7 @@ module.exports = class AuthMiddleware {
 				res.redirect('/login');
 			}
 		} catch (e) {
-			console.error('TEST ERR', e);
+			this.logger.error('TEST ERR', e);
 			return next(e);
 		}
 	}

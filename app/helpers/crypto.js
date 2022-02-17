@@ -8,14 +8,7 @@ const bcrypt = require('bcrypt');
  * @return {bool} True if the passwords do match.
  */
 module.exports.comparePassword = async function comparePassword(password, hash) {
-	try {
-		const match = await bcrypt.compare(password, hash);
-
-		return match;
-	} catch (e) {
-		console.log(e);
-		return false;
-	}
+	return await bcrypt.compare(password, hash);
 };
 
 /**

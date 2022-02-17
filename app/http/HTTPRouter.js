@@ -1,5 +1,5 @@
 const express = require('express');
-const proxy = require('http-proxy-middleware');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
 module.exports = class HTTPRouter extends express.Router {
 	constructor(baseURL) {
@@ -19,7 +19,7 @@ module.exports = class HTTPRouter extends express.Router {
 	proxy(route, target, options = {}) {
 		this.use(
 			route,
-			proxy('/', {
+			createProxyMiddleware('/', {
 				target,
 				logLevel: this.proxyLogLevel,
 				ws: true,

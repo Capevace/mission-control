@@ -133,6 +133,18 @@ sudo apt-get install libcap2-bin
 sudo setcap 'cap_net_bind_service=+ep' /usr/bin/node # Replace path to node binary
 ```
 
+### Notes about internal package updating
+- `public-ip` kept at 4.0.4 until we move to ESM
+- `internal-ip` kept at 6.1.0 until we move to ESM
+- `auto-bind` kept at 4.0.0 until we move to ESM
+- `on-change` kept at 3.0.2 until we move to ESM
+- `passport` kept at 0.4 until we're sure, JWT-based caddy login still works
+
+**Packages by internal plugins**
+- `db-hafas`: bahn
+- `internal-ip` and `public-ip`: system-info
+- `@oznu/hap-client`: homebridge
+
 ## Authors
 
 Lukas Mateffy – [@Capevace](https://twitter.com/capevace) – [mateffy.me](https://mateffy.me)

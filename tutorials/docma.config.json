@@ -1,4 +1,5 @@
 {
+	"#### npm-script": "docma serve docs -c ./.config/docma.config.json",
 	"src": [
 		"./app/**/*.js",
 		"./tutorials/**/*.md",

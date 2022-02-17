@@ -169,7 +169,7 @@ class UsersAPI extends DatabaseAPI {
 	 */
 	async updatePassword(username, password) {
 		const oldUser = await this.findUnsafe(username);
-		console.log('new password', username, password);
+
 		if (!oldUser)
 			throw new UserError(`User '${username}' doesn't exist and needs to be created first`);
 

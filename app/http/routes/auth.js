@@ -1,13 +1,7 @@
 const logging = require('@helpers/logger');
 const logger = logging.createLogger('Auth');
 
-const passport = require('passport');
-const jwt = require('jsonwebtoken');
 const Joi = require('joi');
-const JWTStrategy = require('passport-jwt').Strategy;
-const ExtractJwt = require('passport-jwt').ExtractJwt;
-const queryString = require('querystring');
-const proxy = require('http-proxy-middleware');
 
 const User = require('@models/User');
 const UserError = require('@helpers/UserError');
@@ -37,11 +31,6 @@ const validator = require('@http/middleware/validator');
 module.exports = function authRoutes(app, { auth, database: db }) {
 	
 	app.get('/login', auth.controllers.login.serveLoginPage);
-    // app.post('/login', passport.authenticate('local', { 
-    // 	successRedirect: '/',
-    // 	failureRedirect: '/login',
-    // 	failureFlash: true
-    // }));
     app.post('/login', auth.controllers.login.authenticate);
 	app.post('/logout', auth.controllers.login.logout, (req, res) => res.status(200).redirect('/login'));
 
@@ -196,11 +185,7 @@ module.exports = function authRoutes(app, { auth, database: db }) {
 			const username = req.params.username;
 			const newPassword = req.body.password;
 
-			try {
-				await db.api.users.updatePassword(username, newPassword);
-			} catch (e) {
-				console.log(e)
-			}
+			await db.api.users.updatePassword(username, newPassword);
 
 			res.status(200).json({ success: true });
 		}

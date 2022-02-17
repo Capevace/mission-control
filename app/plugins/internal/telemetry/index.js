@@ -1,17 +1,33 @@
+const path = require('path');
+const fs = require('fs/promises');
 const si = require('systeminformation');
 const publicIp = require('public-ip');
 const pkg = require('@root/package.json');
 
-async function composeStaticStats(config) {
+async function getUIVersion(dashboardPath) {
+	const commitFilePath = path.join(dashboardPath, 'commit.txt');
+	return String(await fs.readFile(commitFilePath));
+}
+
+async function composeStaticStats(config, logger) {
 	const [system, cpu, osInfo] = await Promise.all([
 		si.system(),
 		si.cpu(),
 		si.osInfo()
 	]);
 
+	let uiVersion = '-';
+
+	try {
+		uiVersion = await getUIVersion(config.dashboard.path);
+	} catch (e) {
+		logger.warn('could not determine dashboard UI commit hash', e);
+	}
+
 	return {
 		deviceName: config.name,
 		version: config.version,
+		uiVersion,
 		system: {
 			manufacturer: system.manufacturer,
 			model: system.model
@@ -83,13 +99,13 @@ async function combineWithDynamicStats(staticInfo) {
 
 
 module.exports = async function telemetry(APP) {
-	const { config, sync, state, database, dashboard } = APP;
+	const { config, sync, state, database, dashboard, logger } = APP;
 
 	const service = sync.createService('telemetry', {
 		stats: null
 	});
 
-	const staticInfo = await composeStaticStats(config);
+	const staticInfo = await composeStaticStats(config, logger);
 
 	async function refreshStats() {
 		const stats = await combineWithDynamicStats(staticInfo);

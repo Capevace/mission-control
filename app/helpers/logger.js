@@ -5,9 +5,7 @@
  */
 
 const chalk = require('chalk');
-const qrcode = require('qrcode-terminal');
 const onFinished = require('on-finished');
-const cliProgress = require('cli-progress');
 
 let logBuffer = [];
 let progressBar = null;
@@ -167,26 +165,22 @@ module.exports.setLogLevel = function setLogLevel(levelString = 'debug') {
 };
 
 /**
- * Ouput the styled ready message including a QR code that leads to the base url.
+ * Ouput the styled ready message including the url.
  *
  * @param  {String} url - The url to encode and log.
  * @param  {String} authUrl - The auth url to display.
  */
 module.exports.logReadyMessage = function logReadyMessage(url, authUrl) {
-	qrcode.generate(url, { small: true }, function (qrCode) {
-		const message =
+	const message =
 			`
 ${`.  . .-. .-. .-. .-. .-. . .   .-. .-. . . .-. .-. .-. .   
 |\\/|  |  \`-. \`-.  |  | | |\\|   |   | | |\\|  |  |(  | | |   
 '  ' '-' '-' '-' '-' '-' ' '   '-' '-' ' '  '  ' ' '-' '-' `}
 
 Mission Control available at ${chalk.cyan(url)}
-
-${qrCode}
 `;
 
-		module.exports._log(message); // eslint-disable-line no-console
-	});
+	module.exports._log(message); // eslint-disable-line no-console
 };
 
 module.exports.logMiddleware = function logMiddleware(req, res, next) {
@@ -228,29 +222,29 @@ HTTP Domains:		${config.http.allowedDomains.map(domain => chalk`{cyan ${domain}}
 };
 
 module.exports.progress = async function progress(callback) {
-	progressBar = new cliProgress.SingleBar({
-	    format: `|${chalk.cyan('{bar}')}| {percentage}% {label}`,
-	    barCompleteChar: '\u2588',
-	    barIncompleteChar: '\u2591',
-	    hideCursor: true
-	}, cliProgress.Presets.rect);
+	// progressBar = new cliProgress.SingleBar({
+	//     format: `|${chalk.cyan('{bar}')}| {percentage}% {label}`,
+	//     barCompleteChar: '\u2588',
+	//     barIncompleteChar: '\u2591',
+	//     hideCursor: true
+	// }, cliProgress.Presets.rect);
 
-	progressBar.start(1, 0, {
-	    label: ''
-	});
+	// progressBar.start(1, 0, {
+	//     label: ''
+	// });
 
 	function cleanup() {
-		if (progressBar) {
-			progressBar.stop();
-			progressBar = null;
-		}
+		// if (progressBar) {
+		// 	progressBar.stop();
+		// 	progressBar = null;
+		// }
 
-		logBuffer.forEach(msgs => console_log(...msgs));
-		logBuffer = [];
+		// logBuffer.forEach(msgs => console_log(...msgs));
+		// logBuffer = [];
 	}
 
 	try {
-		await callback((label, percentage) => progressBar.update(percentage, { label }));
+		await callback((label, percentage) => { /* do something with the updates */ });
 		cleanup();
 	} catch (e) {
 		cleanup();
