@@ -103,8 +103,9 @@ module.exports = function initAuth(core, sessionSecret) {
 
 					content = content
 						.toString()
+						.replace(/{{THEME}}/g, req.dashboard.theme)
 						.replace(
-							'{{ERROR_MSG}}',
+							/{{ERROR_MSG}}/g,
 							errors.length > 0
 								? `<p class="error-msg">${errors[0]}</p>`
 								: ''

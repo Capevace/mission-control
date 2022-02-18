@@ -1,28 +1,30 @@
-const fs = require('fs');
+const fs = require('fs/promises');
 const path = require('path');
 const express = require('express');
 const addTrailingSlashMiddleware = require('@helpers/add-trailing-slash-middleware');
 
 module.exports = function dashboardRoutes(app, { config, auth }) {
 	const dashboardHtmlPath = path.resolve(__dirname, '../../views/dashboard.html');
-	const dashboardHtml = fs.readFileSync(dashboardHtmlPath)
-		.toString()
-		.replace(/{{SERVER_REPLACE_URL}}/gm, config.http.url);
-
-	// HTML for the mobile dashboard (uses JS optimized for old iOS Safari)
-	const dashboardHtmlMobile = dashboardHtml
-		.replace(/index\.js/gm, 'mobile.js')
-		.replace('<!--DELETE-MOBILE', '')
-		.replace('DELETE-MOBILE-->', '');
 
 	function renderDashboard(mobile = false, generateAPIToken) {
-		return (req, res) => {
+		return async (req, res) => {
+			const dashboardHtml = String(await fs.readFile(dashboardHtmlPath))
+				.replace(/{{SERVER_REPLACE_URL}}/gm, config.http.url);
+
+			// HTML for the mobile dashboard (uses JS optimized for old iOS Safari)
+			const dashboardHtmlMobile = dashboardHtml
+				.replace(/index\.js/gm, 'mobile.js')
+				.replace('<!--DELETE-MOBILE', '')
+				.replace('DELETE-MOBILE-->', '');
+
 			const html = (mobile ? dashboardHtmlMobile : dashboardHtml)
 				.replace(/{{SERVER_REPLACE_API_KEY}}/gm, generateAPIToken(req.user))
 				.replace(/{{SERVER_REPLACE_USER_JSON}}/, JSON.stringify({ ...req.user, password: undefined }))
 				.replace(/{{SERVER_REPLACE_DASHBOARD_DATA}}/, req.getComponentsHtml())
 				.replace(/{{SERVER_REPLACE_PAGES_JSON}}/, req.getPagesJson())
-				.replace(/{{SERVER_REPLACE_COMPONENTS_DICT}}/, req.getComponents());
+				.replace(/{{SERVER_REPLACE_COMPONENTS_DICT}}/, req.getComponents())
+				.replace(/{{SERVER_REPLACE_THEME}}/, req.dashboard.theme)
+				.replace(/{{SERVER_REPLACE_THEME_BACKGROUND}}/, req.dashboard.themeBackground);
 
 			res.set('Content-Type', 'text/html').send(html);
 		};

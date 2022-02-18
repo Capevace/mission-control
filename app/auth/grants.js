@@ -16,6 +16,12 @@ const userRole = {
 	'user:password': {
 		'update:own': ['*']
 	},
+	'notification': {
+		'create:own': ['*'],
+		'read:own': ['*'],
+		'update:own': ['*'],
+		'delete:own': ['*']
+	},
 	'service': {
 		'update:any': ['*']
 	},
@@ -24,6 +30,9 @@ const userRole = {
 	},
 	'dashboard': {
 		'update:any': ['*']
+	},
+	'theme': {
+		'update:own': ['*']
 	}
 };
 
@@ -50,8 +59,7 @@ const adminRole = {
 		'read:any': ['*'],
 		'update:any': ['*']
 	},
-	'shell': {
-		'read:any': ['*'],
+	'theme': {
 		'update:any': ['*']
 	}
 };

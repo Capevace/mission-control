@@ -32,18 +32,18 @@
 
 
 	</head>
-	<body class="app-background max-h-screen min-h-screen text-white antialiased font-sans flex justify-center items-center overflow-none">
+	<body class="app-background max-h-screen min-h-screen text-white antialiased font-sans flex justify-center items-center overflow-none theme-toggler theme-{{THEME}}">
 
-		<form action="/login" method="post" class="max-w-2xl bg-purple-600 rounded-2xl p-5 m-3 forms sm:mb-32">
-			<h1 class="text-2xl font-bold mb-5 w-full text-center text-purple-200">Login</h1>
-			<div class="text-purple-200 text-sm mb-5">{{ERROR_MSG}}</div>
+		<form action="/login" method="post" class="max-w-2xl bg-primary-600 rounded-2xl p-5 m-3 forms sm:mb-32">
+			<h1 class="text-2xl font-bold mb-5 w-full text-center text-primary-200">Login</h1>
+			<div class="text-primary-200 text-sm mb-5">{{ERROR_MSG}}</div>
 			<div class="flex flex-wrap mb-5 w-full ">
-				<label for="username" class="w-full text-xs mb-2 font-medium text-purple-lighter">Username</label>
+				<label for="username" class="w-full text-xs mb-2 font-medium">Username</label>
 				<input type="text" id="username" name="username" autocomplete="username" autofocus="autofocus" required/>
 			</div>
 
 			<div class="flex flex-wrap mb-8 w-full">
-				<label for="password" class="w-full text-xs mb-2 font-medium text-purple-lighter">Password</label>
+				<label for="password" class="w-full text-xs mb-2 font-medium">Password</label>
 				<input type="password" id="password" name="password" autocomplete="password" class="" required />
 			</div>
 

@@ -43,9 +43,10 @@ const autoBind = require('auto-bind');
 class DashboardAPI {
 	/**
 	 * Create a new DashboardAPI instance
+	 * @param {Config} config
 	 * @param {Sync} sync - An instance of the Sync system
 	 */
-	constructor(sync) {
+	constructor(config, sync) {
 		this.sync = sync;
 		
 		/**
@@ -62,11 +63,21 @@ class DashboardAPI {
 		 */
 		this.pages = {};
 
+		this.themeColors = require(path.join(config.dashboard.path, 'themes.json'));
+
 		autoBind(this);
 	}
 
 	get state() {
 		return Object.freeze(this.sync.state);
+	}
+
+	get theme() {
+		return this.sync.service('theme').state.theme;
+	}
+
+	get themeBackground() {
+		return this.themeColors[this.theme]['700'];
 	}
 
 	get componentsJson() {

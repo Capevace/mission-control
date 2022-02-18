@@ -73,7 +73,7 @@ class HTTP {
 		 *
 		 * @type {DashboardAPI}
 		 */
-		this.dashboard = new DashboardAPI(sync);
+		this.dashboard = new DashboardAPI(config, sync);
 
 		/**
 		 * The express app
@@ -129,20 +129,22 @@ class HTTP {
 		// against a list of allowed URLs so it can't be forged.
 		this.app.use(attachHostUrlMiddleware(this.config));
 
+		// Bind component & page data to requests
+		this.app.use(
+			this.attachDashboardToRequest.bind(this)
+		);
+
 		// Create auth router and use the routes
 		this.authRouter = new express.Router();
+
 		this.app.use(authRoutes(this.authRouter, { database, auth }));
 
 		// Dashboard routes need component & page data attached
 		this.dashboardRouter = new express.Router();
 
-		// Bind component & page data to dashboard requests
-		this.dashboardRouter.use(
-			this.attachComponentsAndPagesMiddleware.bind(this)
-		);
 		this.dashboardRouter = dashboardRoutes(this.dashboardRouter, {
 			config,
-			auth,
+			auth
 		});
 		this.app.use(this.dashboardRouter);
 
@@ -194,13 +196,14 @@ class HTTP {
 	 * @param  {express~Response}  res  - The express response
 	 * @param  {Function}          next - Middleware callback
 	 */
-	attachComponentsAndPagesMiddleware(req, res, next) {
+	attachDashboardToRequest(req, res, next) {
 		// Attach dashboard components & pages as functions.
 		// This is because not every request actually needs these
 		// and it would be wasteful to evaluate them everytime.
 		req.getComponentsHtml = this.dashboard.getComponentsHTML;
 		req.getPagesJson = this.dashboard.getPagesJSON;
 		req.getComponents = () => this.dashboard.componentsJson;
+		req.dashboard = this.dashboard;
 
 		next();
 	}

@@ -4,10 +4,10 @@
     const header = {
         template: `
 			<ServiceProvider service="telemetry" v-slot="{ stats }">
-				<header class="flex flex-wrap md:flex-no-wrap font-semibold text-purple-50 text-lg gap-2">
+				<header class="flex flex-wrap md:flex-no-wrap font-semibold text-primary-50 text-lg gap-2">
 					<section class="w-full md:w-1/3 leading-tight">
 						<span class="block">{{ stats.version || '-' }}</span>
-						<span class="text-purple-400 text-xs">
+						<span class="text-primary-400 text-xs">
 							Mission Control Version
 						</span>
 					</section>
@@ -15,19 +15,19 @@
 					<section class="w-full flex-1 flex flex-wrap md:flex-no-wrap gap-2">
 						<section class="w-full leading-tight">
 							<span class="block">{{ stats.network.internalIPv4 }}</span>
-							<span class="text-purple-400 text-xs">Internal IP</span>
+							<span class="text-primary-400 text-xs">Internal IP</span>
 						</section>
 
 						<section class="w-full leading-tight">
 							<span class="block">{{ stats.network.publicIPv4 }}</span>
-							<span class="text-purple-400 text-xs">Public IP</span>
+							<span class="text-primary-400 text-xs">Public IP</span>
 						</section>
 
 						<section class="w-full leading-tight">
 							<ClockProvider v-slot="{ now }">
 								<span class="block">{{ now.toLocaleString() }}</span>
 							</ClockProvider>
-							<span class="text-purple-400 text-xs">Server Time</span>
+							<span class="text-primary-400 text-xs">Server Time</span>
 						</section>
 					</section>
 				</header>

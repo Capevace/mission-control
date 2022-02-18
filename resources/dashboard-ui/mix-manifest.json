@@ -1,12 +1,12 @@
 {
-    "/js/index.js": "/js/index.js",
-    "/js/page-floorplan.js": "/js/page-floorplan.js",
-    "/js/page-telemetry.js": "/js/page-telemetry.js",
-    "/js/page-telemetry-sync.js": "/js/page-telemetry-sync.js",
-    "/js/page-notifications.js": "/js/page-notifications.js",
-    "/js/page-settings.js": "/js/page-settings.js",
-    "/js/page-users.js": "/js/page-users.js",
-    "/js/page-create-user.js": "/js/page-create-user.js",
-    "/js/page-user.js": "/js/page-user.js",
-    "/css/index.css": "/css/index.css"
+    "/js/index.js": "/js/index.js?id=9c6e10e850b7bbe609f7",
+    "/js/page-floorplan.js": "/js/page-floorplan.js?id=95fddda21135145bd4b1",
+    "/js/page-telemetry.js": "/js/page-telemetry.js?id=2b8283b4cc6a2964030b",
+    "/js/page-telemetry-sync.js": "/js/page-telemetry-sync.js?id=d062033494a0fb72ddab",
+    "/js/page-notifications.js": "/js/page-notifications.js?id=47fb5d343c31581adf08",
+    "/js/page-settings.js": "/js/page-settings.js?id=bad80d54539c09ff4844",
+    "/js/page-users.js": "/js/page-users.js?id=c5b56551209032551931",
+    "/js/page-create-user.js": "/js/page-create-user.js?id=38da53d14a4f7b936b46",
+    "/js/page-user.js": "/js/page-user.js?id=1096ae12ca666ee7cff4",
+    "/css/index.css": "/css/index.css?id=e83cbadf68141d46a8ef"
 }

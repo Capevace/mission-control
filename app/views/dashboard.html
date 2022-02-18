@@ -9,8 +9,8 @@
 		<meta name="apple-mobile-web-app-title" content="Mission Control" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="default" />
-		<meta name="theme-color" content="#6c27d8" media="(prefers-color-scheme: light)" />
-		<meta name="theme-color" content="#6c27d8" media="(prefers-color-scheme: dark)" />
+		<meta name="theme-color" content="{{SERVER_REPLACE_THEME_BACKGROUND}}" media="(prefers-color-scheme: light)" />
+		<meta name="theme-color" content="{{SERVER_REPLACE_THEME_BACKGROUND}}" media="(prefers-color-scheme: dark)" />
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 		<link rel="icon" href="/favicon.png">
 
@@ -42,12 +42,18 @@
 		</div>
 	</body>
 	<script type="text/javascript">
+		window.onerror = function (message, source, lineno, colno, error)  {
+			document.body.innerHTML += `<pre>aaa${JSON.stringify({message, source, lineno, colno, error}, null, 2)}</pre><br><br><br>`;
+		}
+	</script>
+	<script type="text/javascript">
 		window.MISSION_CONTROL_API_KEY = '{{SERVER_REPLACE_API_KEY}}';
 		window.MISSION_CONTROL_URL = `${window.location.protocol}//${window.location.hostname}${window.location.port ? ':' + window.location.port : ''}`
 			|| '{{SERVER_REPLACE_URL}}';
 		window.MISSION_CONTROL_USER = {{SERVER_REPLACE_USER_JSON}};
 		window.MISSION_CONTROL_PAGES = {{SERVER_REPLACE_PAGES_JSON}};
 		window.MISSION_CONTROL_COMPONENTS_DICT = {{SERVER_REPLACE_COMPONENTS_DICT}};
+		window.MISSION_CONTROL_THEME = '{{SERVER_REPLACE_THEME}}';
 		// window.MISSION_CONTROL_INITIAL_STATE = {{SERVER_REPLACE_STATE_JSON}};
 	</script>
 	<script type="text/javascript" src="/assets/js/index.js"></script>
@@ -56,7 +62,8 @@
 	
 	<script type="text/javascript">
 		// Call init components after all components have been registered
-		window.MISSION_CONTROL.dashboard.initComponents();
+		if (window.MISSION_CONTROL && window.MISSION_CONTROL.dashboard)
+			window.MISSION_CONTROL.dashboard.initComponents();
 	</script>
 
 	<link
@@ -65,7 +72,12 @@
 	/>
 
 	<script type="text/javascript">
-		document.fonts.ready
-			.then(() => window.MISSION_CONTROL.dashboard.setReady(true));
+		if (document.fonts) {
+			document.fonts.ready
+				.then(function () { window.MISSION_CONTROL.dashboard.setReady(true) });
+		} else {
+			if (window.MISSION_CONTROL && window.MISSION_CONTROL.dashboard)
+				window.MISSION_CONTROL.dashboard.setReady(true);
+		}
 	</script>
 </html>

@@ -9,21 +9,21 @@
 			<ServiceProvider service="covid" v-slot="{ cities }">
 				<section class="w-full">
 					<div class="dashboard-box-heading mb-3">
-						COVID-19 Data <span class="ml-1 text-purple-500">(Last 7 days)</span>
+						COVID-19 Data <span class="ml-1 text-primary-500">(Last 7 days)</span>
 					</div>
 					<div class="flex flex-wrap w-full gap-5">
 						<div class="dashboard-box min-w-sm flex-1" v-for="city of filterCities(cities)">
-							<div class="font-semibold text-purple-200 flex justify-between items-center">
+							<div class="font-semibold text-primary-200 flex justify-between items-center">
 								{{city.label}}
 							</div>
-							<div class="flex text-purple-50 font-semibold">
+							<div class="flex text-primary-50 font-semibold">
 								<div class="mr-2">
 									<div class="font-bold text-2xl ">{{city.casesPerPopulation | round}}</div>
-									<div class="text-xs text-purple-500 ">per 100.000</div>
+									<div class="text-xs text-primary-500 ">per 100.000</div>
 								</div>
 								<div>
 									<div class="font-bold text-2xl">{{city.casesLast7Days}}</div>
-									<div class="text-xs text-purple-500 ">cases</div>
+									<div class="text-xs text-primary-500 ">cases</div>
 								</div>
 							</div>
 						</div>
