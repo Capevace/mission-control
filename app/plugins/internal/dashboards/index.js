@@ -14,26 +14,35 @@ module.exports = async function layoutPlugin({ sync, database }) {
 	 * }
 	 */
 
-	const service = sync.createService('dashboards', { 
-		main: mainLayout
+	const service = sync.createService('dashboards', {
+		main: mainLayout,
+		componentProps: {
+			'generic-info-block-28331': {
+				label: 'System Version',
+				service: 'telemetry',
+				objectPath: 'stats.deviceName',
+			},
+		},
 	});
 
-	service.action('update')
+	service
+		.action('update')
 		.requirePermission('update', 'dashboard', 'any')
-		.validate(Joi => Joi.object())
+		.validate((Joi) => Joi.object())
 		.handler(({ main }, { setState }) => {
 			setState({
-				main
+				main,
 			});
 
 			database.set('layout:main-layout', main);
 		});
 
-	service.action('reset')
+	service
+		.action('reset')
 		.requirePermission('update', 'dashboard', 'any')
 		.handler((data, { setState }) => {
 			setState({
-				main: defaultDashboard
+				main: defaultDashboard,
 			});
 
 			database.set('layout:main-layout', defaultDashboard);
@@ -41,6 +50,6 @@ module.exports = async function layoutPlugin({ sync, database }) {
 
 	return {
 		version: '0.0.1',
-		description: 'Dashboard Layout Engine'
+		description: 'Dashboard Layout Engine',
 	};
 };

@@ -1,18 +1,20 @@
 <script type="module">
-    const { dashboard } = MISSION_CONTROL;
+    const { dashboard, components } = MISSION_CONTROL;
 
     const covidComponent = {
 		components: {
-			ServiceProvider: MISSION_CONTROL.components.headless.ServiceProvider,
+			ServiceProvider: components.headless.ServiceProvider,
+			Panel: components.common.Panel,
+			PanelLabel: components.common.PanelLabel,
 		},
         template: `
 			<ServiceProvider service="covid" v-slot="{ cities }">
 				<section class="w-full">
-					<div class="dashboard-box-heading mb-3">
+					<PanelLabel>
 						COVID-19 Data <span class="ml-1 text-primary-500">(Last 7 days)</span>
-					</div>
+					</PanelLabel>
 					<div class="flex flex-wrap w-full gap-5">
-						<div class="dashboard-box min-w-sm flex-1" v-for="city of filterCities(cities)">
+						<Panel class="min-w-sm flex-1" v-for="city of filterCities(cities)">
 							<div class="font-semibold text-primary-200 flex justify-between items-center">
 								{{city.label}}
 							</div>
@@ -26,7 +28,7 @@
 									<div class="text-xs text-primary-500 ">cases</div>
 								</div>
 							</div>
-						</div>
+						</Panel>
 					</div>
 				</section>
 			</ServiceProvider>

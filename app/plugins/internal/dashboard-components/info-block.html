@@ -1,0 +1,67 @@
+<template type="text/x-template" id="mc-info-box-template">
+	<div>
+		<info-block :label="label">
+			{{ valueAtPath }}
+		</info-block>
+	</div>
+</template>
+<script type="module">
+const { Vue, dashboard, components } = MISSION_CONTROL;
+
+function getValueAtPath(fullObject, objectPath) {
+	const parts = objectPath.split('.');
+
+	return parts.reduce((o, part) => {
+		try {
+			if (!o) {
+				return null;
+			}
+
+			if (part in o) {
+				return o[part];
+			}
+
+			return null;
+		} catch (e) {
+			return null;
+		}
+	}, fullObject);
+}
+
+console.warn(components.common.InfoBlock);
+const gneericInfoBlock = {
+	name: 'GenericInfoBlock',
+	components: {
+		InfoBlock: components.common.InfoBlock,
+	},
+	template: `#mc-info-box-template`,
+	props: {
+		service: {
+			type: String,
+			default: () => 'telemetry',
+		},
+		label: {
+			type: String,
+			default: () => 'Version',
+		},
+		objectPath: {
+			type: String,
+			default: () => 'stats.version',
+		},
+	},
+	data: () => ({
+		valueAtPath: null,
+	}),
+	created() {
+		this.$client = this.$sync.service(this.service, (state) => {
+			this.valueAtPath = getValueAtPath(state, this.objectPath);
+		});
+	},
+	destroyed() {
+		this.$client.unsubscribe();
+	},
+	computed: {},
+};
+
+dashboard.component('generic-info-block', gneericInfoBlock);
+</script>

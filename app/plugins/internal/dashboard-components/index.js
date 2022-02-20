@@ -1,11 +1,12 @@
 module.exports = function dashboardExample(APP) {
 	const { dashboard } = APP;
 
-	dashboard.component('links')
-		.custom(__dirname + '/links.html');
+	dashboard
+		.component('generic-info-block')
+		.custom(__dirname + '/info-block.html');
 
 	return {
 		version: '0.0.1',
-		description: 'Dashboard Components'
+		description: 'Dashboard Components',
 	};
 };
