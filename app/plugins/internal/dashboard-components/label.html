@@ -1,0 +1,23 @@
+<template type="text/x-template" id="mc-label-template">
+	<panel-label class="w-full h-full flex items-end">
+		{{ label }}
+	</panel-label>
+</template>
+<script type="module">
+const { Vue, dashboard, components } = MISSION_CONTROL;
+
+const genericLabel = {
+	components: {
+		PanelLabel: components.common.PanelLabel,
+	},
+	template: `#mc-label-template`,
+	props: {
+		label: {
+			type: String,
+			default: () => 'Example Heading',
+		},
+	},
+};
+
+dashboard.component('generic-label', genericLabel);
+</script>

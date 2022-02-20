@@ -1,8 +1,12 @@
 const defaultDashboard = require('./default-dashboard');
+const defaultProps = { 'default-admin-controls': {} };
+
 
 module.exports = async function layoutPlugin({ sync, database }) {
 	// const layout = database.get('layout', initialLayout);
-	const mainLayout = database.get('layout:main-layout', defaultDashboard);
+	
+	const dbMainLayout = database.get('layout:main-layout', defaultDashboard);
+	const dbProps = database.get('dashboard:component-props', defaultProps);
 
 	/**
 	 * {
@@ -15,14 +19,8 @@ module.exports = async function layoutPlugin({ sync, database }) {
 	 */
 
 	const service = sync.createService('dashboards', {
-		main: mainLayout,
-		componentProps: {
-			'generic-info-block-28331': {
-				label: 'System Version',
-				service: 'telemetry',
-				objectPath: 'stats.deviceName',
-			},
-		},
+		main: dbMainLayout,
+		componentProps: dbProps
 	});
 
 	service
@@ -35,6 +33,100 @@ module.exports = async function layoutPlugin({ sync, database }) {
 			});
 
 			database.set('layout:main-layout', main);
+		});
+
+	service
+		.action('add-component')
+		.requirePermission('create', 'dashboard:widget', 'any')
+		.validate(Joi => Joi.object({
+			type: Joi.string()
+				.trim()
+				.required(),
+			props: Joi.object()
+				.required()
+		}))
+		.handler(({ type, props }, { state, setState }) => {
+			const componentId = `${type}-${Math.floor(
+				Math.random() * 100000
+			)}`;
+
+			for (const breakpoint of Object.keys(state.main)) {
+				const minY = state.main[breakpoint].reduce(
+					(minY, component) => {
+						const localMinY = component.y + component.h;
+
+						return minY < localMinY ? localMinY : minY;
+					},
+					0
+				);
+
+				state.main[breakpoint].push({
+					x: 0,
+					y: minY,
+					w: 6,
+					h: 9,
+					i: componentId,
+					component: type,
+					moved: false,
+				});
+			}
+
+			state.componentProps[componentId] = { ...props };
+
+			database.set('dashboard:component-props', state.componentProps);
+		});
+
+	service
+		.action('delete-component')
+		.requirePermission('delete', 'dashboard:widget', 'any')
+		.validate(Joi => Joi.object({
+			id: Joi.string()
+				.trim()
+				.required()
+		}))
+		.handler(({ id }, { state, setState, UserError }) => {
+			let main = state.main;
+			let props = state.componentProps;
+
+			for (const breakpoint of Object.keys(main)) {
+				const index = main[breakpoint].findIndex((component) => component.i === id);
+
+				if (index !== -1) {
+					main[breakpoint].splice(index, 1);
+				} else {
+					throw new UserError('Component not found', 404);
+				}
+			}
+
+			delete props[id];
+
+			setState({
+				main,
+				componentProps: props
+			});
+
+			database.set('layout:main-layout', main);
+			database.set('dashboard:component-props', props);
+		});
+
+	service
+		.action('edit-component-props')
+		.requirePermission('update', 'dashboard:widget', 'any')
+		.validate(Joi => Joi.object({
+			id: Joi.string()
+				.trim()
+				.required(),
+			props: Joi.object()
+				.required()
+		}))
+		.handler(({ id, props }, { state, setState, UserError }) => {
+			if (!(id in state.componentProps)) {
+				throw new UserError('Component not found', 404);
+			}
+
+			state.componentProps[id] = props;
+
+			database.set('dashboard:component-props', state.componentProps);
 		});
 
 	service

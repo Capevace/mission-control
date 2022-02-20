@@ -1,12 +1,12 @@
 {
-    "/js/index.js": "/js/index.js?id=9c6e10e850b7bbe609f7",
-    "/js/page-floorplan.js": "/js/page-floorplan.js?id=95fddda21135145bd4b1",
-    "/js/page-telemetry.js": "/js/page-telemetry.js?id=2b8283b4cc6a2964030b",
-    "/js/page-telemetry-sync.js": "/js/page-telemetry-sync.js?id=d062033494a0fb72ddab",
-    "/js/page-notifications.js": "/js/page-notifications.js?id=47fb5d343c31581adf08",
-    "/js/page-settings.js": "/js/page-settings.js?id=bad80d54539c09ff4844",
-    "/js/page-users.js": "/js/page-users.js?id=c5b56551209032551931",
-    "/js/page-create-user.js": "/js/page-create-user.js?id=38da53d14a4f7b936b46",
-    "/js/page-user.js": "/js/page-user.js?id=1096ae12ca666ee7cff4",
-    "/css/index.css": "/css/index.css?id=e83cbadf68141d46a8ef"
+    "/js/index.js": "/js/index.js?id=c49ffdb7239e7ddc1710b557f4d1621a",
+    "/js/page-floorplan.js": "/js/page-floorplan.js?id=e3054d481d695c9073a84a1ffe79e4fd",
+    "/js/page-telemetry.js": "/js/page-telemetry.js?id=d49cf31f658cab858d0d5cfcbe708b6d",
+    "/js/page-telemetry-sync.js": "/js/page-telemetry-sync.js?id=5037864cef21cf59707b8d1376008de7",
+    "/js/page-notifications.js": "/js/page-notifications.js?id=56e8fb6fd830a3aa7fa5c56807394ef1",
+    "/js/page-settings.js": "/js/page-settings.js?id=2e2535b4a2f5014fd32e6e94b59fe053",
+    "/js/page-users.js": "/js/page-users.js?id=7611882f55f6762feaecf5c621905ff3",
+    "/js/page-create-user.js": "/js/page-create-user.js?id=6a047407f53a9dfff5110627fe910923",
+    "/js/page-user.js": "/js/page-user.js?id=e53271a18dcaab22c920af68669acd7f",
+    "/css/index.css": "/css/index.css?id=7e7f9ebfa20e4003aa799b33fabcb31c"
 }

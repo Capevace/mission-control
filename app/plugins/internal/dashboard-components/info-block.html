@@ -30,7 +30,6 @@ function getValueAtPath(fullObject, objectPath) {
 
 console.warn(components.common.InfoBlock);
 const gneericInfoBlock = {
-	name: 'GenericInfoBlock',
 	components: {
 		InfoBlock: components.common.InfoBlock,
 	},
@@ -51,9 +50,11 @@ const gneericInfoBlock = {
 	},
 	data: () => ({
 		valueAtPath: null,
+		remoteState: {}
 	}),
 	created() {
 		this.$client = this.$sync.service(this.service, (state) => {
+			this.remoteState = state;
 			this.valueAtPath = getValueAtPath(state, this.objectPath);
 		});
 	},
@@ -61,6 +62,12 @@ const gneericInfoBlock = {
 		this.$client.unsubscribe();
 	},
 	computed: {},
+	watch: {
+		objectPath() {
+			if (this.remoteState)
+				this.valueAtPath = getValueAtPath(this.remoteState, this.objectPath);
+		}
+	}
 };
 
 dashboard.component('generic-info-block', gneericInfoBlock);

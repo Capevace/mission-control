@@ -45,7 +45,7 @@ module.exports = function homekitInit(APP) {
 		status: ConnectionStatus.connecting
 	});
 
-	dashboard.component('homebridgeSwitches')
+	dashboard.component('homebridge-buttons')
 		.custom(__dirname + '/component.html');
 
 	const homebridge = new HapClient({

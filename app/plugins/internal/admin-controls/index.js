@@ -45,7 +45,7 @@ module.exports = function adminControls({
 			};
 		});
 
-	dashboard.component('adminControls').custom(__dirname + '/widget.html');
+	dashboard.component('admin-controls').custom(__dirname + '/widget.html');
 
 	return {
 		internal: true,

@@ -4,31 +4,26 @@
 	const adminControls = {
 		template: `
 			<ServiceProvider service="admin-controls" v-slot="{ restarting, startedAt, invokeAction }">
-				<section>
-					<PanelLabel>
-						Server
-					</PanelLabel>
-					<Panel class="flex items-center">
-						<div class="flex-1 font-semibold ">
-							<ClockProvider v-slot="{ now }">
-								<InfoBlock label="Uptime">
-									<template :data-now="now.toISOString()">
-										{{ startedAt | uptime }}
-									</template>
-								</InfoBlock>
-							</ClockProvider>
-						</div>
-						<div>
-							<Button
-								:loading="restarting"
-								@click="restart(invokeAction)"
-								class="w-full"
-							>
-								Restart
-							</Button>
-						</div>  
-					</Panel>
-				</section>
+				<Panel class="flex items-center">
+					<div class="flex-1 font-semibold ">
+						<ClockProvider v-slot="{ now }">
+							<InfoBlock label="Uptime">
+								<template :data-now="now.toISOString()">
+									{{ startedAt | uptime }}
+								</template>
+							</InfoBlock>
+						</ClockProvider>
+					</div>
+					<div>
+						<Button
+							:loading="restarting"
+							@click="restart(invokeAction)"
+							class="w-full"
+						>
+							Restart
+						</Button>
+					</div>  
+				</Panel>
 			</ServiceProvider>
 		`,
 		components: {

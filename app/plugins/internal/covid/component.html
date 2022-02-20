@@ -1,3 +1,22 @@
+<template type="text/x-template" id="mc-covid-template">
+	<service-provider service="covid" v-slot="{ cities }" class="h-full">
+		<panel class="min-w-sm" v-if="cities[city]">
+			<div class="font-semibold text-primary-200 flex justify-between items-center">
+				{{cities[city].label}} <span>
+			</div>
+			<div class="flex text-primary-50 font-semibold">
+				<div class="mr-2">
+					<div class="font-bold text-2xl ">{{cities[city].casesPerPopulation | round}}</div>
+					<div class="text-xs text-primary-500 ">per 100.000</div>
+				</div>
+				<div>
+					<div class="font-bold text-2xl">{{cities[city].casesLast7Days}}</div>
+					<div class="text-xs text-primary-500 ">cases</div>
+				</div>
+			</div>
+		</panel>
+	</service-provider>
+</template>
 <script type="module">
     const { dashboard, components } = MISSION_CONTROL;
 
@@ -7,32 +26,13 @@
 			Panel: components.common.Panel,
 			PanelLabel: components.common.PanelLabel,
 		},
-        template: `
-			<ServiceProvider service="covid" v-slot="{ cities }">
-				<section class="w-full">
-					<PanelLabel>
-						COVID-19 Data <span class="ml-1 text-primary-500">(Last 7 days)</span>
-					</PanelLabel>
-					<div class="flex flex-wrap w-full gap-5">
-						<Panel class="min-w-sm flex-1" v-for="city of filterCities(cities)">
-							<div class="font-semibold text-primary-200 flex justify-between items-center">
-								{{city.label}}
-							</div>
-							<div class="flex text-primary-50 font-semibold">
-								<div class="mr-2">
-									<div class="font-bold text-2xl ">{{city.casesPerPopulation | round}}</div>
-									<div class="text-xs text-primary-500 ">per 100.000</div>
-								</div>
-								<div>
-									<div class="font-bold text-2xl">{{city.casesLast7Days}}</div>
-									<div class="text-xs text-primary-500 ">cases</div>
-								</div>
-							</div>
-						</Panel>
-					</div>
-				</section>
-			</ServiceProvider>
-        `,
+		props: {
+			city: {
+				type: String,
+				default: () => 'de.ni.03355'
+			}
+		},
+        template: '#mc-covid-template',
         methods: {
 			filterCities(cities) {
                 return Object.values(cities);

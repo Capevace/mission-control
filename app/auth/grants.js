@@ -61,7 +61,13 @@ const adminRole = {
 	},
 	'theme': {
 		'update:any': ['*']
-	}
+	},
+	'dashboard:widget': {
+		'read:any': ['*'],
+		'create:any': ['*'],
+		'update:any': ['*'],
+		'delete:any': ['*']
+	},
 };
 
 const systemRole = {

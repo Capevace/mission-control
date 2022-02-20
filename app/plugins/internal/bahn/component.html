@@ -65,14 +65,19 @@
                 class="list-reset flex cursor-pointer flex-wrap"
                 @click="expanded = !expanded"
             >
-                <div class="flex-shrink-0 flex flex-col justify-start font-semibold mr-4 mb-2">
-                    <div class="text-xl text-primary-50 leading-tight">
-                        {{route.departure | dateify}}<span v-if="route.departureDelay">{{route.departureDelay}}</span>
+                <div class="flex-shrink-0 flex flex-col justify-start font-semibold mr-4">
+                    <div class="text-lg text-primary-50 leading-tight">
+                        {{route.departure | dateify}}
                         –
-                        {{route.arrival | dateify}}<span v-if="route.arrivalDelay">{{route.arrivalDelay}}</span>
+                        {{route.arrival | dateify}}
                     </div>
                     <div class="text-sm text-primary-400 inline w-32 truncate">
                         {{route.lines}}
+                    </div>
+                    <div class="text-sm text-pink-400 inline w-32 truncate" v-if="route.delayedDeparture || route.delayedArrival">
+                        {{(route.delayedDeparture || route.departure) | dateify}}
+                        -
+                        {{(route.delayedArrival || route.arrival) | dateify}}
                     </div>
                 </div>
 
@@ -107,13 +112,13 @@
 
     const trainsComponent = {
         template: `
-			<ServiceProvider service="trains" v-slot="{ routes }">
-				<section class="w-full h-full">
+			<ServiceProvider service="trains" v-slot="{ routes }" class="h-full">
+				<section class="w-full h-full flex flex-col">
 					<PanelLabel>
 						Trains to Lübeck Hbf
 						<a class="link ml-3" href="https://reiseauskunft.bahn.de/bin/query.exe/dn?revia=yes&existOptimizePrice-deactivated=1&country=DEU&dbkanal_007=L01_S01_D001_KIN0001_qf-bahn-svb-kl2_lz03&start=1&protocol=https%3A&REQ0JourneyStopsS0A=1&S=ZOB%2C+L%C3%BCneburg&REQ0JourneyStopsSID=A%3D1%40O%3DZOB%2C+L%C3%BCneburg%40X%3D10419523%40Y%3D53249302%40U%3D80%40L%3D000626772%40B%3D1%40p%3D1623428175%40&Z=L%C3%BCbeck+Hbf&REQ0JourneyStopsZID=&timesel=depart&returnDate=&returnTime=&returnTimesel=depart&optimize=0&auskunft_travelers_number=1&tariffTravellerType.1=E&tariffTravellerReductionClass.1=0&tariffClass=2&rtMode=DB-HYBRID&externRequest=yes&HWAI=JS!js%3Dyes!ajax%3Dyes!#hfsseq1|l5.018015162.1623743447">bahn.de</a>
 					</PanelLabel>
-					<Panel>
+					<Panel class="h-full">
 						<div class="list-none p-0 w-full text-main-lightest inline-block overflow-y-scroll h-full">
 							<bahn-row
 								v-for="(route, index) in routes"

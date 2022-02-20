@@ -1,207 +1,552 @@
 {
-  "lg": [{
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 2,
-    "i": "0",
-    "component": "basic-header",
-    "moved": false
-  }, {
-    "x": 0,
-    "y": 11,
-    "w": 4,
-    "h": 3,
-    "i": "1",
-    "component": "admin-controls",
-    "moved": false
-  }, {
-    "x": 8,
-    "y": 2,
-    "w": 4,
-    "h": 9,
-    "i": "2",
-    "component": "bahn",
-    "moved": false
-  }, {
-    "x": 0,
-    "y": 2,
-    "w": 8,
-    "h": 9,
-    "i": "3",
-    "component": "homebridge-buttons",
-    "moved": false
-  }, {
-    "x": 8,
-    "y": 11,
-    "w": 4,
-    "h": 5,
-    "i": "4",
-    "component": "covid",
-    "moved": false
-  }],
-  "md": [{
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 2,
-    "i": "0",
-    "component": "basic-header",
-    "moved": false
-  }, {
-    "x": 0,
-    "y": 11,
-    "w": 4,
-    "h": 3,
-    "i": "1",
-    "component": "admin-controls",
-    "moved": false
-  }, {
-    "x": 6,
-    "y": 2,
-    "w": 4,
-    "h": 9,
-    "i": "2",
-    "component": "bahn",
-    "moved": false
-  }, {
-    "x": 0,
-    "y": 2,
-    "w": 6,
-    "h": 9,
-    "i": "3",
-    "component": "homebridge-buttons",
-    "moved": false
-  }, {
-    "x": 6,
-    "y": 11,
-    "w": 4,
-    "h": 4,
-    "i": "4",
-    "component": "covid",
-    "moved": false
-  }],
-  "sm": [{
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 2,
-    "i": "0",
-    "component": "basic-header",
-    "moved": false
-  }, {
-    "x": 0,
-    "y": 18,
-    "w": 3,
-    "h": 5,
-    "i": "1",
-    "component": "admin-controls",
-    "moved": false
-  }, {
-    "x": 0,
-    "y": 8,
-    "w": 3,
-    "h": 10,
-    "i": "2",
-    "component": "bahn",
-    "moved": false
-  }, {
-    "x": 0,
-    "y": 2,
-    "w": 6,
-    "h": 6,
-    "i": "3",
-    "component": "homebridge-buttons",
-    "moved": false
-  }, {
-    "x": 3,
-    "y": 8,
-    "w": 3,
-    "h": 7,
-    "i": "4",
-    "component": "covid",
-    "moved": false
-  }],
-  "xs": [{
-    "x": 0,
-    "y": 0,
-    "w": 4,
-    "h": 2,
-    "i": "0",
-    "component": "basic-header",
-    "moved": false
-  }, {
-    "x": 0,
-    "y": 25,
-    "w": 4,
-    "h": 3,
-    "i": "1",
-    "component": "admin-controls",
-    "moved": false
-  }, {
-    "x": 0,
-    "y": 11,
-    "w": 4,
-    "h": 9,
-    "i": "2",
-    "component": "bahn",
-    "moved": false
-  }, {
-    "x": 0,
-    "y": 2,
-    "w": 4,
-    "h": 9,
-    "i": "3",
-    "component": "homebridge-buttons",
-    "moved": false
-  }, {
-    "x": 0,
-    "y": 20,
-    "w": 4,
-    "h": 5,
-    "i": "4",
-    "component": "covid",
-    "moved": false
-  }],
-  "xxs": [{
-    "x": 0,
-    "y": 0,
-    "w": 2,
-    "h": 3,
-    "i": "0",
-    "component": "basic-header",
-    "moved": false
-  }, {
-    "x": 0,
-    "y": 28,
-    "w": 4,
-    "h": 3,
-    "i": "1",
-    "component": "admin-controls",
-    "moved": false
-  }, {
-    "x": 0,
-    "y": 15,
-    "w": 2,
-    "h": 9,
-    "i": "2",
-    "component": "bahn",
-    "moved": false
-  }, {
-    "x": 0,
-    "y": 3,
-    "w": 2,
-    "h": 12,
-    "i": "3",
-    "component": "homebridge-buttons",
-    "moved": false
-  }, {
-    "x": 0,
-    "y": 24,
-    "w": 2,
-    "h": 4,
-    "i": "4",
-    "component": "covid",
-    "moved": false
-  }]
+  "lg": [
+    {
+      "x": 0,
+      "y": 7,
+      "w": 3,
+      "h": 3,
+      "i": "default-admin-controls",
+      "component": "admin-controls",
+      "moved": false
+    },
+    {
+      "x": 9,
+      "y": 0,
+      "w": 3,
+      "h": 9,
+      "i": "bahn-17785",
+      "component": "bahn",
+      "moved": false
+    },
+    {
+      "x": 5,
+      "y": 1,
+      "w": 2,
+      "h": 3,
+      "i": "covid-21923",
+      "component": "covid",
+      "moved": false
+    },
+    {
+      "x": 5,
+      "y": 0,
+      "w": 3,
+      "h": 1,
+      "i": "generic-label-91426",
+      "component": "generic-label",
+      "moved": false
+    },
+    {
+      "x": 0,
+      "y": 5,
+      "w": 3,
+      "h": 2,
+      "i": "generic-label-20372",
+      "component": "generic-label",
+      "moved": false
+    },
+    {
+      "x": 5,
+      "y": 4,
+      "w": 2,
+      "h": 4,
+      "i": "covid-87398",
+      "component": "covid",
+      "moved": false
+    },
+    {
+      "x": 2,
+      "y": 1,
+      "w": 2,
+      "h": 2,
+      "i": "generic-info-block-66251",
+      "component": "generic-info-block",
+      "moved": false
+    },
+    {
+      "x": 2,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "i": "generic-info-block-42772",
+      "component": "generic-info-block",
+      "moved": false
+    },
+    {
+      "x": 0,
+      "y": 1,
+      "w": 2,
+      "h": 2,
+      "i": "generic-info-block-78626",
+      "component": "generic-info-block",
+      "moved": false
+    },
+    {
+      "x": 0,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "i": "generic-info-block-10583",
+      "component": "generic-info-block",
+      "moved": false
+    },
+    {
+      "x": 2,
+      "y": 0,
+      "w": 2,
+      "h": 1,
+      "i": "generic-label-65350",
+      "component": "generic-label",
+      "moved": false
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "w": 2,
+      "h": 1,
+      "i": "generic-label-25535",
+      "component": "generic-label",
+      "moved": false
+    }
+  ],
+  "md": [
+    {
+      "x": 0,
+      "y": 7,
+      "w": 3,
+      "h": 3,
+      "i": "default-admin-controls",
+      "component": "admin-controls",
+      "moved": false
+    },
+    {
+      "x": 7,
+      "y": 0,
+      "w": 3,
+      "h": 9,
+      "i": "bahn-17785",
+      "component": "bahn",
+      "moved": false
+    },
+    {
+      "x": 3,
+      "y": 7,
+      "w": 2,
+      "h": 3,
+      "i": "covid-21923",
+      "component": "covid",
+      "moved": false
+    },
+    {
+      "x": 3,
+      "y": 5,
+      "w": 3,
+      "h": 2,
+      "i": "generic-label-91426",
+      "component": "generic-label",
+      "moved": false
+    },
+    {
+      "x": 0,
+      "y": 6,
+      "w": 3,
+      "h": 1,
+      "i": "generic-label-20372",
+      "component": "generic-label",
+      "moved": false
+    },
+    {
+      "x": 5,
+      "y": 7,
+      "w": 2,
+      "h": 3,
+      "i": "covid-87398",
+      "component": "covid",
+      "moved": false
+    },
+    {
+      "x": 3,
+      "y": 3,
+      "w": 3,
+      "h": 2,
+      "i": "generic-info-block-66251",
+      "component": "generic-info-block",
+      "moved": false
+    },
+    {
+      "x": 3,
+      "y": 1,
+      "w": 3,
+      "h": 2,
+      "i": "generic-info-block-42772",
+      "component": "generic-info-block",
+      "moved": false
+    },
+    {
+      "x": 0,
+      "y": 1,
+      "w": 3,
+      "h": 2,
+      "i": "generic-info-block-78626",
+      "component": "generic-info-block",
+      "moved": false
+    },
+    {
+      "x": 0,
+      "y": 3,
+      "w": 3,
+      "h": 3,
+      "i": "generic-info-block-10583",
+      "component": "generic-info-block",
+      "moved": false
+    },
+    {
+      "x": 3,
+      "y": 0,
+      "w": 4,
+      "h": 1,
+      "i": "generic-label-65350",
+      "component": "generic-label",
+      "moved": false
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "w": 3,
+      "h": 1,
+      "i": "generic-label-25535",
+      "component": "generic-label",
+      "moved": false
+    }
+  ],
+  "sm": [
+    {
+      "x": 0,
+      "y": 13,
+      "w": 3,
+      "h": 2,
+      "i": "default-admin-controls",
+      "component": "admin-controls",
+      "moved": false
+    },
+    {
+      "x": 3,
+      "y": 0,
+      "w": 3,
+      "h": 8,
+      "i": "bahn-17785",
+      "component": "bahn",
+      "moved": false
+    },
+    {
+      "x": 3,
+      "y": 10,
+      "w": 3,
+      "h": 3,
+      "i": "covid-21923",
+      "component": "covid",
+      "moved": false
+    },
+    {
+      "x": 3,
+      "y": 8,
+      "w": 3,
+      "h": 2,
+      "i": "generic-label-91426",
+      "component": "generic-label",
+      "moved": false
+    },
+    {
+      "x": 0,
+      "y": 11,
+      "w": 3,
+      "h": 2,
+      "i": "generic-label-20372",
+      "component": "generic-label",
+      "moved": false
+    },
+    {
+      "x": 3,
+      "y": 13,
+      "w": 3,
+      "h": 4,
+      "i": "covid-87398",
+      "component": "covid",
+      "moved": false
+    },
+    {
+      "x": 0,
+      "y": 9,
+      "w": 3,
+      "h": 2,
+      "i": "generic-info-block-66251",
+      "component": "generic-info-block",
+      "moved": false
+    },
+    {
+      "x": 0,
+      "y": 7,
+      "w": 3,
+      "h": 2,
+      "i": "generic-info-block-42772",
+      "component": "generic-info-block",
+      "moved": false
+    },
+    {
+      "x": 0,
+      "y": 1,
+      "w": 3,
+      "h": 2,
+      "i": "generic-info-block-78626",
+      "component": "generic-info-block",
+      "moved": false
+    },
+    {
+      "x": 0,
+      "y": 3,
+      "w": 3,
+      "h": 2,
+      "i": "generic-info-block-10583",
+      "component": "generic-info-block",
+      "moved": false
+    },
+    {
+      "x": 0,
+      "y": 5,
+      "w": 3,
+      "h": 2,
+      "i": "generic-label-65350",
+      "component": "generic-label",
+      "moved": false
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "w": 2,
+      "h": 1,
+      "i": "generic-label-25535",
+      "component": "generic-label",
+      "moved": false
+    }
+  ],
+  "xs": [
+    {
+      "x": 0,
+      "y": 23,
+      "w": 4,
+      "h": 2,
+      "i": "default-admin-controls",
+      "component": "admin-controls",
+      "moved": false
+    },
+    {
+      "x": 0,
+      "y": 12,
+      "w": 6,
+      "h": 9,
+      "i": "bahn-17785",
+      "component": "bahn",
+      "moved": false
+    },
+    {
+      "x": 2,
+      "y": 4,
+      "w": 2,
+      "h": 4,
+      "i": "covid-21923",
+      "component": "covid",
+      "moved": false
+    },
+    {
+      "x": 2,
+      "y": 0,
+      "w": 2,
+      "h": 1,
+      "i": "generic-label-91426",
+      "component": "generic-label",
+      "moved": false
+    },
+    {
+      "x": 0,
+      "y": 21,
+      "w": 4,
+      "h": 2,
+      "i": "generic-label-20372",
+      "component": "generic-label",
+      "moved": false
+    },
+    {
+      "x": 2,
+      "y": 1,
+      "w": 2,
+      "h": 3,
+      "i": "covid-87398",
+      "component": "covid",
+      "moved": false
+    },
+    {
+      "x": 0,
+      "y": 9,
+      "w": 2,
+      "h": 3,
+      "i": "generic-info-block-66251",
+      "component": "generic-info-block",
+      "moved": false
+    },
+    {
+      "x": 0,
+      "y": 7,
+      "w": 2,
+      "h": 2,
+      "i": "generic-info-block-42772",
+      "component": "generic-info-block",
+      "moved": false
+    },
+    {
+      "x": 0,
+      "y": 1,
+      "w": 2,
+      "h": 2,
+      "i": "generic-info-block-78626",
+      "component": "generic-info-block",
+      "moved": false
+    },
+    {
+      "x": 0,
+      "y": 3,
+      "w": 2,
+      "h": 2,
+      "i": "generic-info-block-10583",
+      "component": "generic-info-block",
+      "moved": false
+    },
+    {
+      "x": 0,
+      "y": 5,
+      "w": 2,
+      "h": 2,
+      "i": "generic-label-65350",
+      "component": "generic-label",
+      "moved": false
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "w": 2,
+      "h": 1,
+      "i": "generic-label-25535",
+      "component": "generic-label",
+      "moved": false
+    }
+  ],
+  "xxs": [
+    {
+      "x": 0,
+      "y": 22,
+      "w": 2,
+      "h": 3,
+      "i": "default-admin-controls",
+      "component": "admin-controls",
+      "moved": false
+    },
+    {
+      "x": 0,
+      "y": 11,
+      "w": 6,
+      "h": 9,
+      "i": "bahn-17785",
+      "component": "bahn",
+      "moved": false
+    },
+    {
+      "x": 0,
+      "y": 7,
+      "w": 1,
+      "h": 4,
+      "i": "covid-21923",
+      "component": "covid",
+      "moved": false
+    },
+    {
+      "x": 0,
+      "y": 5,
+      "w": 2,
+      "h": 2,
+      "i": "generic-label-91426",
+      "component": "generic-label",
+      "moved": false
+    },
+    {
+      "x": 0,
+      "y": 20,
+      "w": 2,
+      "h": 2,
+      "i": "generic-label-20372",
+      "component": "generic-label",
+      "moved": false
+    },
+    {
+      "x": 1,
+      "y": 7,
+      "w": 1,
+      "h": 4,
+      "i": "covid-87398",
+      "component": "covid",
+      "moved": false
+    },
+    {
+      "x": 1,
+      "y": 3,
+      "w": 1,
+      "h": 2,
+      "i": "generic-info-block-66251",
+      "component": "generic-info-block",
+      "moved": false
+    },
+    {
+      "x": 1,
+      "y": 1,
+      "w": 1,
+      "h": 2,
+      "i": "generic-info-block-42772",
+      "component": "generic-info-block",
+      "moved": false
+    },
+    {
+      "x": 0,
+      "y": 1,
+      "w": 1,
+      "h": 2,
+      "i": "generic-info-block-78626",
+      "component": "generic-info-block",
+      "moved": false
+    },
+    {
+      "x": 0,
+      "y": 3,
+      "w": 1,
+      "h": 2,
+      "i": "generic-info-block-10583",
+      "component": "generic-info-block",
+      "moved": false
+    },
+    {
+      "x": 1,
+      "y": 0,
+      "w": 1,
+      "h": 1,
+      "i": "generic-label-65350",
+      "component": "generic-label",
+      "moved": false
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1,
+      "i": "generic-label-25535",
+      "component": "generic-label",
+      "moved": false
+    }
+  ]
 }

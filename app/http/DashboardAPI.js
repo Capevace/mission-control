@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const fsPromises = require('fs/promises');
 const autoBind = require('auto-bind');
 
 /**
@@ -93,16 +94,18 @@ class DashboardAPI {
 		return JSON.stringify(json);
 	}
 
-	getComponentsHTML() {
-		return Object.values(this.components)
-			.map((component) => {
-				if (component.content === null || component.content.type !== 'custom-html') {
-					return '';
-				}
+	async getComponentsHTML() {
+		let html = '';
 
-				return `<!-- COMPONENT - CUSTOM - ${component.name} -->\n${component.content.raw}\n\n`;
-			})
-			.reduce((fullHTML, html) => fullHTML + html, '');
+		for (const component of Object.values(this.components)) {
+			if (component.content === null || component.content.type !== 'custom-html') {
+				continue;
+			}
+
+			html += `<!-- COMPONENT - CUSTOM - ${component.name} -->\n${await component.content.read()}\n\n`;
+		} 
+
+		return html;
 	}
 
 	getPagesJSON() {
@@ -164,7 +167,8 @@ class DashboardAPI {
 				this.components[name].content = {
 					type: 'custom-html',
 					path: absolutePath,
-					raw: fs.readFileSync(absolutePath)
+					raw: fs.readFileSync(absolutePath),
+					read: async () => String(await fsPromises.readFile(absolutePath))
 				};
 
 				return builder;

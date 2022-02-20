@@ -107,10 +107,10 @@ function parseJourney(journey) {
 
 	return {
 		lines,
-		departure: new Date(leg.departure),
-		arrival: new Date(lastLeg.arrival),
-		arrivalDelay: lastLeg.arrivalDelay, // delay is in seconds, acc. to docs
-		departureDelay: leg.departureDelay
+		departure: new Date(leg.plannedDeparture),
+		arrival: new Date(lastLeg.plannedArrival),
+		delayedDeparture: lastLeg.plannedDeparture !== lastLeg.departure ? new Date(lastLeg.departure) : null,
+		delayedArrival: lastLeg.plannedArrival !== lastLeg.arrival ? new Date(lastLeg.arrival) : null
 	};
 }
 
