@@ -1,0 +1,110 @@
+<template type="text/x-template" id="mc-weed-template">
+	<Panel class="flex items-center">
+        <div class="flex-1 flex flex-col gap-5">
+            <panel-button
+                @click="toggle"
+                class="w-full"
+       		>	
+       			<div class="flex flex-no-wrap items-center justify-center gap-5">
+       				<img class="absolute left-0 ml-2 w-8 inline-block" src="/plugins/weed-mode/cannabis.png">
+                	{{ enabled ? 'Joint is dead' : `Let's have a spliff!`  }}
+       			</div>
+            </panel-button>
+
+            <span class="text-xs font-semibold text-primary-400">
+            	Last smoked: 
+
+            	<template v-if="lastSpliff">
+            		<clock-provider v-slot="{ now }">
+						{{ lastSpliff | distance }} ago
+					</clock-provider>
+            	</template>
+            	<template v-else>
+            		too long ago
+            	</template>
+            </span>
+        </div>
+    </Panel>
+</template>
+<script type="module">
+const { Vue, dashboard, components, utils } = MISSION_CONTROL;
+
+const genericLabel = {
+	components: {
+		Panel: components.common.Panel,
+		PanelButton: components.form.Button,
+		ClockProvider: components.headless.ClockProvider,
+	},
+	template: `#mc-weed-template`,
+	data: () => ({
+		enabled: false,
+		lastSpliff: null
+	}),
+	props: {
+		position: {
+			type: String,
+			default: () => '26'
+		}
+	},
+	created() {
+		this.$client = this.$sync.service('weed', (state) => {
+			this.enabled = state.enabled;
+			this.lastSpliff = new Date(state.lastSpliff);
+
+			if (state.enabled) {
+				new Array(200).fill(0).forEach(() => {
+					const size = 120 + Math.floor(Math.random() * 160);
+					const img = document.createElement('img');
+					img.src = '/plugins/weed-mode/cannabis.png';
+					img.style.width = size + 'px';
+
+					const x = -(size) + Math.random() * (window.innerWidth + (size));
+					const offset = Math.random() * 1500;
+					img.style.transform = `translate(${x}px, -${offset}px)`;
+					img.style.transition = `all ${Math.floor(offset/1000 * 10)}s linear`;
+					img.classList.add('absolute');
+					img.classList.add('top-0');
+					img.classList.add('left-0');
+
+					document.body.append(img);
+
+					setTimeout(() => {
+						img.style.transform = `translate(${x}px, ${window.innerHeight + 500}px)`;
+					}, 100);
+
+					// setTimeout(() => {
+					// 	element.remove();
+					// }, 10000);
+					setTimeout(() => {
+						img.remove();
+					}, 60000);
+				});
+			}
+		});
+	},
+	destroyed() {
+		this.$client.unsubscribe();
+	},
+	methods: {
+		async toggle() {
+			try {
+				await this.$client.action('toggle', { position: parseInt(this.position) });
+			} catch (e) {
+				console.error(e);
+				this.$notify({
+					type: 'error',
+					title: 'Toggle weed mode',
+					text: e.message
+				});
+			}
+		}
+	},
+	filters: {
+		distance(date) {
+			return utils.formatDistance(date, new Date());
+		}
+	}
+};
+
+dashboard.component('weed', genericLabel);
+</script>

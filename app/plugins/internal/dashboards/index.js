@@ -1,5 +1,5 @@
 const defaultDashboard = require('./default-dashboard');
-const defaultProps = { 'default-admin-controls': {} };
+const defaultProps = require('./default-props');
 
 
 module.exports = async function layoutPlugin({ sync, database }) {
@@ -138,6 +138,7 @@ module.exports = async function layoutPlugin({ sync, database }) {
 			});
 
 			database.set('layout:main-layout', defaultDashboard);
+			database.set('dashboard:component-props', defaultProps);
 		});
 
 	return {

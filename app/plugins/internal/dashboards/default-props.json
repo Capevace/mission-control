@@ -1,0 +1,57 @@
+{
+  "generic-info-block-46978": {
+    "service": "telemetry",
+    "label": "Versionsss",
+    "objectPath": "stats.version"
+  },
+  "generic-info-block-45874": {
+    "service": "telemetry",
+    "label": "Internal IP",
+    "objectPath": "stats.network.internalIPv4"
+  },
+  "covid-16075": {
+    "city": "de.sh.01003"
+  },
+  "covid-12543": {
+    "city": "de.ni.03355"
+  },
+  "bahn-17785": {},
+  "covid-21923": {
+    "city": "de.ni.03355"
+  },
+  "generic-label-91426": {
+    "label": "COVID-Data"
+  },
+  "generic-label-20372": {
+    "label": "Server Uptimes"
+  },
+  "covid-87398": {
+    "city": "de.sh.01003"
+  },
+  "generic-info-block-66251": {
+    "service": "telemetry",
+    "label": "Public IP",
+    "objectPath": "stats.network.publicIPv4"
+  },
+  "generic-info-block-42772": {
+    "service": "telemetry",
+    "label": "Internal IP",
+    "objectPath": "stats.network.internalIPv4"
+  },
+  "generic-info-block-78626": {
+    "service": "telemetry",
+    "label": "Mission Control Version",
+    "objectPath": "stats.version"
+  },
+  "generic-info-block-10583": {
+    "service": "telemetry",
+    "label": "UI Version",
+    "objectPath": "stats.uiVersion"
+  },
+  "generic-label-65350": {
+    "label": "Networking"
+  },
+  "generic-label-25535": {
+    "label": "Software Version"
+  }
+}

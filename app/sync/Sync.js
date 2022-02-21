@@ -131,7 +131,7 @@ class Sync {
 			 * Invoke an action on the service
 			 * @type {Service~handleAction}
 			 */
-			invoke: service.invokeAction,
+			invokeAction: service.invokeAction,
 
 			/**
 			 * Subscribe to service state changes
@@ -172,7 +172,7 @@ class Sync {
 		logger.debug(`service: ${serviceName} action: ${action}`, data);
 
 		const service = this.service(serviceName);
-		return await service.invoke(action, data, user);
+		return await service.invokeAction(action, data, user);
 	}
 
 	/**

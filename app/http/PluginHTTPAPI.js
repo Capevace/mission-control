@@ -55,6 +55,10 @@ class PluginHTTPAPI extends HTTPRouter {
 		 */
 		this.proxyLogLevel = 'warn';
 	}
+
+	// get(path) {
+	// 	console.log(this.baseURL, path);
+	// }
 }
 
 module.exports = PluginHTTPAPI;

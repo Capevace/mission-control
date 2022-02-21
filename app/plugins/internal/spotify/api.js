@@ -1,4 +1,6 @@
-module.exports = function api(APP) {
+const superagent = require('superagent');
+
+module.exports = function api(APP, spotifyApi, service) {
 	const { state, database, logger, config } = APP;
 
 	let tokenData = database.get('spotify', {});
@@ -17,7 +19,7 @@ module.exports = function api(APP) {
 				)
 				.send({
 					code: code,
-					redirect_uri: `${config.http.url}/spotify/auth/callback`,
+					redirect_uri: `${config.http.url}/plugins/spotify/auth/callback`,
 					grant_type: 'authorization_code'
 				});
 
@@ -28,11 +30,7 @@ module.exports = function api(APP) {
 			let expiresAt = new Date();
 			expiresAt.setTime(expiresAt.getTime() + expires_in * 1000);
 
-			return {
-				accessToken: access_token,
-				expiresAt,
-				refreshToken: refresh_token
-			};
+			await authorizeSpotify({ accessToken: access_token, expiresAt, refreshToken: refresh_token });
 		} catch (e) {
 			throw e.body || e;
 		}
@@ -69,8 +67,8 @@ module.exports = function api(APP) {
 	}
 
 	// Update the tokens in the database and state
-	function authorizeSpotify(accessToken, expiresAt, refreshToken) {
-		const data = { accessToken, expiresAt, refreshToken };
+	async function authorizeSpotify(tokens) {
+		const { accessToken, expiresAt, refreshToken } = tokens;
 
 		// Schedule a token refresh at a given time
 		scheduleTokenRefresh(expiresAt, refreshToken);
@@ -78,8 +76,7 @@ module.exports = function api(APP) {
 		logger.info('Successfully authorized Spotify');
 
 		// Save to database so its persistent and then update state so clients are notified.
-		database.set('spotify', data);
-		service.invoke('SPOTIFY:UPDATE-TOKEN', data);
+		await service.invokeAction('update-tokens', tokens);
 	}
 
 	function scheduleTokenRefresh(expiresAt, refreshToken) {
@@ -88,32 +85,12 @@ module.exports = function api(APP) {
 
 		setTimeout(async () => {
 			try {
-				const data = await refreshAccessToken(refreshToken);
-				authorizeSpotify(
-					data.accessToken,
-					data.expiresAt,
-					data.refreshToken
-				);
+				const tokens = await refreshAccessToken(refreshToken);
+				await authorizeSpotify(tokens);
 			} catch (e) {
 				logger.error('Couldn\'t refresh access token', e);
-				state.invoke('NOTIFICATIONS:CREATE', {
-					title: `Spotify couldn't be authorized.`,
-					message: e.message
-				});
 			}
 		}, dateDifference);
-	}
-
-	function updateTokenState(state, { accessToken, expiresAt, refreshToken }) {
-		return {
-			...state,
-			spotify: {
-				...state.spotify,
-				accessToken,
-				expiresAt,
-				refreshToken
-			}
-		};
 	}
 
 	function validateTokenUpdate(data) {
@@ -127,7 +104,6 @@ module.exports = function api(APP) {
 		refreshAccessToken, 
 		authorizeSpotify, 
 		scheduleTokenRefresh, 
-		updateTokenState, 
 		validateTokenUpdate 
 	};
 };

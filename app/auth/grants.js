@@ -33,7 +33,13 @@ const userRole = {
 	},
 	'theme': {
 		'update:own': ['*']
-	}
+	},
+	'weed-mode': {
+		'read:any': ['*'],
+		'create:any': ['*'],
+		'update:any': ['*'],
+		'delete:any': ['*']
+	},
 };
 
 const adminRole = {
@@ -63,6 +69,12 @@ const adminRole = {
 		'update:any': ['*']
 	},
 	'dashboard:widget': {
+		'read:any': ['*'],
+		'create:any': ['*'],
+		'update:any': ['*'],
+		'delete:any': ['*']
+	},
+	'spotify:track': {
 		'read:any': ['*'],
 		'create:any': ['*'],
 		'update:any': ['*'],

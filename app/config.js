@@ -56,8 +56,8 @@ let config = require('rc')('mission-control', {
 			__dirname,
 			'../resources/spotify-ui'
 		), // ui path
-		clientId: '', // 'f1421bd3dada404da546902b6849f2d7',
-		secret: '' // '2192e52bff6740cb8dbce0011305bb20'
+		clientId: 'f1421bd3dada404da546902b6849f2d7', // 'f1421bd3dada404da546902b6849f2d7',
+		secret: '2192e52bff6740cb8dbce0011305bb20' // '2192e52bff6740cb8dbce0011305bb20'
 	},
 	ifttt: {
 		token: 'dq0U6fRhl-t35dc_HnDem5'
