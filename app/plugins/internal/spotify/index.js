@@ -10,7 +10,7 @@ const makeAPI = require('./api');
 const routes = require('./routes');
 
 module.exports = async function spotifyInit(APP) {
-	const { sync, database, logger, config, http } = APP;
+	const { sync, database, dashboard, logger, config, http } = APP;
 
 	const spotifyData = database.get('spotify', {});
 
@@ -101,6 +101,10 @@ module.exports = async function spotifyInit(APP) {
 			});
 		}
 	}
+
+	dashboard
+		.component('spotify-player')
+		.custom(__dirname + '/spotify-player.html');
 
 	return {
 		version: '0.0.1',
