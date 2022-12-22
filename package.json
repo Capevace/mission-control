@@ -39,7 +39,7 @@
 		"http-proxy-middleware": "^2.0.3",
 		"internal-ip": "^6.1.0",
 		"joi": "^17.6.0",
-		"jsonwebtoken": "^8.5.1",
+		"jsonwebtoken": "^9.0.0",
 		"module-alias": "^2.2.2",
 		"on-change": "^3.0.2",
 		"on-finished": "^2.3.0",
